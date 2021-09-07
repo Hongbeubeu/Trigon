@@ -17,7 +17,6 @@ public class CompositeTile : MonoBehaviour
         for (int i = 0; i < transform.childCount; i++)
         {
             BaseTile baseTile = transform.GetChild(i).gameObject.AddComponent<BaseTile>();
-            Debug.Log(baseTile.gameObject.name);
             baseTile.SetSortingOrder(rootSortingOrder);
             baseTiles.Add(baseTile);
         }

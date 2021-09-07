@@ -11,6 +11,7 @@ public class BoardGenerator : MonoBehaviour
     {
         GenerateBoard();
         transform.localScale = new Vector2(0.5f, 0.5f);
+        GameManager.instance.ShowBoard();
     }
     void GenerateBoard()
     {
@@ -24,27 +25,31 @@ public class BoardGenerator : MonoBehaviour
             x = y = i;
             z = 0;
             int indexInRow = 0;
+            TypeTile typeTile;
             for (int j = 0; j < 2 * i + 1; j++)
             {
                 if (j % 2 == 0)
                 {
                     tempTile = upTilePrefab;
+                    typeTile = TypeTile.UP;
                 }
                 else
                 {
                     tempTile = downTilePrefab;
+                    typeTile = TypeTile.DOWN;
                 }
 
                 if (x > 3 && y < row - 4 && z < row - 4)
                 {
                     GameObject tile = Instantiate(tempTile, pos, Quaternion.identity);
+                    BoardTile boardTile = tile.AddComponent<BoardTile>();
+                    boardTile.SetProperties(tile.transform.position, typeTile, new Vector3(x, y, z));
                     tile.transform.SetParent(this.transform);
+                    GameManager.instance.matrixTiles[new Vector3Int(x, y, z)] = boardTile;
                     tile.GetComponent<SpriteRenderer>().color = boardColor;
                     SpriteMask mask = tile.GetComponent<SpriteMask>();
                     int so = tile.GetComponent<SpriteRenderer>().sortingOrder;
-
                     mask.isCustomRangeActive = true;
-
                     mask.frontSortingOrder = so;
                     mask.backSortingOrder = -1;
                 }
