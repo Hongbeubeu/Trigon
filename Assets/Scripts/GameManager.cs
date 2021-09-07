@@ -24,10 +24,14 @@ public class GameManager : MonoBehaviour
     Dictionary<int, List<Vector3Int>> dictionarySameCrossX = new Dictionary<int, List<Vector3Int>>();
     Dictionary<int, List<Vector3Int>> dictionarySameCrossY = new Dictionary<int, List<Vector3Int>>();
     Dictionary<int, List<Vector3Int>> dictionarySameCrossZ = new Dictionary<int, List<Vector3Int>>();
-    Transform tileOnBoard;
+    Dictionary<Vector3Int, GameObject> tilesOnBoard = new Dictionary<Vector3Int, GameObject>();
+    Transform tileOnBoardZone;
     private int numberTileOnSpawnZone;
     List<Vector2> tileAlreadyAdded = new List<Vector2>();
     List<List<Vector3Int>> crossToClears = new List<List<Vector3Int>>();
+    List<int> crossXToCleared = new List<int>();
+    List<int> crossYToCleared = new List<int>();
+    List<int> crossZToCleared = new List<int>();
     public int NumberTileOnSpawnZone
     {
         get => numberTileOnSpawnZone;
@@ -43,10 +47,11 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         boardGenerator = FindObjectOfType<BoardGenerator>();
-        tileOnBoard = GameObject.Find("Tiles On Board Zone").transform;
+        tileOnBoardZone = GameObject.Find("Tiles On Board Zone").transform;
         spawner = FindObjectOfType<TileSpawner>();
         boardGenerator.GenerateBoard();
     }
+    
     private void Start()
     {
         spawner.RandomTile();
@@ -103,50 +108,81 @@ public class GameManager : MonoBehaviour
 
             positionToMatrix[item.Value.transform.position] = item.Key;
         }
-
-        foreach (var item in positionToMatrix)
-        {
-            Debug.Log(item.Key);
-        }
-        Debug.Log("___");
     }
 
     public void CheckSameCrossX(int x)
     {
+        if (crossXToCleared.Contains(x))
+            return;
         List<Vector3Int> crossToClear = new List<Vector3Int>();
 
         foreach (var item in dictionarySameCrossX[x])
         {
             if (!matrixTiles[item].isContainsTile)
                 return;
+            crossToClear.Add(item);
         }
-
         crossToClears.Add(crossToClear);
+        crossXToCleared.Add(x);
     }
+
     public void CheckSameCrossY(int y)
     {
+        if (crossYToCleared.Contains(y))
+            return;
         List<Vector3Int> crossToClear = new List<Vector3Int>();
+
         foreach (var item in dictionarySameCrossY[y])
         {
             if (!matrixTiles[item].isContainsTile)
                 return;
+            crossToClear.Add(item);
         }
         crossToClears.Add(crossToClear);
+        crossYToCleared.Add(y);
     }
+
     public void CheckSameCrossZ(int z)
     {
+        if (crossZToCleared.Contains(z))
+            return;
         List<Vector3Int> crossToClear = new List<Vector3Int>();
+
         foreach (var item in dictionarySameCrossZ[z])
         {
             if (!matrixTiles[item].isContainsTile)
                 return;
+            crossToClear.Add(item);
         }
         crossToClears.Add(crossToClear);
+        crossZToCleared.Add(z);
     }
 
     public void ClearCross()
     {
-        Debug.Log("clear");
+        FindCrossToClear();
+        foreach (var crossToClear in crossToClears)
+        {
+            foreach (var item in crossToClear)
+            {
+                matrixTiles[item].isContainsTile = false;
+                Destroy(tilesOnBoard[item].gameObject);
+                tilesOnBoard.Remove(item);
+            }
+        }
+        crossToClears.Clear();
+    }
+
+    void FindCrossToClear()
+    {
+        foreach (var tilePos in tileAlreadyAdded)
+        {
+            CheckSameCrossX(positionToMatrix[tilePos].x);
+            CheckSameCrossY(positionToMatrix[tilePos].y);
+            CheckSameCrossZ(positionToMatrix[tilePos].z);
+        }
+
+        ResetTileAlreadyAdded();
     }
 
     public Vector2 CheckPosition(Vector2 pos, TypeTile type)
@@ -165,6 +201,7 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+
         return new Vector2(-100, 0);
     }
 
@@ -173,19 +210,12 @@ public class GameManager : MonoBehaviour
         Vector2 pos = tile.transform.position;
         Vector2 correctPos = FindPosNearest(pos);
         tileAlreadyAdded.Add(correctPos);
-
-        int crossX = positionToMatrix[correctPos].x;
-        int crossY = positionToMatrix[correctPos].y;
-        int crossZ = positionToMatrix[correctPos].z;
+        tilesOnBoard.Add(positionToMatrix[correctPos], tile);
         matrixTiles[positionToMatrix[correctPos]].isContainsTile = true;
-        CheckSameCrossX(crossX);
-        CheckSameCrossY(crossY);
-        CheckSameCrossZ(crossZ);
-        tile.transform.SetParent(tileOnBoard);
-        Debug.Log("ee");
+        tile.transform.SetParent(tileOnBoardZone);
     }
 
-    public void ResetTileTemp()
+    public void ResetTileAlreadyAdded()
     {
         tileAlreadyAdded.Clear();
     }

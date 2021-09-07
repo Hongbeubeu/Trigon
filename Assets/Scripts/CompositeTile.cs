@@ -81,8 +81,6 @@ public class CompositeTile : MonoBehaviour
                 currentFirstPoint = res;
         }
 
-        GameManager.instance.ResetTileTemp();
-
         for (int i = 0; i < baseTiles.Count; i++)
         {
             baseTiles[i].transform.position = desPos[i];
