@@ -7,8 +7,8 @@ public class CompositeTile : MonoBehaviour
     Vector2 rootScale;
     int topSortingOrder = 5;
     int rootSortingOrder = 2;
-
     List<BaseTile> baseTiles = new List<BaseTile>();
+    List<Vector2> baseTilePosDistance = new List<Vector2>();
 
     private void Awake()
     {
@@ -19,6 +19,19 @@ public class CompositeTile : MonoBehaviour
             BaseTile baseTile = transform.GetChild(i).gameObject.AddComponent<BaseTile>();
             baseTile.SetSortingOrder(rootSortingOrder);
             baseTiles.Add(baseTile);
+        }
+        InitBaseTilePosition();
+    }
+
+    void InitBaseTilePosition()
+    {
+        Vector2 rootPoint = baseTiles[0].transform.position;
+        baseTilePosDistance.Add(Vector2.zero);
+        for (int i = 1; i < baseTiles.Count; i++)
+        {
+            Vector2 currentPoint = baseTiles[i].transform.position;
+            Vector2 distanceVector = currentPoint - rootPoint;
+            baseTilePosDistance.Add(distanceVector);
         }
     }
 
@@ -37,9 +50,49 @@ public class CompositeTile : MonoBehaviour
 
     private void OnMouseUp()
     {
+        CheckValidPosition();
+    }
+
+    void ResetPosition()
+    {
         transform.position = rootPos;
         transform.localScale = rootScale;
         SetSortingOrder(rootSortingOrder);
+    }
+
+    void CheckValidPosition()
+    {
+        List<Vector2> desPos = new List<Vector2>();
+        Vector2 currentFirstPoint = baseTiles[0].transform.position;
+        Vector2 res;
+        for (int i = 0; i < baseTilePosDistance.Count; i++)
+        {
+            res = GameManager.instance.CheckPosition(currentFirstPoint + baseTilePosDistance[i], baseTiles[i].type);
+            if (res.x + 100 == 0 && -res.y == 0)
+            {
+                ResetPosition();
+                return;
+            }
+            else
+            {
+                desPos.Add(res);
+            }
+            if (i == 0)
+                currentFirstPoint = res;
+        }
+
+        GameManager.instance.ResetTileTemp();
+
+        for (int i = 0; i < baseTiles.Count; i++)
+        {
+            baseTiles[i].transform.position = desPos[i];
+            GameManager.instance.SetTileToBoard(baseTiles[i].gameObject);
+        }
+
+        GameManager.instance.NumberTileOnSpawnZone--;
+        SetSortingOrder(rootSortingOrder);
+        GameManager.instance.ClearCross();
+        Destroy(gameObject);
     }
 
     void SetSortingOrder(int sortingOrder)

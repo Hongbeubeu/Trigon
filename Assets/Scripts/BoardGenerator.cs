@@ -7,13 +7,11 @@ public class BoardGenerator : MonoBehaviour
     public Color boardColor;
     float deltaX = 0.576f;
     int row = 12;
-    private void Start()
+    private void Awake()
     {
-        GenerateBoard();
         transform.localScale = new Vector2(0.5f, 0.5f);
-        GameManager.instance.ShowBoard();
     }
-    void GenerateBoard()
+    public void GenerateBoard()
     {
         float posX = 0f;
         float posY = 8f;
@@ -43,7 +41,7 @@ public class BoardGenerator : MonoBehaviour
                 {
                     GameObject tile = Instantiate(tempTile, pos, Quaternion.identity);
                     BoardTile boardTile = tile.AddComponent<BoardTile>();
-                    boardTile.SetProperties(tile.transform.position, typeTile, new Vector3(x, y, z));
+                    boardTile.SetProperties(typeTile, new Vector3(x, y, z));
                     tile.transform.SetParent(this.transform);
                     GameManager.instance.matrixTiles[new Vector3Int(x, y, z)] = boardTile;
                     tile.GetComponent<SpriteRenderer>().color = boardColor;

@@ -6,17 +6,14 @@ public class TileSpawner : MonoBehaviour
 {
     public Transform[] zone;
     public Color[] colors;
-
     string tilePrefabPath = "Prefabs/Composite Tiles";
-
     GameObject[] tilePrefabs;
-    private void Start()
+    private void Awake()
     {
         tilePrefabs = Resources.LoadAll<GameObject>(tilePrefabPath);
-        RandomTile();
     }
 
-    void RandomTile()
+    public void RandomTile()
     {
         for (int i = 0; i < 3; i++)
         {
@@ -32,5 +29,6 @@ public class TileSpawner : MonoBehaviour
                 tile.transform.GetChild(j).GetComponent<SpriteRenderer>().color = randColor;
             }
         }
+        GameManager.instance.NumberTileOnSpawnZone = 3;
     }
 }
