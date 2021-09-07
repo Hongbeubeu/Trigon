@@ -38,7 +38,8 @@ public class BoardGenerator : MonoBehaviour
                 {
                     GameObject tile = Instantiate(tempTile, pos, Quaternion.identity);
                     tile.transform.SetParent(this.transform);
-                    Color c = new Color((x * 50) / 255f, (y * 50) / 255f, (z * 50) / 255f);
+                    float temp = 191f / 255f;
+                    Color c = new Color(temp, temp, temp);
                     tile.GetComponent<SpriteRenderer>().color = c;
                 }
                 pos.x += deltaX;
