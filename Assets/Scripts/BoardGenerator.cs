@@ -4,6 +4,7 @@ public class BoardGenerator : MonoBehaviour
 {
     public GameObject upTilePrefab;
     public GameObject downTilePrefab;
+    public Color boardColor;
     float deltaX = 0.576f;
     int row = 12;
     private void Start()
@@ -38,9 +39,14 @@ public class BoardGenerator : MonoBehaviour
                 {
                     GameObject tile = Instantiate(tempTile, pos, Quaternion.identity);
                     tile.transform.SetParent(this.transform);
-                    float temp = 191f / 255f;
-                    Color c = new Color(temp, temp, temp);
-                    tile.GetComponent<SpriteRenderer>().color = c;
+                    tile.GetComponent<SpriteRenderer>().color = boardColor;
+                    SpriteMask mask = tile.GetComponent<SpriteMask>();
+                    int so = tile.GetComponent<SpriteRenderer>().sortingOrder;
+
+                    mask.isCustomRangeActive = true;
+
+                    mask.frontSortingOrder = so;
+                    mask.backSortingOrder = -1;
                 }
                 pos.x += deltaX;
                 indexInRow++;
