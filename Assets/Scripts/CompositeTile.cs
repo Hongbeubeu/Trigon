@@ -3,12 +3,13 @@ using UnityEngine;
 
 public class CompositeTile : MonoBehaviour
 {
+    public int id;
     Vector2 rootPos;
     Vector2 rootScale;
     int topSortingOrder = 5;
     int rootSortingOrder = 2;
-    List<BaseTile> baseTiles = new List<BaseTile>();
-    List<Vector2> baseTilePosDistance = new List<Vector2>();
+    public List<BaseTile> baseTiles = new List<BaseTile>();
+    public List<Vector2> baseTilePosDistance = new List<Vector2>();
 
     private void Awake()
     {
@@ -50,7 +51,7 @@ public class CompositeTile : MonoBehaviour
 
     private void OnMouseUp()
     {
-        CheckValidPosition();
+        CheckValidPositionToPutTilesDown();
     }
 
     void ResetPosition()
@@ -60,7 +61,7 @@ public class CompositeTile : MonoBehaviour
         SetSortingOrder(rootSortingOrder);
     }
 
-    void CheckValidPosition()
+    void CheckValidPositionToPutTilesDown()
     {
         List<Vector2> desPos = new List<Vector2>();
         Vector2 currentFirstPoint = baseTiles[0].transform.position;
@@ -68,7 +69,7 @@ public class CompositeTile : MonoBehaviour
         for (int i = 0; i < baseTilePosDistance.Count; i++)
         {
             res = GameManager.instance.CheckPosition(currentFirstPoint + baseTilePosDistance[i], baseTiles[i].type);
-            if (res.x + 100 == 0 && -res.y == 0)
+            if (res.x + 100 == 0 && res.y == 0)
             {
                 ResetPosition();
                 return;
@@ -86,10 +87,10 @@ public class CompositeTile : MonoBehaviour
             baseTiles[i].transform.position = desPos[i];
             GameManager.instance.SetTileToBoard(baseTiles[i].gameObject);
         }
-
-        GameManager.instance.NumberTileOnSpawnZone--;
+        GameManager.instance.tileOnSpawner.Remove(id);
         SetSortingOrder(rootSortingOrder);
         GameManager.instance.ClearCross();
+        GameManager.instance.NumberTileOnSpawnZone--;
         Destroy(gameObject);
     }
 

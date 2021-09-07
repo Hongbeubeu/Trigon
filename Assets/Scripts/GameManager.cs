@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
     Dictionary<int, List<Vector3Int>> dictionarySameCrossY = new Dictionary<int, List<Vector3Int>>();
     Dictionary<int, List<Vector3Int>> dictionarySameCrossZ = new Dictionary<int, List<Vector3Int>>();
     Dictionary<Vector3Int, GameObject> tilesOnBoard = new Dictionary<Vector3Int, GameObject>();
+    public Dictionary<int, CompositeTile> tileOnSpawner = new Dictionary<int, CompositeTile>();
     Transform tileOnBoardZone;
     private int numberTileOnSpawnZone;
     List<Vector2> tileAlreadyAdded = new List<Vector2>();
@@ -42,6 +43,8 @@ public class GameManager : MonoBehaviour
             {
                 spawner.RandomTile();
             }
+            else
+                CheckLose();
         }
     }
     private void Awake()
@@ -51,7 +54,7 @@ public class GameManager : MonoBehaviour
         spawner = FindObjectOfType<TileSpawner>();
         boardGenerator.GenerateBoard();
     }
-    
+
     private void Start()
     {
         spawner.RandomTile();
@@ -166,11 +169,15 @@ public class GameManager : MonoBehaviour
             foreach (var item in crossToClear)
             {
                 matrixTiles[item].isContainsTile = false;
-                Destroy(tilesOnBoard[item].gameObject);
+                if (tilesOnBoard[item] != null)
+                    Destroy(tilesOnBoard[item].gameObject);
                 tilesOnBoard.Remove(item);
             }
         }
         crossToClears.Clear();
+        crossXToCleared.Clear();
+        crossYToCleared.Clear();
+        crossZToCleared.Clear();
     }
 
     void FindCrossToClear()
@@ -183,6 +190,47 @@ public class GameManager : MonoBehaviour
         }
 
         ResetTileAlreadyAdded();
+    }
+
+    public void CheckLose()
+    {
+        if (tileOnSpawner.Count == 0)
+            return;
+        Debug.Log(tileOnSpawner.Count);
+        foreach (var item in tileOnSpawner)
+        {
+            CompositeTile compositetTile = item.Value;
+            TypeTile type = compositetTile.transform.GetChild(0).GetComponent<BaseTile>().type;
+            Vector2 res;
+
+
+            foreach (var boardTile in matrixTiles)
+            {
+                if (!boardTile.Value.isContainsTile && type == boardTile.Value.type)
+                {
+                    Vector2 firstPosition = boardTile.Value.transform.position;
+                    bool canPutDown = true;
+                    for (int i = 0; i < compositetTile.baseTilePosDistance.Count; i++)
+                    {
+                        res = CheckPosition(firstPosition + compositetTile.baseTilePosDistance[i], compositetTile.baseTiles[i].type);
+                        if (res.x + 100 == 0 && res.y == 0)
+                        {
+                            canPutDown = false;
+                            break;
+                        }
+                    }
+                    if (canPutDown)
+                    {
+                        Debug.Log("Not Lose!");
+                        return;
+                    }
+                }
+            }
+        }
+        Debug.Log("Lose!");
+        return;
+        // Debug.Log("pass: " + pass);
+        // return pass != 0 ? true : false;
     }
 
     public Vector2 CheckPosition(Vector2 pos, TypeTile type)
