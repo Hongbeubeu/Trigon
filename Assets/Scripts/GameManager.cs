@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
         tileOnBoardZone = GameObject.Find("Tiles On Board Zone").transform;
         spawner = FindObjectOfType<TileSpawner>();
         boardGenerator.GenerateBoard();
+        boardGenerator.ScaleBoard();
     }
 
     private void Start()

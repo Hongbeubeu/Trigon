@@ -7,7 +7,7 @@ public class BoardGenerator : MonoBehaviour
     public Color boardColor;
     float deltaX = 0.576f;
     int row = 12;
-    private void Awake()
+    public void ScaleBoard()
     {
         transform.localScale = new Vector2(0.5f, 0.5f);
     }
