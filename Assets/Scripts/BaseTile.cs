@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
+using DG.Tweening;
 
 public class BaseTile : MonoBehaviour
 {
     SpriteRenderer spriteRenderer;
     SpriteMask spriteMask;
     public TypeTile type;
+    Sequence sequence;
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -22,5 +24,15 @@ public class BaseTile : MonoBehaviour
     {
         spriteRenderer.sortingOrder = sortingOrder;
         spriteMask.frontSortingOrder = sortingOrder;
+    }
+
+    public void Destroy()
+    {
+        sequence = DOTween.Sequence();
+        transform.DOScale(Vector2.zero, 0.25f).SetEase(Ease.Linear).OnComplete(() =>
+        {
+            sequence.Kill();
+            Destroy(gameObject);
+        });
     }
 }

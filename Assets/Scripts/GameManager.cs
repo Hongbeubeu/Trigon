@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     Dictionary<int, List<Vector3Int>> dictionarySameCrossX = new Dictionary<int, List<Vector3Int>>();
     Dictionary<int, List<Vector3Int>> dictionarySameCrossY = new Dictionary<int, List<Vector3Int>>();
     Dictionary<int, List<Vector3Int>> dictionarySameCrossZ = new Dictionary<int, List<Vector3Int>>();
-    Dictionary<Vector3Int, GameObject> tilesOnBoard = new Dictionary<Vector3Int, GameObject>();
+    Dictionary<Vector3Int, BaseTile> tilesOnBoard = new Dictionary<Vector3Int, BaseTile>();
     public Dictionary<int, CompositeTile> tileOnSpawner = new Dictionary<int, CompositeTile>();
     Transform tileOnBoardZone;
     private int numberTileOnSpawnZone;
@@ -167,18 +167,24 @@ public class GameManager : MonoBehaviour
         FindCrossToClear();
         foreach (var crossToClear in crossToClears)
         {
-            foreach (var item in crossToClear)
-            {
-                matrixTiles[item].isContainsTile = false;
-                if (tilesOnBoard[item] != null)
-                    Destroy(tilesOnBoard[item].gameObject);
-                tilesOnBoard.Remove(item);
-            }
+            StartCoroutine(ClearCrossCoroutine(crossToClear));
         }
         crossToClears.Clear();
         crossXToCleared.Clear();
         crossYToCleared.Clear();
         crossZToCleared.Clear();
+    }
+
+    IEnumerator ClearCrossCoroutine(List<Vector3Int> crossToClear)
+    {
+        foreach (var item in crossToClear)
+        {
+            matrixTiles[item].isContainsTile = false;
+            if (tilesOnBoard[item] != null)
+                tilesOnBoard[item].Destroy();
+            tilesOnBoard.Remove(item);
+            yield return new WaitForSeconds(0.01f);
+        }
     }
 
     void FindCrossToClear()
@@ -222,7 +228,6 @@ public class GameManager : MonoBehaviour
                     }
                     if (canPutDown)
                     {
-                        Debug.Log("Not Lose!");
                         return;
                     }
                 }
@@ -230,8 +235,6 @@ public class GameManager : MonoBehaviour
         }
         Debug.Log("Lose!");
         return;
-        // Debug.Log("pass: " + pass);
-        // return pass != 0 ? true : false;
     }
 
     public Vector2 CheckPosition(Vector2 pos, TypeTile type)
@@ -259,7 +262,7 @@ public class GameManager : MonoBehaviour
         Vector2 pos = tile.transform.position;
         Vector2 correctPos = FindPosNearest(pos);
         tileAlreadyAdded.Add(correctPos);
-        tilesOnBoard.Add(positionToMatrix[correctPos], tile);
+        tilesOnBoard.Add(positionToMatrix[correctPos], tile.GetComponent<BaseTile>());
         matrixTiles[positionToMatrix[correctPos]].isContainsTile = true;
         tile.transform.SetParent(tileOnBoardZone);
     }
