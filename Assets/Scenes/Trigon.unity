@@ -1456,7 +1456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e39ec74197b8ffd439eb6dd806fb6d89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zone:
+  spawnZones:
   - {fileID: 535194519}
   - {fileID: 812265598}
   - {fileID: 1827424450}

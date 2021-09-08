@@ -2,7 +2,7 @@
 
 public class TileSpawner : MonoBehaviour
 {
-    public Transform[] zone;
+    public Transform[] spawnZones;
     public Color[] colors;
     string tilePrefabPath = "Prefabs/Composite Tiles";
     GameObject[] tilePrefabs;
@@ -16,14 +16,14 @@ public class TileSpawner : MonoBehaviour
         GameManager.instance.tileOnSpawner.Clear();
         for (int i = 0; i < 3; i++)
         {
-            GameObject tile = Instantiate(tilePrefabs[Random.Range(0, tilePrefabs.Length)], zone[i].position, Quaternion.identity);
+            GameObject tile = Instantiate(tilePrefabs[Random.Range(0, tilePrefabs.Length)], spawnZones[i].position, Quaternion.identity);
             BoxCollider2D collider = tile.AddComponent<BoxCollider2D>();
             collider.size = new Vector2(2.5f, 2.5f);
             tile.transform.localScale = new Vector2(0.45f, 0.45f);
             CompositeTile compositeTile = tile.AddComponent<CompositeTile>();
             compositeTile.id = i;
             GameManager.instance.tileOnSpawner.Add(i, compositeTile);
-            tile.transform.SetParent(zone[i]);
+            tile.transform.SetParent(spawnZones[i]);
             Color randColor = colors[Random.Range(0, colors.Length)];
             compositeTile.rootColor = randColor;
             for (int j = 0; j < tile.transform.childCount; j++)
@@ -32,5 +32,16 @@ public class TileSpawner : MonoBehaviour
             }
         }
         GameManager.instance.NumberTileOnSpawnZone = 3;
+    }
+
+    public void ResetSpawnZone()
+    {
+        foreach (var item in spawnZones)
+        {
+            while (item.childCount > 0)
+            {
+                Destroy(item.GetChild(0).gameObject);
+            }
+        }
     }
 }

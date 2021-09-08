@@ -87,8 +87,6 @@ public class GameManager : MonoBehaviour
         boardGenerator = FindObjectOfType<BoardGenerator>();
         tileOnBoardZone = GameObject.Find("Tiles On Board Zone").transform;
         spawner = FindObjectOfType<TileSpawner>();
-        boardGenerator.GenerateBoard();
-        boardGenerator.ScaleBoard();
     }
 
     private void OnEnable()
@@ -98,6 +96,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        boardGenerator.GenerateBoard();
+        boardGenerator.ScaleBoard();
         InitBoardMapping();
         NewGame();
     }
@@ -123,6 +123,7 @@ public class GameManager : MonoBehaviour
     public void NewGame()
     {
         ResetProperties();
+        spawner.ResetSpawnZone();
         spawner.RandomTile();
         LoadScore();
     }
