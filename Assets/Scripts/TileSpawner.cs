@@ -38,9 +38,10 @@ public class TileSpawner : MonoBehaviour
     {
         foreach (var item in spawnZones)
         {
-            while (item.childCount > 0)
+            int children = item.childCount;
+            for (int i = 0; i < children; i++)
             {
-                Destroy(item.GetChild(0).gameObject);
+                Destroy(item.GetChild(i));
             }
         }
     }
