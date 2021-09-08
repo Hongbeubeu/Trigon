@@ -33,6 +33,8 @@ public class BaseTile : MonoBehaviour
 
     public void DestroyAnim()
     {
+        if (gameObject == null)
+            return;
         sequence = DOTween.Sequence();
         transform.DOScale(Vector2.zero, 0.25f).SetEase(Ease.Linear).OnComplete(() =>
         {

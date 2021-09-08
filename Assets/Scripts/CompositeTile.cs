@@ -143,7 +143,8 @@ public class CompositeTile : AGameState
     {
         foreach (var item in baseTiles)
         {
-            item.Destroy();
+            if (item != null)
+                item.Destroy();
         }
     }
 }

@@ -393,9 +393,15 @@ public class GameManager : MonoBehaviour
         isLose = true;
         CheckMaxScore();
         UIManager.instance.SetActivePanel(UIPanel.LOSE);
+        DestroRestTiles();
+    }
+
+    void DestroRestTiles()
+    {
         foreach (var item in tilesOnBoard)
         {
-            item.Value.Destroy();
+            if (item.Value != null)
+                item.Value.Destroy();
         }
         CompositeTile[] compositeTiles = FindObjectsOfType<CompositeTile>();
         foreach (var compositeTile in compositeTiles)
@@ -417,8 +423,10 @@ public class GameManager : MonoBehaviour
         return PlayerPrefs.GetInt("Max Score", 0);
     }
 
-    public void RePlayGame()
+    public void ReplayGame()
     {
+        DestroRestTiles();
+        CheckMaxScore();
         UIManager.instance.SetActivePanel(UIPanel.PLAY);
         NewGame();
     }

@@ -41,7 +41,7 @@ public class TileSpawner : MonoBehaviour
             int children = item.childCount;
             for (int i = 0; i < children; i++)
             {
-                Destroy(item.GetChild(i));
+                Destroy(item.GetChild(i).gameObject);
             }
         }
     }
