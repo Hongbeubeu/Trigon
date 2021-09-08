@@ -43,7 +43,7 @@ public class BoardGenerator : MonoBehaviour
                     BoardTile boardTile = tile.AddComponent<BoardTile>();
                     boardTile.SetProperties(typeTile, new Vector3(x, y, z));
                     tile.transform.SetParent(this.transform);
-                    GameManager.instance.matrixTiles[new Vector3Int(x, y, z)] = boardTile;
+                    GameManager.instance.boardTiles[new Vector3Int(x, y, z)] = boardTile;
                     tile.GetComponent<SpriteRenderer>().color = boardColor;
                     SpriteMask mask = tile.GetComponent<SpriteMask>();
                     int so = tile.GetComponent<SpriteRenderer>().sortingOrder;

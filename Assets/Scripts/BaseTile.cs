@@ -31,7 +31,7 @@ public class BaseTile : MonoBehaviour
         spriteMask.frontSortingOrder = sortingOrder;
     }
 
-    public void Destroy()
+    public void DestroyAnim()
     {
         sequence = DOTween.Sequence();
         transform.DOScale(Vector2.zero, 0.25f).SetEase(Ease.Linear).OnComplete(() =>
@@ -39,5 +39,15 @@ public class BaseTile : MonoBehaviour
             sequence.Kill();
             Destroy(gameObject);
         });
+    }
+
+    public void Destroy()
+    {
+        Destroy(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        sequence.Kill();
     }
 }

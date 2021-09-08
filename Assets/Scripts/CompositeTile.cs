@@ -97,6 +97,7 @@ public class CompositeTile : AGameState
             baseTiles[i].transform.position = desPos[i];
             GameManager.instance.SetTileToBoard(baseTiles[i].gameObject);
         }
+        GameManager.instance.Score += baseTiles.Count;
         GameManager.instance.tileOnSpawner.Remove(id);
         SetSortingOrder(rootSortingOrder);
         GameManager.instance.ClearCross();
@@ -118,7 +119,6 @@ public class CompositeTile : AGameState
         {
             item.SetColor(tempColor);
         }
-
     }
 
     void SetSortingOrder(int sortingOrder)
@@ -137,5 +137,13 @@ public class CompositeTile : AGameState
     public void Pause()
     {
         isPause = true;
+    }
+
+    public void Destroy()
+    {
+        foreach (var item in baseTiles)
+        {
+            item.Destroy();
+        }
     }
 }

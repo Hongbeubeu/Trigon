@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
+using TMPro;
 
 public enum UIPanel
 {
@@ -25,20 +23,27 @@ public class UIManager : MonoBehaviour
     }
     #endregion
     Transform losePanel,
-              pausePanel;
-
+              pausePanel,
+              playPanel;
+    TextMeshProUGUI maxScore, currentScore;
     private void Awake()
     {
         Init();
+    }
+
+    private void OnEnable()
+    {
+        SetActivePanel(UIPanel.PLAY);
     }
 
     void Init()
     {
         losePanel = transform.Find("Lose Panel");
         pausePanel = transform.Find("Pause Panel");
+        playPanel = transform.Find("Play Panel");
 
-        losePanel.gameObject.SetActive(false);
-        pausePanel.gameObject.SetActive(false);
+        maxScore = playPanel.Find("Score Panel/Score Max").GetComponent<TextMeshProUGUI>();
+        currentScore = playPanel.Find("Score Panel/Score Current").GetComponent<TextMeshProUGUI>();
     }
 
     public void SetActivePanel(UIPanel panel)
@@ -52,10 +57,22 @@ public class UIManager : MonoBehaviour
             case UIPanel.LOSE:
                 losePanel.gameObject.SetActive(true);
                 break;
+            case UIPanel.PLAY:
+                playPanel.gameObject.SetActive(true);
+                break;
             default:
-                ResetPanel();
                 break;
         }
+    }
+
+    public void SetCurrentScore(int score)
+    {
+        currentScore.SetText("Current: " + score);
+    }
+
+    public void SetMaxScore(int max)
+    {
+        maxScore.SetText("Max: " + max);
     }
 
     void ResetPanel()

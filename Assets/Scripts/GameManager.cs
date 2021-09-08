@@ -16,18 +16,19 @@ public class GameManager : MonoBehaviour
         }
     }
     #endregion
-    public int rowNumber = 12;
+    int rowNumber = 12;
+    int score;
     BoardGenerator boardGenerator;
     TileSpawner spawner;
-    public Dictionary<Vector3Int, BoardTile> matrixTiles = new Dictionary<Vector3Int, BoardTile>();
+    Transform tileOnBoardZone;
+    private int numberTileOnSpawnZone;
+    public Dictionary<Vector3Int, BoardTile> boardTiles = new Dictionary<Vector3Int, BoardTile>();
     public Dictionary<Vector2, Vector3Int> positionToMatrix = new Dictionary<Vector2, Vector3Int>();
     Dictionary<int, List<Vector3Int>> dictionarySameCrossX = new Dictionary<int, List<Vector3Int>>();
     Dictionary<int, List<Vector3Int>> dictionarySameCrossY = new Dictionary<int, List<Vector3Int>>();
     Dictionary<int, List<Vector3Int>> dictionarySameCrossZ = new Dictionary<int, List<Vector3Int>>();
     Dictionary<Vector3Int, BaseTile> tilesOnBoard = new Dictionary<Vector3Int, BaseTile>();
     public Dictionary<int, CompositeTile> tileOnSpawner = new Dictionary<int, CompositeTile>();
-    Transform tileOnBoardZone;
-    private int numberTileOnSpawnZone;
     List<Vector2> tileAlreadyAdded = new List<Vector2>();
     List<List<Vector3Int>> crossToClears = new List<List<Vector3Int>>();
     List<int> crossXToCleared = new List<int>();
@@ -49,6 +50,38 @@ public class GameManager : MonoBehaviour
                 CheckLose();
         }
     }
+
+    public int Score
+    {
+        get => score;
+        set
+        {
+            score = value;
+            UIManager.instance.SetCurrentScore(score);
+        }
+    }
+
+    void ResetProperties()
+    {
+        tilesOnBoard.Clear();
+        tileOnSpawner.Clear();
+        tileAlreadyAdded.Clear();
+        crossToClears.Clear();
+        crossXToCleared.Clear();
+        crossYToCleared.Clear();
+        crossZToCleared.Clear();
+        isPause = false;
+        isLose = false;
+        ResetBoardTiles();
+    }
+
+    void ResetBoardTiles()
+    {
+        foreach (var item in boardTiles)
+        {
+            item.Value.isContainsTile = false;
+        }
+    }
     private void Awake()
     {
         boardGenerator = FindObjectOfType<BoardGenerator>();
@@ -58,10 +91,15 @@ public class GameManager : MonoBehaviour
         boardGenerator.ScaleBoard();
     }
 
+    private void OnEnable()
+    {
+        ResetProperties();
+    }
+
     private void Start()
     {
-        spawner.RandomTile();
         InitBoardMapping();
+        NewGame();
     }
     private void Update()
     {
@@ -82,9 +120,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void NewGame()
+    {
+        ResetProperties();
+        spawner.RandomTile();
+        LoadScore();
+    }
+
+    void LoadScore()
+    {
+        UIManager.instance.SetMaxScore(GetMaxScore());
+        Score = 0;
+    }
+
     public void InitBoardMapping()
     {
-        foreach (var item in matrixTiles)
+        foreach (var item in boardTiles)
         {
             int keyX = item.Key.x, keyY = item.Key.y, keyZ = item.Key.z;
 
@@ -142,7 +193,7 @@ public class GameManager : MonoBehaviour
 
         foreach (var item in dictionarySameCrossX[x])
         {
-            if (!matrixTiles[item].isContainsTile)
+            if (!boardTiles[item].isContainsTile)
                 return;
             crossToClear.Add(item);
         }
@@ -158,7 +209,7 @@ public class GameManager : MonoBehaviour
 
         foreach (var item in dictionarySameCrossY[y])
         {
-            if (!matrixTiles[item].isContainsTile)
+            if (!boardTiles[item].isContainsTile)
                 return;
             crossToClear.Add(item);
         }
@@ -174,7 +225,7 @@ public class GameManager : MonoBehaviour
 
         foreach (var item in dictionarySameCrossZ[z])
         {
-            if (!matrixTiles[item].isContainsTile)
+            if (!boardTiles[item].isContainsTile)
                 return;
             crossToClear.Add(item);
         }
@@ -185,10 +236,17 @@ public class GameManager : MonoBehaviour
     public void ClearCross()
     {
         FindCrossToClear();
+        int gainedScore = 0;
+
         foreach (var crossToClear in crossToClears)
         {
+            gainedScore += crossToClear.Count;
             StartCoroutine(ClearCrossCoroutine(crossToClear));
         }
+
+        gainedScore *= crossToClears.Count;
+        Score += gainedScore;
+
         crossToClears.Clear();
         crossXToCleared.Clear();
         crossYToCleared.Clear();
@@ -199,9 +257,9 @@ public class GameManager : MonoBehaviour
     {
         foreach (var item in crossToClear)
         {
-            matrixTiles[item].isContainsTile = false;
+            boardTiles[item].isContainsTile = false;
             if (tilesOnBoard.ContainsKey(item))
-                tilesOnBoard[item].Destroy();
+                tilesOnBoard[item].DestroyAnim();
             tilesOnBoard.Remove(item);
             yield return new WaitForSeconds(0.01f);
         }
@@ -222,7 +280,7 @@ public class GameManager : MonoBehaviour
 
     public void CheckLose()
     {
-        if (tileOnSpawner.Count == 0)
+        if (tileOnSpawner.Count == 0 || isLose)
             return;
         bool checkLose = true;
         foreach (var item in tileOnSpawner)
@@ -231,7 +289,7 @@ public class GameManager : MonoBehaviour
             TypeTile type = compositetTile.transform.GetChild(0).GetComponent<BaseTile>().type;
             Vector2 res;
             bool itemCanPutDown = false;
-            foreach (var boardTile in matrixTiles)
+            foreach (var boardTile in boardTiles)
             {
                 if (!boardTile.Value.isContainsTile && type == boardTile.Value.type)
                 {
@@ -265,9 +323,9 @@ public class GameManager : MonoBehaviour
 
     public Vector2 CheckPosition(Vector2 pos, TypeTile type)
     {
-        foreach (var item in matrixTiles)
+        foreach (var item in boardTiles)
         {
-            BoardTile boardTile = matrixTiles[item.Key];
+            BoardTile boardTile = boardTiles[item.Key];
             if (boardTile.type != type)
                 continue;
             if (Mathf.Abs(boardTile.transform.position.x - pos.x) < 0.25f
@@ -289,7 +347,7 @@ public class GameManager : MonoBehaviour
         Vector2 correctPos = FindPosNearest(pos);
         tileAlreadyAdded.Add(correctPos);
         tilesOnBoard.Add(positionToMatrix[correctPos], tile.GetComponent<BaseTile>());
-        matrixTiles[positionToMatrix[correctPos]].isContainsTile = true;
+        boardTiles[positionToMatrix[correctPos]].isContainsTile = true;
         tile.transform.SetParent(tileOnBoardZone);
     }
 
@@ -331,11 +389,35 @@ public class GameManager : MonoBehaviour
     public void LoseGame()
     {
         isLose = true;
+        CheckMaxScore();
         UIManager.instance.SetActivePanel(UIPanel.LOSE);
+        foreach (var item in tilesOnBoard)
+        {
+            item.Value.Destroy();
+        }
+        CompositeTile[] compositeTiles = FindObjectsOfType<CompositeTile>();
+        foreach (var compositeTile in compositeTiles)
+        {
+            compositeTile.Destroy();
+        }
+    }
+
+    void CheckMaxScore()
+    {
+        if (score > GetMaxScore())
+        {
+            PlayerPrefs.SetInt("Max Score", score);
+        }
+    }
+
+    int GetMaxScore()
+    {
+        return PlayerPrefs.GetInt("Max Score", 0);
     }
 
     public void RePlayGame()
     {
-
+        UIManager.instance.SetActivePanel(UIPanel.PLAY);
+        NewGame();
     }
 }
