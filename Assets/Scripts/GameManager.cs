@@ -33,6 +33,8 @@ public class GameManager : MonoBehaviour
     List<int> crossXToCleared = new List<int>();
     List<int> crossYToCleared = new List<int>();
     List<int> crossZToCleared = new List<int>();
+    public bool isPause = false;
+    public bool isLose = false;
     public int NumberTileOnSpawnZone
     {
         get => numberTileOnSpawnZone;
@@ -60,6 +62,24 @@ public class GameManager : MonoBehaviour
     {
         spawner.RandomTile();
         InitBoardMapping();
+    }
+    private void Update()
+    {
+        if (isLose)
+            return;
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!isPause)
+            {
+                isPause = true;
+                PauseGame();
+            }
+            else
+            {
+                isPause = false;
+                PlayGame();
+            }
+        }
     }
 
     public void InitBoardMapping()
@@ -180,11 +200,12 @@ public class GameManager : MonoBehaviour
         foreach (var item in crossToClear)
         {
             matrixTiles[item].isContainsTile = false;
-            if (tilesOnBoard[item] != null)
+            if (tilesOnBoard.ContainsKey(item))
                 tilesOnBoard[item].Destroy();
             tilesOnBoard.Remove(item);
             yield return new WaitForSeconds(0.01f);
         }
+        CheckLose();
     }
 
     void FindCrossToClear()
@@ -203,14 +224,13 @@ public class GameManager : MonoBehaviour
     {
         if (tileOnSpawner.Count == 0)
             return;
-        Debug.Log(tileOnSpawner.Count);
+        bool checkLose = true;
         foreach (var item in tileOnSpawner)
         {
             CompositeTile compositetTile = item.Value;
             TypeTile type = compositetTile.transform.GetChild(0).GetComponent<BaseTile>().type;
             Vector2 res;
-
-
+            bool itemCanPutDown = false;
             foreach (var boardTile in matrixTiles)
             {
                 if (!boardTile.Value.isContainsTile && type == boardTile.Value.type)
@@ -228,12 +248,18 @@ public class GameManager : MonoBehaviour
                     }
                     if (canPutDown)
                     {
-                        return;
+                        checkLose = false;
+                        itemCanPutDown = true;
+                        item.Value.SetCanPutToBoard(true);
+                        break;
                     }
                 }
             }
+            if (!itemCanPutDown)
+                item.Value.SetCanPutToBoard(false);
         }
-        Debug.Log("Lose!");
+        if (checkLose)
+            LoseGame();
         return;
     }
 
@@ -280,5 +306,36 @@ public class GameManager : MonoBehaviour
                 return item.Key;
         }
         return new Vector2(-100, 0);
+    }
+
+    public void PauseGame()
+    {
+        UIManager.instance.SetActivePanel(UIPanel.PAUSE);
+        AGameState[] compositeTiles = FindObjectsOfType<AGameState>();
+        foreach (var compositeTile in compositeTiles)
+        {
+            compositeTile.gameObject.GetComponent<CompositeTile>().Pause();
+        }
+    }
+
+    public void PlayGame()
+    {
+        UIManager.instance.SetActivePanel(UIPanel.PLAY);
+        AGameState[] compositeTiles = FindObjectsOfType<AGameState>();
+        foreach (var compositeTile in compositeTiles)
+        {
+            compositeTile.gameObject.GetComponent<CompositeTile>().Play();
+        }
+    }
+
+    public void LoseGame()
+    {
+        isLose = true;
+        UIManager.instance.SetActivePanel(UIPanel.LOSE);
+    }
+
+    public void RePlayGame()
+    {
+
     }
 }

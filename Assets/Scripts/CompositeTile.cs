@@ -1,16 +1,19 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class CompositeTile : MonoBehaviour
+public class CompositeTile : AGameState
 {
     public int id;
     Vector2 rootPos;
     Vector2 rootScale;
+    public Color rootColor;
+    Color cantPutColor;
     int topSortingOrder = 5;
     int rootSortingOrder = 2;
     public List<BaseTile> baseTiles = new List<BaseTile>();
     public List<Vector2> baseTilePosDistance = new List<Vector2>();
-
+    bool isPause = false;
+    bool canPutToBoard = true;
     private void Awake()
     {
         rootPos = transform.position;
@@ -21,6 +24,7 @@ public class CompositeTile : MonoBehaviour
             baseTile.SetSortingOrder(rootSortingOrder);
             baseTiles.Add(baseTile);
         }
+        cantPutColor = new Color(176f / 255f, 176f / 255f, 176 / 255f, 1);
         InitBaseTilePosition();
     }
 
@@ -38,12 +42,16 @@ public class CompositeTile : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (isPause || !canPutToBoard)
+            return;
         transform.localScale = new Vector2(0.5f, 0.5f);
         SetSortingOrder(topSortingOrder);
     }
 
     private void OnMouseDrag()
     {
+        if (isPause || !canPutToBoard)
+            return;
         Vector2 screenPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
         Vector2 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
         transform.position = worldPos;
@@ -51,6 +59,8 @@ public class CompositeTile : MonoBehaviour
 
     private void OnMouseUp()
     {
+        if (isPause || !canPutToBoard)
+            return;
         CheckValidPositionToPutTilesDown();
     }
 
@@ -94,11 +104,38 @@ public class CompositeTile : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public void SetCanPutToBoard(bool canPut)
+    {
+        if (canPutToBoard == canPut)
+            return;
+        canPutToBoard = canPut;
+        Color tempColor;
+        if (canPut)
+            tempColor = rootColor;
+        else
+            tempColor = cantPutColor;
+        foreach (var item in baseTiles)
+        {
+            item.SetColor(tempColor);
+        }
+
+    }
+
     void SetSortingOrder(int sortingOrder)
     {
         for (int i = 0; i < baseTiles.Count; i++)
         {
             baseTiles[i].SetSortingOrder(sortingOrder);
         }
+    }
+
+    public void Play()
+    {
+        isPause = false;
+    }
+
+    public void Pause()
+    {
+        isPause = true;
     }
 }

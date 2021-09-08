@@ -25,6 +25,7 @@ public class TileSpawner : MonoBehaviour
             GameManager.instance.tileOnSpawner.Add(i, compositeTile);
             tile.transform.SetParent(zone[i]);
             Color randColor = colors[Random.Range(0, colors.Length)];
+            compositeTile.rootColor = randColor;
             for (int j = 0; j < tile.transform.childCount; j++)
             {
                 tile.transform.GetChild(j).GetComponent<SpriteRenderer>().color = randColor;

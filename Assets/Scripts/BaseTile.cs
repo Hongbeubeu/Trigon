@@ -20,6 +20,11 @@ public class BaseTile : MonoBehaviour
             type = TypeTile.DOWN;
     }
 
+    public void SetColor(Color color)
+    {
+        spriteRenderer.color = color;
+    }
+
     public void SetSortingOrder(int sortingOrder)
     {
         spriteRenderer.sortingOrder = sortingOrder;
