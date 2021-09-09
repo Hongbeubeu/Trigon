@@ -3,12 +3,41 @@
 public class TileSpawner : MonoBehaviour
 {
     public Transform[] spawnZones;
-    public Color[] colors;
+    public Color[] colorPack1;
+    public Color[] colorPack2;
+    public Color[] colorPack3;
+    public Color[] colorPack4;
+
+    public Color[] colorPack;
+
     string tilePrefabPath = "Prefabs/Composite Tiles";
     GameObject[] tilePrefabs;
     private void Awake()
     {
         tilePrefabs = Resources.LoadAll<GameObject>(tilePrefabPath);
+    }
+
+    public void RandomColorPack()
+    {
+        int randomPack = Random.Range(1, 5);
+        switch (randomPack)
+        {
+            case 1:
+                colorPack = colorPack1;
+                break;
+            case 2:
+                colorPack = colorPack2;
+                break;
+            case 3:
+                colorPack = colorPack3;
+                break;
+            case 4:
+                colorPack = colorPack4;
+                break;
+            default:
+                colorPack = colorPack1;
+                break;
+        }
     }
 
     public void RandomTile()
@@ -25,7 +54,7 @@ public class TileSpawner : MonoBehaviour
             compositeTile.id = i;
             GameManager.instance.tileOnSpawner.Add(i, compositeTile);
             tile.transform.SetParent(spawnZones[i]);
-            Color randColor = colors[Random.Range(0, colors.Length)];
+            Color randColor = colorPack[Random.Range(0, colorPack.Length)];
             compositeTile.rootColor = randColor;
             for (int j = 0; j < tile.transform.childCount; j++)
             {

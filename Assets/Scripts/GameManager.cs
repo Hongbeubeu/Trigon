@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
             {
                 spawner.RandomTile();
             }
-            else
+            else if (value == 3)
                 CheckLose();
         }
     }
@@ -123,6 +123,7 @@ public class GameManager : MonoBehaviour
     public void NewGame()
     {
         ResetProperties();
+        spawner.RandomColorPack();
         spawner.ResetSpawnZone();
         spawner.RandomTile();
         LoadScore();
@@ -238,12 +239,17 @@ public class GameManager : MonoBehaviour
     {
         FindCrossToClear();
         int gainedScore = 0;
+        float timer = 0f;
 
         foreach (var crossToClear in crossToClears)
         {
+            timer += 0.01f * crossToClear.Count;
             gainedScore += crossToClear.Count;
             StartCoroutine(ClearCrossCoroutine(crossToClear));
         }
+
+        timer += 0.25f;
+        Timer.Schedule(this, 0.26f, () => CheckLose());
 
         gainedScore *= crossToClears.Count;
         Score += gainedScore;
@@ -264,7 +270,6 @@ public class GameManager : MonoBehaviour
             tilesOnBoard.Remove(item);
             yield return new WaitForSeconds(0.01f);
         }
-        CheckLose();
     }
 
     void FindCrossToClear()
@@ -428,5 +433,10 @@ public class GameManager : MonoBehaviour
         CheckMaxScore();
         UIManager.instance.SetActivePanel(UIPanel.PLAY);
         NewGame();
+    }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
     }
 }
