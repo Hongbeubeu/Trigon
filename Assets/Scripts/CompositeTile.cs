@@ -7,7 +7,7 @@ public class CompositeTile : AGameState
     Vector2 rootPos;
     Vector2 rootScale;
     public Color rootColor;
-    Color cantPutColor;
+    Color loseColor;
     int topSortingOrder = 5;
     int rootSortingOrder = 2;
     public List<BaseTile> baseTiles = new List<BaseTile>();
@@ -18,13 +18,15 @@ public class CompositeTile : AGameState
     {
         rootPos = transform.position;
         rootScale = transform.localScale;
+        loseColor = new Color(176f / 255f, 176f / 255f, 176 / 255f, 1);
         for (int i = 0; i < transform.childCount; i++)
         {
             BaseTile baseTile = transform.GetChild(i).gameObject.AddComponent<BaseTile>();
             baseTile.SetSortingOrder(rootSortingOrder);
+            baseTile.loseColor = loseColor;
             baseTiles.Add(baseTile);
         }
-        cantPutColor = new Color(176f / 255f, 176f / 255f, 176 / 255f, 1);
+
         InitBaseTilePosition();
     }
 
@@ -39,6 +41,8 @@ public class CompositeTile : AGameState
             baseTilePosDistance.Add(distanceVector);
         }
     }
+
+#if UNITY_EDITOR
     private void OnMouseDown()
     {
         if (isPause || !canPutToBoard)
@@ -61,6 +65,7 @@ public class CompositeTile : AGameState
             return;
         CheckValidPositionToPutTilesDown();
     }
+#endif
 
     public void SetScaleOnPickUp()
     {
@@ -118,7 +123,7 @@ public class CompositeTile : AGameState
         if (canPut)
             tempColor = rootColor;
         else
-            tempColor = cantPutColor;
+            tempColor = loseColor;
         foreach (var item in baseTiles)
         {
             item.SetColor(tempColor);

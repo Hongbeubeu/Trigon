@@ -6,6 +6,7 @@ public class BaseTile : MonoBehaviour
     SpriteRenderer spriteRenderer;
     SpriteMask spriteMask;
     public TypeTile type;
+    public Color loseColor;
     Sequence sequence;
     private void Awake()
     {
@@ -23,6 +24,11 @@ public class BaseTile : MonoBehaviour
     public void SetColor(Color color)
     {
         spriteRenderer.color = color;
+    }
+
+    public void SetLoseColor()
+    {
+        spriteRenderer.color = loseColor;
     }
 
     public void SetSortingOrder(int sortingOrder)

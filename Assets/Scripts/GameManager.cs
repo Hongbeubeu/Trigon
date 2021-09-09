@@ -397,7 +397,24 @@ public class GameManager : MonoBehaviour
         isLose = true;
         CheckMaxScore();
         UIManager.instance.SetActivePanel(UIPanel.LOSE);
-        DestroRestTiles();
+        DisableTileOnLose();
+    }
+
+    void DisableTileOnLose()
+    {
+        foreach (var item in tilesOnBoard)
+        {
+            if (item.Value != null)
+                item.Value.SetLoseColor();
+        }
+        CompositeTile[] compositeTiles = FindObjectsOfType<CompositeTile>();
+        foreach (var compositeTile in compositeTiles)
+        {
+            foreach (var baseTile in compositeTile.baseTiles)
+            {
+                baseTile.SetLoseColor();
+            }
+        }
     }
 
     void DestroRestTiles()
