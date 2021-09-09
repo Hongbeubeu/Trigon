@@ -17,6 +17,7 @@ public class TileSpawner : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             GameObject tile = Instantiate(tilePrefabs[Random.Range(0, tilePrefabs.Length)], spawnZones[i].position, Quaternion.identity);
+            tile.tag = "Draggable";
             BoxCollider2D collider = tile.AddComponent<BoxCollider2D>();
             collider.size = new Vector2(2.5f, 2.5f);
             tile.transform.localScale = new Vector2(0.45f, 0.45f);

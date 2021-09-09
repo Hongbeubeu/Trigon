@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
         }
     }
     #endregion
-    int rowNumber = 12;
     int score;
     BoardGenerator boardGenerator;
     TileSpawner spawner;

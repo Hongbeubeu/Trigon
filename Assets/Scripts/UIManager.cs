@@ -79,6 +79,7 @@ public class UIManager : MonoBehaviour
     {
         losePanel.gameObject.SetActive(false);
         pausePanel.gameObject.SetActive(false);
+        playPanel.gameObject.SetActive(false);
     }
 
     public void Quit()

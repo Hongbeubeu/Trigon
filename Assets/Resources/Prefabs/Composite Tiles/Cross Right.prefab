@@ -273,7 +273,7 @@ GameObject:
   - component: {fileID: 4308033373665516304}
   m_Layer: 0
   m_Name: Cross Right
-  m_TagString: Untagged
+  m_TagString: Draggable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

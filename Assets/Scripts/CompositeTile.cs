@@ -12,8 +12,8 @@ public class CompositeTile : AGameState
     int rootSortingOrder = 2;
     public List<BaseTile> baseTiles = new List<BaseTile>();
     public List<Vector2> baseTilePosDistance = new List<Vector2>();
-    bool isPause = false;
-    bool canPutToBoard = true;
+    public bool isPause = false;
+    public bool canPutToBoard = true;
     private void Awake()
     {
         rootPos = transform.position;
@@ -39,13 +39,11 @@ public class CompositeTile : AGameState
             baseTilePosDistance.Add(distanceVector);
         }
     }
-
     private void OnMouseDown()
     {
         if (isPause || !canPutToBoard)
             return;
-        transform.localScale = new Vector2(0.5f, 0.5f);
-        SetSortingOrder(topSortingOrder);
+        SetScaleOnPickUp();
     }
 
     private void OnMouseDrag()
@@ -64,14 +62,20 @@ public class CompositeTile : AGameState
         CheckValidPositionToPutTilesDown();
     }
 
-    void ResetPosition()
+    public void SetScaleOnPickUp()
+    {
+        transform.localScale = new Vector2(0.5f, 0.5f);
+        SetSortingOrder(topSortingOrder);
+    }
+
+    public void ResetPosition()
     {
         transform.position = rootPos;
         transform.localScale = rootScale;
         SetSortingOrder(rootSortingOrder);
     }
 
-    void CheckValidPositionToPutTilesDown()
+    public void CheckValidPositionToPutTilesDown()
     {
         List<Vector2> desPos = new List<Vector2>();
         Vector2 currentFirstPoint = baseTiles[0].transform.position;
