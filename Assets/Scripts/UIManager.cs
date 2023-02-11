@@ -60,8 +60,6 @@ public class UIManager : MonoBehaviour
             case UIPanel.PLAY:
                 playPanel.gameObject.SetActive(true);
                 break;
-            default:
-                break;
         }
     }
 

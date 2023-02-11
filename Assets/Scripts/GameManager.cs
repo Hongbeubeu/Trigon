@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -38,8 +37,8 @@ public class GameManager : MonoBehaviour
 	List<int> crossXToCleared = new List<int>();
 	List<int> crossYToCleared = new List<int>();
 	List<int> crossZToCleared = new List<int>();
-	public bool isPause = false;
-	public bool isLose = false;
+	public bool isPause;
+	public bool isLose;
 
 	public int NumberTileOnSpawnZone
 	{
@@ -249,16 +248,13 @@ public class GameManager : MonoBehaviour
 	{
 		FindCrossToClear();
 		int gainedScore = 0;
-		float timer = 0f;
 
 		foreach (var crossToClear in crossToClears)
 		{
-			timer += 0.01f * crossToClear.Count;
 			gainedScore += crossToClear.Count;
 			StartCoroutine(ClearCrossCoroutine(crossToClear));
 		}
 
-		timer += 0.25f;
 		Timer.Schedule(this, 0.26f, CheckLose);
 
 		gainedScore *= crossToClears.Count;
@@ -338,7 +334,6 @@ public class GameManager : MonoBehaviour
 
 		if (checkLose)
 			LoseGame();
-		return;
 	}
 
 	public Vector2 CheckPosition(Vector2 pos, TypeTile type)
@@ -390,20 +385,20 @@ public class GameManager : MonoBehaviour
 	public void PauseGame()
 	{
 		UIManager.instance.SetActivePanel(UIPanel.PAUSE);
-		AGameState[] compositeTiles = FindObjectsOfType<AGameState>();
-		foreach (var compositeTile in compositeTiles)
+		// AGameState[] compositeTiles = FindObjectsOfType<AGameState>();
+		foreach (var compositeTile in tileOnSpawner)
 		{
-			compositeTile.gameObject.GetComponent<CompositeTile>().Pause();
+			compositeTile.Value.Pause();
 		}
 	}
 
 	public void PlayGame()
 	{
 		UIManager.instance.SetActivePanel(UIPanel.PLAY);
-		AGameState[] compositeTiles = FindObjectsOfType<AGameState>();
-		foreach (var compositeTile in compositeTiles)
+		// AGameState[] compositeTiles = FindObjectsOfType<AGameState>();
+		foreach (var compositeTile in tileOnSpawner)
 		{
-			compositeTile.gameObject.GetComponent<CompositeTile>().Play();
+			compositeTile.Value.Play();
 		}
 	}
 
@@ -419,18 +414,17 @@ public class GameManager : MonoBehaviour
 	{
 		foreach (var item in tilesOnBoard)
 		{
-			if (item.Value != null)
-				item.Value.SetLoseColor();
+			item.Value.SetLoseColor();
 		}
 
-		CompositeTile[] compositeTiles = FindObjectsOfType<CompositeTile>();
-		foreach (var compositeTile in compositeTiles)
-		{
-			foreach (var baseTile in compositeTile.baseTiles)
-			{
-				baseTile.SetLoseColor();
-			}
-		}
+		// CompositeTile[] compositeTiles = FindObjectsOfType<CompositeTile>();
+		// foreach (var compositeTile in tileOnSpawner)
+		// {
+		// 	foreach (var baseTile in compositeTile.Value.baseTiles)
+		// 	{
+		// 		baseTile.SetLoseColor();
+		// 	}
+		// }
 	}
 
 	void DestroRestTiles()
