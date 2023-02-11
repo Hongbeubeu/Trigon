@@ -4,8 +4,8 @@ using UnityEngine;
 public class CompositeTile : AGameState
 {
 	public int id;
-	Vector2 rootPos;
-	Vector2 rootScale;
+	public Vector2 rootPos;
+	public Vector2 rootScale;
 	public Color rootColor;
 	Color loseColor;
 	int topSortingOrder = 5;
@@ -19,13 +19,10 @@ public class CompositeTile : AGameState
 	private void Awake()
 	{
 		rootPos = transform.position;
-		rootScale = transform.localScale;
 		loseColor = new Color(176f / 255f, 176f / 255f, 176 / 255f, 1);
-
-		InitBaseTilePosition();
 	}
 
-	void InitBaseTilePosition()
+	public void InitBaseTilePosition()
 	{
 		Vector2 rootPoint = baseTiles[0].transform.position;
 		baseTilePosDistance.Add(Vector2.zero);
@@ -58,7 +55,6 @@ public class CompositeTile : AGameState
 		if (isPause || !canPutToBoard)
 			return;
 		var screenPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-		if (Camera.main == null) return;
 		Vector2 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
 		worldPos.x += 0.2f;
 		worldPos.y += 1f;

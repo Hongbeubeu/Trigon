@@ -46,13 +46,16 @@ public class TileSpawner : MonoBehaviour
 			tile.tag = "Draggable";
 			BoxCollider2D collide = tile.gameObject.AddComponent<BoxCollider2D>();
 			collide.size = new Vector2(2.5f, 2.5f);
-			tile.transform.localScale = new Vector2(0.45f, 0.45f);
+			var scale = new Vector2(0.45f, 0.45f);
+			tile.rootScale = scale;
+			tile.transform.localScale = scale;
 			tile.id = i;
 			GameManager.instance.tileOnSpawner.Add(i, tile);
 			tile.transform.SetParent(spawnZones[i]);
 			var randColor = colorPack[Random.Range(0, colorPack.Length)];
 			tile.rootColor = randColor;
 			tile.ChangeColorTile(randColor);
+			tile.InitBaseTilePosition();
 		}
 
 		GameManager.instance.NumberTileOnSpawnZone = 3;

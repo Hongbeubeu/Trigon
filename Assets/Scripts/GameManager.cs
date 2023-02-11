@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -301,7 +302,7 @@ public class GameManager : MonoBehaviour
 		foreach (var item in tileOnSpawner)
 		{
 			CompositeTile compositetTile = item.Value;
-			TypeTile type = compositetTile.transform.GetChild(0).GetComponent<BaseTile>().type;
+			TypeTile type = compositetTile.baseTiles[0].type;
 			Vector2 res;
 			bool itemCanPutDown = false;
 			foreach (var boardTile in boardTiles)
@@ -312,13 +313,15 @@ public class GameManager : MonoBehaviour
 					bool canPutDown = true;
 					for (int i = 0; i < compositetTile.baseTilePosDistance.Count; i++)
 					{
-						res = CheckPosition(firstPosition + compositetTile.baseTilePosDistance[i], compositetTile.baseTiles[i].type);
+						res = CheckPosition(firstPosition + compositetTile.baseTilePosDistance[i],
+							compositetTile.baseTiles[i].type);
 						if (res.x + 100 == 0 && res.y == 0)
 						{
 							canPutDown = false;
 							break;
 						}
 					}
+
 					if (canPutDown)
 					{
 						checkLose = false;
@@ -328,9 +331,11 @@ public class GameManager : MonoBehaviour
 					}
 				}
 			}
+
 			if (!itemCanPutDown)
 				item.Value.SetCanPutToBoard(false);
 		}
+
 		if (checkLose)
 			LoseGame();
 		return;
