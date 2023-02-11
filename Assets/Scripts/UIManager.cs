@@ -26,10 +26,9 @@ public class UIManager : MonoBehaviour
 
 	#endregion
 
-	[SerializeField] private GameObject losePanel;
-
-	[SerializeField] private GameObject pausePanel;
-	[SerializeField] private GameObject playPanel;
+	[SerializeField] private CanvasGroup losePanel;
+	[SerializeField] private CanvasGroup pausePanel;
+	[SerializeField] private CanvasGroup playPanel;
 
 	[SerializeField] private TextMeshProUGUI maxScore;
 	[SerializeField] private TextMeshProUGUI currentScore;
@@ -46,13 +45,16 @@ public class UIManager : MonoBehaviour
 		switch (panel)
 		{
 			case UIPanel.PAUSE:
-				pausePanel.SetActive(true);
+				pausePanel.alpha = 1;
+				pausePanel.blocksRaycasts = true;
 				break;
 			case UIPanel.LOSE:
-				losePanel.SetActive(true);
+				losePanel.alpha = 1;
+				losePanel.blocksRaycasts = true;
 				break;
 			case UIPanel.PLAY:
-				playPanel.SetActive(true);
+				playPanel.alpha = 1;
+				playPanel.blocksRaycasts = true;
 				break;
 		}
 	}
@@ -69,9 +71,12 @@ public class UIManager : MonoBehaviour
 
 	void ResetPanel()
 	{
-		losePanel.SetActive(false);
-		pausePanel.SetActive(false);
-		playPanel.SetActive(false);
+		losePanel.alpha = 0;
+		losePanel.blocksRaycasts = false;
+		pausePanel.alpha = 0;
+		pausePanel.blocksRaycasts = false;
+		playPanel.alpha = 0;
+		playPanel.blocksRaycasts = false;
 	}
 
 	public void Quit()

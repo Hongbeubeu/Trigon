@@ -386,19 +386,19 @@ public class GameManager : MonoBehaviour
 	public void PauseGame()
 	{
 		UIManager.instance.SetActivePanel(UIPanel.PAUSE);
-		foreach (var compositeTile in tileOnSpawner)
-		{
-			compositeTile.Value.Pause();
-		}
+		// foreach (var compositeTile in tileOnSpawner)
+		// {
+		// 	compositeTile.Value.Pause();
+		// }
 	}
 
 	public void ContinueGame()
 	{
 		UIManager.instance.SetActivePanel(UIPanel.PLAY);
-		foreach (var compositeTile in tileOnSpawner)
-		{
-			compositeTile.Value.Play();
-		}
+		// foreach (var compositeTile in tileOnSpawner)
+		// {
+		// 	compositeTile.Value.Play();
+		// }
 	}
 
 	public void LoseGame()

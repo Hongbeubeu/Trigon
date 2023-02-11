@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class CompositeTile : AGameState
+public class CompositeTile : MonoBehaviour
 {
 	public int id;
 	public Vector2 rootPos;
@@ -48,7 +48,7 @@ public class CompositeTile : AGameState
 			return;
 		SetScaleOnPickUp();
 	}
-	
+
 	private void OnMouseDrag()
 	{
 		if (isPause || !canPutToBoard)
@@ -58,7 +58,7 @@ public class CompositeTile : AGameState
 		worldPos.y += 1f;
 		transform.position = worldPos;
 	}
-	
+
 	private void OnMouseUp()
 	{
 		if (isPause || !canPutToBoard)

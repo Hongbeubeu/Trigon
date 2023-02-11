@@ -552,6 +552,7 @@ GameObject:
   - component: {fileID: 264464669}
   - component: {fileID: 264464671}
   - component: {fileID: 264464670}
+  - component: {fileID: 264464672}
   m_Layer: 5
   m_Name: Lose Panel
   m_TagString: Untagged
@@ -618,6 +619,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 264464668}
   m_CullTransparentMesh: 0
+--- !u!225 &264464672
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 264464668}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &348841274
 GameObject:
   m_ObjectHideFlags: 0
@@ -963,7 +976,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &542544863
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2107,13 +2120,14 @@ GameObject:
   - component: {fileID: 1473668527}
   - component: {fileID: 1473668529}
   - component: {fileID: 1473668528}
+  - component: {fileID: 1473668530}
   m_Layer: 5
   m_Name: Pause Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1473668527
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2173,6 +2187,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1473668526}
   m_CullTransparentMesh: 0
+--- !u!225 &1473668530
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1473668526}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1504249773
 GameObject:
   m_ObjectHideFlags: 0
@@ -2212,6 +2238,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1559433505}
+  - component: {fileID: 1559433506}
   m_Layer: 5
   m_Name: Play Panel
   m_TagString: Untagged
@@ -2240,6 +2267,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &1559433506
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1559433504}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1628060461
 GameObject:
   m_ObjectHideFlags: 0
@@ -2250,7 +2289,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1628060462}
   - component: {fileID: 1628060463}
-  - component: {fileID: 1628060464}
   m_Layer: 0
   m_Name: Spawn Zone
   m_TagString: Untagged
@@ -2307,35 +2345,23 @@ MonoBehaviour:
   - {r: 0.8470589, g: 0.6862745, b: 0.37647063, a: 1}
   - {r: 0.5803922, g: 0.5176471, b: 0.6901961, a: 1}
   colorPack2:
-  - {r: 0.4666667, g: 0.42352945, b: 0.67058825, a: 1}
-  - {r: 0.7176471, g: 0.4039216, b: 0.33333334, a: 1}
-  - {r: 0.53333336, g: 0.7058824, b: 0.6313726, a: 1}
-  - {r: 0.36862746, g: 0.50980395, b: 0.6117647, a: 1}
-  - {r: 0.47058827, g: 0.6901961, b: 0.79215693, a: 1}
-  - {r: 0.8352942, g: 0.56078434, b: 0.4784314, a: 1}
-  - {r: 0.9333334, g: 0.8078432, b: 0.67058825, a: 1}
-  - {r: 0.8470589, g: 0.6862745, b: 0.37647063, a: 1}
-  - {r: 0.5803922, g: 0.5176471, b: 0.6901961, a: 1}
+  - {r: 0.654902, g: 0.44705886, b: 0.4901961, a: 1}
+  - {r: 0.7058824, g: 0.6117647, b: 0.7686275, a: 1}
+  - {r: 0.9176471, g: 0.7803922, b: 0.7803922, a: 1}
+  - {r: 0.627451, g: 0.76470596, b: 0.8235295, a: 1}
   colorPack3:
-  - {r: 0.4666667, g: 0.42352945, b: 0.67058825, a: 1}
-  - {r: 0.7176471, g: 0.4039216, b: 0.33333334, a: 1}
-  - {r: 0.53333336, g: 0.7058824, b: 0.6313726, a: 1}
-  - {r: 0.36862746, g: 0.50980395, b: 0.6117647, a: 1}
-  - {r: 0.47058827, g: 0.6901961, b: 0.79215693, a: 1}
-  - {r: 0.8352942, g: 0.56078434, b: 0.4784314, a: 1}
-  - {r: 0.9333334, g: 0.8078432, b: 0.67058825, a: 1}
-  - {r: 0.8470589, g: 0.6862745, b: 0.37647063, a: 1}
-  - {r: 0.5803922, g: 0.5176471, b: 0.6901961, a: 1}
+  - {r: 0.9921569, g: 0.5411765, b: 0.5411765, a: 1}
+  - {r: 0.65882355, g: 0.8196079, b: 0.8196079, a: 1}
+  - {r: 0.61960787, g: 0.6313726, b: 0.8313726, a: 1}
+  - {r: 1, g: 0.8313726, b: 0.69803923, a: 1}
+  - {r: 0.8078432, g: 0.9294118, b: 0.7803922, a: 1}
+  - {r: 0.9568628, g: 0.7058824, b: 0.69411767, a: 1}
+  - {r: 0.5254902, g: 0.7843138, b: 0.7372549, a: 1}
   colorPack4:
-  - {r: 0.4666667, g: 0.42352945, b: 0.67058825, a: 1}
-  - {r: 0.7176471, g: 0.4039216, b: 0.33333334, a: 1}
-  - {r: 0.53333336, g: 0.7058824, b: 0.6313726, a: 1}
-  - {r: 0.36862746, g: 0.50980395, b: 0.6117647, a: 1}
-  - {r: 0.47058827, g: 0.6901961, b: 0.79215693, a: 1}
-  - {r: 0.8352942, g: 0.56078434, b: 0.4784314, a: 1}
-  - {r: 0.9333334, g: 0.8078432, b: 0.67058825, a: 1}
-  - {r: 0.8470589, g: 0.6862745, b: 0.37647063, a: 1}
-  - {r: 0.5803922, g: 0.5176471, b: 0.6901961, a: 1}
+  - {r: 0.38431376, g: 0.46274513, b: 0.29803923, a: 1}
+  - {r: 0.60784316, g: 0.6313726, b: 0.48235297, a: 1}
+  - {r: 0.30980393, g: 0.427451, b: 0.31764707, a: 1}
+  - {r: 0.6666667, g: 0.54509807, b: 0.34117648, a: 1}
   colorPack: []
   tilePrefabs:
   - {fileID: -460626584447205692, guid: e79a4556fa1c12a498098d8498117672, type: 3}
@@ -2358,18 +2384,6 @@ MonoBehaviour:
   - {fileID: 8322022631242760302, guid: 79d586b09735264419986ce1b1ff282c, type: 3}
   - {fileID: -755217072793674681, guid: 003235c6dfa45b84782eb8d7c3daca11, type: 3}
   - {fileID: 3300517970474993917, guid: c18f6a565afaf4045a46fabe08a3b81b, type: 3}
---- !u!114 &1628060464
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1628060461}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f96e69374e43c4d45b66514b727b771d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1645453860
 GameObject:
   m_ObjectHideFlags: 0
@@ -2944,7 +2958,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2039582651
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3090,8 +3104,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7abb24a647288ae43922caea0819eca9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  losePanel: {fileID: 264464668}
-  pausePanel: {fileID: 1473668526}
-  playPanel: {fileID: 1559433504}
+  losePanel: {fileID: 264464672}
+  pausePanel: {fileID: 1473668530}
+  playPanel: {fileID: 1559433506}
   maxScore: {fileID: 1963054359}
   currentScore: {fileID: 1645453862}
