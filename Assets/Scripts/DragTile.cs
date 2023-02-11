@@ -2,7 +2,6 @@
 
 public class DragTile : MonoBehaviour
 {
-#if PLATFORM_ANDROID
     private bool dragging = false;
     private Transform toDrag;
 
@@ -37,7 +36,7 @@ public class DragTile : MonoBehaviour
         if (dragging && touch.phase == TouchPhase.Moved)
         {
             worldPos = Camera.main.ScreenToWorldPoint(touchPos);
-            worldPos.y += 0.65f;
+            worldPos.y += 2f;
             toDrag.position = worldPos;
         }
 
@@ -48,5 +47,4 @@ public class DragTile : MonoBehaviour
             compositeTile.CheckValidPositionToPutTilesDown();
         }
     }
-#endif
 }
