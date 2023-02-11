@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -291,38 +292,35 @@ public class GameManager : MonoBehaviour
 		ResetTileAlreadyAdded();
 	}
 
-	public void CheckLose()
+	private void CheckLose()
 	{
 		if (tileOnSpawner.Count == 0 || isLose)
 			return;
 		bool checkLose = true;
 		foreach (var item in tileOnSpawner)
 		{
-			CompositeTile compositetTile = item.Value;
-			TypeTile type = compositetTile.baseTiles[0].type;
-			Vector2 res;
+			var compositetTile = item.Value;
+			var type = compositetTile.baseTiles[0].type;
 			bool itemCanPutDown = false;
 			foreach (var boardTile in boardTiles)
 			{
-				if (!boardTile.Value.isContainsTile && type == boardTile.Value.type)
+				if (boardTile.Value.isContainsTile || type != boardTile.Value.type) continue;
+				Vector2 firstPosition = boardTile.Value.transform.position;
+				bool canPutDown = true;
+				for (int i = 0; i < compositetTile.baseTilePosDistance.Count; i++)
 				{
-					Vector2 firstPosition = boardTile.Value.transform.position;
-					bool canPutDown = true;
-					for (int i = 0; i < compositetTile.baseTilePosDistance.Count; i++)
-					{
-						res = CheckPosition(firstPosition + compositetTile.baseTilePosDistance[i],
-							compositetTile.baseTiles[i].type);
-						if (res.x + 100 != 0 || res.y != 0) continue;
-						canPutDown = false;
-						break;
-					}
-
-					if (!canPutDown) continue;
-					checkLose = false;
-					itemCanPutDown = true;
-					item.Value.SetCanPutToBoard(true);
+					var res = FindNearestTilePosition(firstPosition + compositetTile.baseTilePosDistance[i],
+						compositetTile.baseTiles[i].type);
+					if (res.x + 100 != 0 || res.y != 0) continue;
+					canPutDown = false;
 					break;
 				}
+
+				if (!canPutDown) continue;
+				checkLose = false;
+				itemCanPutDown = true;
+				item.Value.SetCanPutToBoard(true);
+				break;
 			}
 
 			if (!itemCanPutDown)
@@ -333,21 +331,18 @@ public class GameManager : MonoBehaviour
 			LoseGame();
 	}
 
-	public Vector2 CheckPosition(Vector2 pos, TypeTile type)
+	public Vector2 FindNearestTilePosition(Vector2 pos, TypeTile type)
 	{
-		foreach (var item in boardTiles)
+		foreach (BoardTile boardTile in from item in boardTiles
+		         select boardTiles[item.Key]
+		         into boardTile
+		         where boardTile.type == type
+		         where Mathf.Abs(boardTile.transform.position.x - pos.x) < 0.25f
+		               && Mathf.Abs(boardTile.transform.position.y - pos.y) < 0.25f
+		         where !boardTile.isContainsTile
+		         select boardTile)
 		{
-			BoardTile boardTile = boardTiles[item.Key];
-			if (boardTile.type != type)
-				continue;
-			if (Mathf.Abs(boardTile.transform.position.x - pos.x) < 0.25f
-			    && Mathf.Abs(boardTile.transform.position.y - pos.y) < 0.25f)
-			{
-				if (!boardTile.isContainsTile)
-				{
-					return boardTile.transform.position;
-				}
-			}
+			return boardTile.transform.position;
 		}
 
 		return new Vector2(-100, 0);
@@ -356,7 +351,7 @@ public class GameManager : MonoBehaviour
 	public void SetTileToBoard(BaseTile tile)
 	{
 		Vector2 pos = tile.transform.position;
-		Vector2 correctPos = FindPosNearest(pos);
+		var correctPos = FindPosNearest(pos);
 		tileAlreadyAdded.Add(correctPos);
 		tilesOnBoard.Add(positionToMatrix[correctPos], tile);
 		boardTiles[positionToMatrix[correctPos]].isContainsTile = true;
@@ -370,10 +365,10 @@ public class GameManager : MonoBehaviour
 
 	Vector2 FindPosNearest(Vector2 pos)
 	{
-		foreach (var item in positionToMatrix)
+		foreach (var item in positionToMatrix.Where(item =>
+			         Mathf.Abs(item.Key.x - pos.x) < 0.01f && Mathf.Abs(item.Key.y - pos.y) < 0.01f))
 		{
-			if (Mathf.Abs(item.Key.x - pos.x) < 0.01f && Mathf.Abs(item.Key.y - pos.y) < 0.01f)
-				return item.Key;
+			return item.Key;
 		}
 
 		return new Vector2(-100, 0);
@@ -403,15 +398,6 @@ public class GameManager : MonoBehaviour
 		{
 			item.Value.SetLoseColor();
 		}
-
-		// CompositeTile[] compositeTiles = FindObjectsOfType<CompositeTile>();
-		// foreach (var compositeTile in tileOnSpawner)
-		// {
-		// 	foreach (var baseTile in compositeTile.Value.baseTiles)
-		// 	{
-		// 		baseTile.SetLoseColor();
-		// 	}
-		// }
 	}
 
 	void DestroRestTiles()

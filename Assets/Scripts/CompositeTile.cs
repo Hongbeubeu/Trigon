@@ -82,12 +82,12 @@ public class CompositeTile : MonoBehaviour
 
 	public void CheckValidPositionToPutTilesDown()
 	{
-		List<Vector2> desPos = new List<Vector2>();
+		var desPos = new List<Vector2>();
 		Vector2 currentFirstPoint = baseTiles[0].transform.position;
-		Vector2 res;
 		for (int i = 0; i < baseTilePosDistance.Count; i++)
 		{
-			res = GameManager.instance.CheckPosition(currentFirstPoint + baseTilePosDistance[i], baseTiles[i].type);
+			var res = GameManager.instance.FindNearestTilePosition(currentFirstPoint + baseTilePosDistance[i],
+				baseTiles[i].type);
 			if (res.x + 100 == 0 && res.y == 0)
 			{
 				ResetPosition();
