@@ -43,7 +43,7 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 11
+  serializedVersion: 12
   m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
@@ -98,7 +98,8 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_LightingSettings: {fileID: 4890085278179872738, guid: ce7ca8ed6329522479c8a1ab141d44de,
+    type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -118,6 +119,8 @@ NavMeshSettings:
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
@@ -173,6 +176,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -308,6 +312,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.6901961, g: 0.6901961, b: 0.6901961, a: 0.4117647}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -383,6 +388,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.19607843}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -502,6 +508,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -619,7 +626,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.2924528, g: 0.2924528, b: 0.2924528, a: 0}
+  m_BackGroundColor: {r: 0.13725491, g: 0.13333334, b: 0.12941177, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -754,6 +761,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.19607843}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -830,6 +838,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -930,11 +939,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92e6b8200ad528c43b61a4e33a1c8078, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upTilePrefab: {fileID: 5616420165216850210, guid: 281dc12a6e082a54aa175fd09a1f7139,
+  upTilePrefab: {fileID: 720134715493726965, guid: 1e35e3efcddaf0744a3c2983b6976dfb,
     type: 3}
-  downTilePrefab: {fileID: 5082947849565136641, guid: b5f652415a1d18143be4371ffc0bb180,
+  downTilePrefab: {fileID: -1164273498409438937, guid: 00700baee12ceb2479f967131db27b84,
     type: 3}
-  boardColor: {r: 0.4528302, g: 0.4528302, b: 0.4528302, a: 1}
+  boardColor: {r: 0.2627451, g: 0.2627451, b: 0.2627451, a: 1}
 --- !u!1 &996752504
 GameObject:
   m_ObjectHideFlags: 0
@@ -988,6 +997,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1018,6 +1028,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2010693087}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ReplayGame
         m_Mode: 1
         m_Arguments:
@@ -1043,6 +1054,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1183,6 +1195,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1317,6 +1330,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1347,6 +1361,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2073460364}
+        m_TargetAssemblyTypeName: 
         m_MethodName: Quit
         m_Mode: 1
         m_Arguments:
@@ -1372,6 +1387,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1446,6 +1462,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1581,6 +1598,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.5188679, g: 0.5188679, b: 0.5188679, a: 0.4117647}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1726,26 +1744,67 @@ MonoBehaviour:
   - {fileID: 812265598}
   - {fileID: 1827424450}
   colorPack1:
-  - {r: 0.24875402, g: 0.70602757, b: 0.8113208, a: 1}
-  - {r: 0.41568628, g: 0.9490196, b: 0.9411765, a: 1}
-  - {r: 0.015686275, g: 0.83137256, b: 0.9411765, a: 1}
-  - {r: 0.015686275, g: 0.9254902, b: 0.9411765, a: 1}
+  - {r: 0.4666667, g: 0.42352945, b: 0.67058825, a: 1}
+  - {r: 0.7176471, g: 0.4039216, b: 0.33333334, a: 1}
+  - {r: 0.53333336, g: 0.7058824, b: 0.6313726, a: 1}
+  - {r: 0.36862746, g: 0.50980395, b: 0.6117647, a: 1}
+  - {r: 0.47058827, g: 0.6901961, b: 0.79215693, a: 1}
+  - {r: 0.8352942, g: 0.56078434, b: 0.4784314, a: 1}
+  - {r: 0.9333334, g: 0.8078432, b: 0.67058825, a: 1}
+  - {r: 0.8470589, g: 0.6862745, b: 0.37647063, a: 1}
+  - {r: 0.5803922, g: 0.5176471, b: 0.6901961, a: 1}
   colorPack2:
-  - {r: 0.8490566, g: 0.41251338, b: 0.42035538, a: 1}
-  - {r: 0.9529412, g: 0.4745098, b: 0.4392157, a: 1}
-  - {r: 0.8867924, g: 0.47267708, b: 0.5257689, a: 1}
-  - {r: 0.98039216, g: 0.74509805, b: 0.7529412, a: 1}
+  - {r: 0.4666667, g: 0.42352945, b: 0.67058825, a: 1}
+  - {r: 0.7176471, g: 0.4039216, b: 0.33333334, a: 1}
+  - {r: 0.53333336, g: 0.7058824, b: 0.6313726, a: 1}
+  - {r: 0.36862746, g: 0.50980395, b: 0.6117647, a: 1}
+  - {r: 0.47058827, g: 0.6901961, b: 0.79215693, a: 1}
+  - {r: 0.8352942, g: 0.56078434, b: 0.4784314, a: 1}
+  - {r: 0.9333334, g: 0.8078432, b: 0.67058825, a: 1}
+  - {r: 0.8470589, g: 0.6862745, b: 0.37647063, a: 1}
+  - {r: 0.5803922, g: 0.5176471, b: 0.6901961, a: 1}
   colorPack3:
-  - {r: 0.46337664, g: 0.61178136, b: 0.8396226, a: 1}
-  - {r: 0.30936277, g: 0.8301887, b: 0.70350134, a: 1}
-  - {r: 0.23255605, g: 0.6855195, b: 0.735849, a: 1}
-  - {r: 0.15307939, g: 0.5781493, b: 0.754717, a: 1}
+  - {r: 0.4666667, g: 0.42352945, b: 0.67058825, a: 1}
+  - {r: 0.7176471, g: 0.4039216, b: 0.33333334, a: 1}
+  - {r: 0.53333336, g: 0.7058824, b: 0.6313726, a: 1}
+  - {r: 0.36862746, g: 0.50980395, b: 0.6117647, a: 1}
+  - {r: 0.47058827, g: 0.6901961, b: 0.79215693, a: 1}
+  - {r: 0.8352942, g: 0.56078434, b: 0.4784314, a: 1}
+  - {r: 0.9333334, g: 0.8078432, b: 0.67058825, a: 1}
+  - {r: 0.8470589, g: 0.6862745, b: 0.37647063, a: 1}
+  - {r: 0.5803922, g: 0.5176471, b: 0.6901961, a: 1}
   colorPack4:
-  - {r: 0.5803922, g: 0.7882353, b: 0.4509804, a: 1}
-  - {r: 0.4762816, g: 0.7264151, b: 0.50363994, a: 1}
-  - {r: 0.69411767, g: 0.84705883, b: 0.7176471, a: 1}
-  - {r: 0.4627451, g: 0.7254902, b: 0.2784314, a: 1}
+  - {r: 0.4666667, g: 0.42352945, b: 0.67058825, a: 1}
+  - {r: 0.7176471, g: 0.4039216, b: 0.33333334, a: 1}
+  - {r: 0.53333336, g: 0.7058824, b: 0.6313726, a: 1}
+  - {r: 0.36862746, g: 0.50980395, b: 0.6117647, a: 1}
+  - {r: 0.47058827, g: 0.6901961, b: 0.79215693, a: 1}
+  - {r: 0.8352942, g: 0.56078434, b: 0.4784314, a: 1}
+  - {r: 0.9333334, g: 0.8078432, b: 0.67058825, a: 1}
+  - {r: 0.8470589, g: 0.6862745, b: 0.37647063, a: 1}
+  - {r: 0.5803922, g: 0.5176471, b: 0.6901961, a: 1}
   colorPack: []
+  tilePrefabs:
+  - {fileID: -460626584447205692, guid: e79a4556fa1c12a498098d8498117672, type: 3}
+  - {fileID: 3558707901198481265, guid: b73a5879557c656429323c4c3c9d8adf, type: 3}
+  - {fileID: -1604766406526910788, guid: c1660dd801fd22940a28215ee28c85f6, type: 3}
+  - {fileID: -5156920364111216451, guid: fb740ab7718707c4780ddd54b7e88987, type: 3}
+  - {fileID: -8328027311161588163, guid: 85f3b65ea6bbd4044b927bc22f8859ad, type: 3}
+  - {fileID: -8120421237596195541, guid: 2202e5f64d6cc214b9bfeee0397ca542, type: 3}
+  - {fileID: 8470100882169838479, guid: 619e69a90be3eec4f889464e37144ca0, type: 3}
+  - {fileID: -7538915122347908528, guid: 5d1cad67b3f1deb46b56cc69074dd06f, type: 3}
+  - {fileID: -8729391392723110066, guid: eb0f28cf782392648b532b89dbb8fdca, type: 3}
+  - {fileID: -2605296943927442935, guid: 33a5ca2e8007aeb4cb5521bc907820ca, type: 3}
+  - {fileID: 8515516059269559563, guid: 0877b0a3c64dc1f4698381f735ce6aa9, type: 3}
+  - {fileID: 5564541092861744645, guid: ad242dc81f41ccb41a1073d7e563c918, type: 3}
+  - {fileID: 2147884532294388229, guid: 5c05ed15c807c964fa2bbd87b1d9e710, type: 3}
+  - {fileID: -947390246648896910, guid: b78619e117f17964abe6183332b92750, type: 3}
+  - {fileID: 1316738307288782212, guid: f3dc5a7444d0fbf40a75459e537cc60e, type: 3}
+  - {fileID: 8164169285325458217, guid: a96b479c3eebd8d4cb984bb11aa3ad92, type: 3}
+  - {fileID: -5811788962092682969, guid: 73b80daa2f6a8de4fbd061ef1f36ec50, type: 3}
+  - {fileID: 8322022631242760302, guid: 79d586b09735264419986ce1b1ff282c, type: 3}
+  - {fileID: -755217072793674681, guid: 003235c6dfa45b84782eb8d7c3daca11, type: 3}
+  - {fileID: 3300517970474993917, guid: c18f6a565afaf4045a46fabe08a3b81b, type: 3}
 --- !u!114 &1628060464
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1810,6 +1869,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1943,6 +2003,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2112,6 +2173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -2142,6 +2204,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2010693087}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ReplayGame
         m_Mode: 1
         m_Arguments:
@@ -2167,6 +2230,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2241,6 +2305,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2472,6 +2537,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &2073460362
 Canvas:
   m_ObjectHideFlags: 0

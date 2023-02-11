@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5616420165216850215}
   - component: {fileID: 5616420165216850212}
-  - component: {fileID: -1573004039936141054}
+  - component: {fileID: 720134715493726965}
   m_Layer: 0
-  m_Name: Triangle Up
+  m_Name: Triangle Up 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &-1573004039936141054
+--- !u!114 &720134715493726965
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,9 +92,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 5616420165216850210}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0e844e5ed4dd1a4bb85d15199e3460f, type: 3}
+  m_Script: {fileID: 11500000, guid: cea8c2d5edf937a408754ebb70f0c81e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteRenderer: {fileID: 5616420165216850212}
+  isContainsTile: 0
   type: 0
-  loseColor: {r: 0.6132076, g: 0.6132076, b: 0.6132076, a: 1}
+  positionInMatrix: {x: 0, y: 0, z: 0}
