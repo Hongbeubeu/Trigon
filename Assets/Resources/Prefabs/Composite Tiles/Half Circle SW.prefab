@@ -10,9 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3136425363800982172}
   - component: {fileID: -8729391392723110066}
+  - component: {fileID: -7992731582093791824}
   m_Layer: 0
   m_Name: Half Circle SW
-  m_TagString: Untagged
+  m_TagString: Draggable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -48,6 +49,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
+  rootPos: {x: 0, y: 0}
+  rootScale: {x: 0, y: 0}
   rootColor: {r: 0, g: 0, b: 0, a: 0}
   baseTiles:
   - {fileID: 2666687670631918251}
@@ -62,6 +65,32 @@ MonoBehaviour:
   - {fileID: 2608958439145520803}
   - {fileID: 4123048632534657685}
   - {fileID: 5957343146953738415}
+--- !u!61 &-7992731582093791824
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3136425363800982173}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 2.5, y: 2.5}
+  m_EdgeRadius: 0
 --- !u!1001 &1452127361089892256
 PrefabInstance:
   m_ObjectHideFlags: 0
