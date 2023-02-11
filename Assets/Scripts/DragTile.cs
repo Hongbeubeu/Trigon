@@ -37,7 +37,8 @@ public class DragTile : MonoBehaviour
         if (dragging && touch.phase == TouchPhase.Moved)
         {
             worldPos = Camera.main.ScreenToWorldPoint(touchPos);
-            worldPos.y += 0.65f;
+            worldPos.x += 0.2f;
+            worldPos.y += 1f;
             toDrag.position = worldPos;
         }
 

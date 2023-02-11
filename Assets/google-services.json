@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "176575209590",
+    "project_id": "unity-leaderboard-36852",
+    "storage_bucket": "unity-leaderboard-36852.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176575209590:android:faf47b0acf6acf6ff0ff57",
+        "android_client_info": {
+          "package_name": "com.beustudio.trigon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "176575209590-kfn9ckqbnf6al8pn5qclb5lvv3ges7uo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAZrAj9TcL-Vbedm45DhzxLzKqN95v_3w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "176575209590-kfn9ckqbnf6al8pn5qclb5lvv3ges7uo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
