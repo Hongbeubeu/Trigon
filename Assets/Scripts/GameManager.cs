@@ -94,6 +94,7 @@ public class GameManager : MonoBehaviour
 		spawner = FindObjectOfType<TileSpawner>();
 		boardGenerator.GenerateBoard();
 		boardGenerator.ScaleBoard();
+		Application.targetFrameRate = 120;
 	}
 
 	private void OnEnable()
