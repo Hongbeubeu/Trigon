@@ -31,21 +31,17 @@ SpriteAtlas:
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
-    - {fileID: 102900000, guid: 60025cf7af77e1649add7933209d2aa1, type: 3}
+    - {fileID: 102900000, guid: 745bad024e3d2d1439ae8912f7b3e7c2, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
-  - {fileID: 21300000, guid: e95fddb8c77dffe4c976fc074c532e2d, type: 3}
-  - {fileID: 21300000, guid: 180b103a7b363ff419708ce2aa8436aa, type: 3}
-  - {fileID: 21300000, guid: 4ac913fb995b3594092dff870afefd37, type: 3}
-  - {fileID: 21300000, guid: a554d3de9297a1e47aa061ded683d687, type: 3}
+  - {fileID: 21300000, guid: 4a8d0bc5aa044734bb7cdbe587e70e6f, type: 3}
+  - {fileID: 21300000, guid: b9c28aa98488dc1449e72769c5debfd2, type: 3}
   m_PackedSpriteNamesToIndex:
-  - Mask Down
-  - BG
-  - Mask Up
-  - FadeBG
+  - crown
+  - ButtonRounded
   m_RenderDataMap: {}
   m_Tag: New Sprite Atlas
   m_IsVariant: 0
