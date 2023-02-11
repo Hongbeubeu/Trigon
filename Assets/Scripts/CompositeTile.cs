@@ -55,7 +55,6 @@ public class CompositeTile : AGameState
 			return;
 		var screenPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 		Vector2 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
-		worldPos.x += 0.2f;
 		worldPos.y += 1f;
 		transform.position = worldPos;
 	}
