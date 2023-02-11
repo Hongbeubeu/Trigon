@@ -17,41 +17,20 @@ public class BoardGenerator : MonoBehaviour
 	{
 		float posX = 0f;
 		float posY = 8f;
-		int x, y, z;
-		Vector2 pos = new Vector2(posX, posY);
-		BoardTile tempTile;
+		var pos = new Vector2(posX, posY);
 		for (int i = 0; i < row; i++)
 		{
-			x = y = i;
-			z = 0;
+			int y;
+			var x = y = i;
+			var z = 0;
 			int indexInRow = 0;
-			TypeTile typeTile;
 			for (int j = 0; j < 2 * i + 1; j++)
 			{
-				if (j % 2 == 0)
-				{
-					tempTile = upTilePrefab;
-					typeTile = TypeTile.UP;
-				}
-				else
-				{
-					tempTile = downTilePrefab;
-					typeTile = TypeTile.DOWN;
-				}
+				var tempTile = j % 2 == 0 ? upTilePrefab : downTilePrefab;
 
 				if (x > 3 && y < row - 4 && z < row - 4)
 				{
-					BoardTile tile = Instantiate(tempTile, pos, Quaternion.identity);
-					// BoardTile boardTile = tile.AddComponent<BoardTile>();
-					tile.SetProperties(typeTile, new Vector3(x, y, z));
-					tile.transform.SetParent(this.transform);
-					GameManager.instance.boardTiles[new Vector3Int(x, y, z)] = tile;
-					tile.GetComponent<SpriteRenderer>().color = boardColor;
-					// SpriteMask mask = tile.GetComponent<SpriteMask>();
-					// int so = tile.GetComponent<SpriteRenderer>().sortingOrder;
-					// mask.isCustomRangeActive = true;
-					// mask.frontSortingOrder = so;
-					// mask.backSortingOrder = -1;
+					InstantiateBoardTile(tempTile, pos, tempTile.type, x, y, z);
 				}
 
 				pos.x += deltaX;
@@ -69,10 +48,17 @@ public class BoardGenerator : MonoBehaviour
 				}
 			}
 
-			x++;
-			y = x;
-			pos.x -= ((2 * i + 1) * deltaX + deltaX);
+			pos.x -= (2 * i + 1) * deltaX + deltaX;
 			pos.y--;
 		}
+	}
+
+	private void InstantiateBoardTile(BoardTile tempTile, Vector2 pos, TypeTile typeTile, int x, int y, int z)
+	{
+		var tile = Instantiate(tempTile, pos, Quaternion.identity);
+		tile.SetProperties(typeTile, new Vector3(x, y, z));
+		tile.transform.SetParent(transform);
+		GameManager.instance.boardTiles[new Vector3Int(x, y, z)] = tile;
+		tile.GetComponent<SpriteRenderer>().color = boardColor;
 	}
 }

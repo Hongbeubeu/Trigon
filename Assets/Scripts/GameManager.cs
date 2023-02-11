@@ -312,20 +312,16 @@ public class GameManager : MonoBehaviour
 					{
 						res = CheckPosition(firstPosition + compositetTile.baseTilePosDistance[i],
 							compositetTile.baseTiles[i].type);
-						if (res.x + 100 == 0 && res.y == 0)
-						{
-							canPutDown = false;
-							break;
-						}
-					}
-
-					if (canPutDown)
-					{
-						checkLose = false;
-						itemCanPutDown = true;
-						item.Value.SetCanPutToBoard(true);
+						if (res.x + 100 != 0 || res.y != 0) continue;
+						canPutDown = false;
 						break;
 					}
+
+					if (!canPutDown) continue;
+					checkLose = false;
+					itemCanPutDown = true;
+					item.Value.SetCanPutToBoard(true);
+					break;
 				}
 			}
 
@@ -386,19 +382,11 @@ public class GameManager : MonoBehaviour
 	public void PauseGame()
 	{
 		UIManager.instance.SetActivePanel(UIPanel.PAUSE);
-		// foreach (var compositeTile in tileOnSpawner)
-		// {
-		// 	compositeTile.Value.Pause();
-		// }
 	}
 
 	public void ContinueGame()
 	{
 		UIManager.instance.SetActivePanel(UIPanel.PLAY);
-		// foreach (var compositeTile in tileOnSpawner)
-		// {
-		// 	compositeTile.Value.Play();
-		// }
 	}
 
 	public void LoseGame()
@@ -461,7 +449,7 @@ public class GameManager : MonoBehaviour
 		UIManager.instance.SetActivePanel(UIPanel.PLAY);
 		NewGame();
 	}
-	
+
 	private void OnDestroy()
 	{
 		StopAllCoroutines();

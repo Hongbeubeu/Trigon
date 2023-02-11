@@ -12,7 +12,7 @@ public class CompositeTile : MonoBehaviour
 	int rootSortingOrder = 2;
 	public List<BaseTile> baseTiles = new List<BaseTile>();
 	public List<Vector2> baseTilePosDistance = new List<Vector2>();
-	public bool isPause = false;
+	public bool isPause;
 	public bool canPutToBoard = true;
 	public List<SpriteRenderer> spriteChildren;
 
@@ -54,6 +54,7 @@ public class CompositeTile : MonoBehaviour
 		if (isPause || !canPutToBoard)
 			return;
 		var screenPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+		if (Camera.main == null) return;
 		Vector2 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
 		worldPos.y += 1f;
 		transform.position = worldPos;
@@ -135,16 +136,6 @@ public class CompositeTile : MonoBehaviour
 		{
 			baseTiles[i].SetSortingOrder(sortingOrder);
 		}
-	}
-
-	public void Play()
-	{
-		isPause = false;
-	}
-
-	public void Pause()
-	{
-		isPause = true;
 	}
 
 	public void Destroy()
