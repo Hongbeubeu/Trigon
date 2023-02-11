@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour
 			else
 			{
 				isPause = false;
-				PlayGame();
+				ContinueGame();
 			}
 		}
 	}
@@ -386,17 +386,15 @@ public class GameManager : MonoBehaviour
 	public void PauseGame()
 	{
 		UIManager.instance.SetActivePanel(UIPanel.PAUSE);
-		// AGameState[] compositeTiles = FindObjectsOfType<AGameState>();
 		foreach (var compositeTile in tileOnSpawner)
 		{
 			compositeTile.Value.Pause();
 		}
 	}
 
-	public void PlayGame()
+	public void ContinueGame()
 	{
 		UIManager.instance.SetActivePanel(UIPanel.PLAY);
-		// AGameState[] compositeTiles = FindObjectsOfType<AGameState>();
 		foreach (var compositeTile in tileOnSpawner)
 		{
 			compositeTile.Value.Play();
@@ -463,7 +461,7 @@ public class GameManager : MonoBehaviour
 		UIManager.instance.SetActivePanel(UIPanel.PLAY);
 		NewGame();
 	}
-
+	
 	private void OnDestroy()
 	{
 		StopAllCoroutines();

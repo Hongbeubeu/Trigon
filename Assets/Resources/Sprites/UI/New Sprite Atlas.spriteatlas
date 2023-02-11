@@ -27,7 +27,7 @@ SpriteAtlas:
       blockOffset: 1
       allowAlphaSplitting: 0
       enableRotation: 1
-      enableTightPacking: 1
+      enableTightPacking: 0
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
@@ -37,11 +37,17 @@ SpriteAtlas:
     cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: 0f0564f2a822bf448b5d98a9d0f44d46, type: 3}
   - {fileID: 21300000, guid: 4a8d0bc5aa044734bb7cdbe587e70e6f, type: 3}
+  - {fileID: 21300000, guid: 6b7ac59730fc2e14ea8f4a561a279bc3, type: 3}
   - {fileID: 21300000, guid: b9c28aa98488dc1449e72769c5debfd2, type: 3}
+  - {fileID: 21300000, guid: 5e36721e04ebc3548beb744210dc9614, type: 3}
   m_PackedSpriteNamesToIndex:
+  - PlayBtn
   - crown
+  - pauseBtn
   - ButtonRounded
+  - replayBtn
   m_RenderDataMap: {}
   m_Tag: New Sprite Atlas
   m_IsVariant: 0
