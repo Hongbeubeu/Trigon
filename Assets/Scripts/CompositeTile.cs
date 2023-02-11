@@ -42,14 +42,13 @@ public class CompositeTile : AGameState
 		}
 	}
 
-#if UNITY_EDITOR
 	private void OnMouseDown()
 	{
 		if (isPause || !canPutToBoard)
 			return;
 		SetScaleOnPickUp();
 	}
-
+	
 	private void OnMouseDrag()
 	{
 		if (isPause || !canPutToBoard)
@@ -60,14 +59,13 @@ public class CompositeTile : AGameState
 		worldPos.y += 1f;
 		transform.position = worldPos;
 	}
-
+	
 	private void OnMouseUp()
 	{
 		if (isPause || !canPutToBoard)
 			return;
 		CheckValidPositionToPutTilesDown();
 	}
-#endif
 
 	public void SetScaleOnPickUp()
 	{
