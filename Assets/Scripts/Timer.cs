@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Timer
+public static class Timer
 {
-	private static MonoBehaviour behaviour;
+	private static MonoBehaviour _behaviour;
 
 	public delegate void Task();
 
-	public static void Schedule(MonoBehaviour _behaviour, float delay, Task task)
+	public static void Schedule(MonoBehaviour behaviour, float delay, Task task)
 	{
-		behaviour = _behaviour;
-		behaviour.StartCoroutine(DoTask(task, delay));
+		_behaviour = behaviour;
+		_behaviour.StartCoroutine(DoTask(task, delay));
 	}
 
 	private static IEnumerator DoTask(Task task, float delay)

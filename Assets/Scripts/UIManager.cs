@@ -12,9 +12,9 @@ public class UIManager : MonoBehaviour
 {
 	#region Singleton
 
-	static UIManager _instance;
+	private static UIManager _instance;
 
-	public static UIManager instance
+	public static UIManager Instance
 	{
 		get
 		{
@@ -69,7 +69,7 @@ public class UIManager : MonoBehaviour
 		maxScore.SetText($"{max}");
 	}
 
-	void ResetPanel()
+	private void ResetPanel()
 	{
 		losePanel.alpha = 0;
 		losePanel.blocksRaycasts = false;

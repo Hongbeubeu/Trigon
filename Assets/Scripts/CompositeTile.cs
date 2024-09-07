@@ -7,11 +7,11 @@ public class CompositeTile : MonoBehaviour
 	public Vector2 rootPos;
 	public Vector2 rootScale;
 	public Color rootColor;
-	Color loseColor;
-	int topSortingOrder = 5;
-	int rootSortingOrder = 2;
-	public List<BaseTile> baseTiles = new List<BaseTile>();
-	public List<Vector2> baseTilePosDistance = new List<Vector2>();
+	private Color _loseColor;
+	private const int TOP_SORTING_ORDER = 5;
+	private const int ROOT_SORTING_ORDER = 2;
+	public List<BaseTile> baseTiles = new();
+	public List<Vector2> baseTilePosDistance = new();
 	public bool isPause;
 	public bool canPutToBoard = true;
 	public List<SpriteRenderer> spriteChildren;
@@ -19,14 +19,14 @@ public class CompositeTile : MonoBehaviour
 	private void Awake()
 	{
 		rootPos = transform.position;
-		loseColor = new Color(176f / 255f, 176f / 255f, 176 / 255f, 1);
+		_loseColor = new Color(176f / 255f, 176f / 255f, 176 / 255f, 1);
 	}
 
 	public void InitBaseTilePosition()
 	{
 		Vector2 rootPoint = baseTiles[0].transform.position;
 		baseTilePosDistance.Add(Vector2.zero);
-		for (int i = 1; i < baseTiles.Count; i++)
+		for (var i = 1; i < baseTiles.Count; i++)
 		{
 			Vector2 currentPoint = baseTiles[i].transform.position;
 			var distanceVector = currentPoint - rootPoint;
@@ -36,7 +36,7 @@ public class CompositeTile : MonoBehaviour
 
 	public void ChangeColorTile(Color color)
 	{
-		for (int i = 0; i < spriteChildren.Count; i++)
+		for (var i = 0; i < spriteChildren.Count; i++)
 		{
 			spriteChildren[i].color = color;
 		}
@@ -67,26 +67,26 @@ public class CompositeTile : MonoBehaviour
 		CheckValidPositionToPutTilesDown();
 	}
 
-	public void SetScaleOnPickUp()
+	private void SetScaleOnPickUp()
 	{
 		transform.localScale = new Vector2(0.5f, 0.5f);
-		SetSortingOrder(topSortingOrder);
+		SetSortingOrder(TOP_SORTING_ORDER);
 	}
 
-	public void ResetPosition()
+	private void ResetPosition()
 	{
 		transform.position = rootPos;
 		transform.localScale = rootScale;
-		SetSortingOrder(rootSortingOrder);
+		SetSortingOrder(ROOT_SORTING_ORDER);
 	}
 
-	public void CheckValidPositionToPutTilesDown()
+	private void CheckValidPositionToPutTilesDown()
 	{
 		var desPos = new List<Vector2>();
 		Vector2 currentFirstPoint = baseTiles[0].transform.position;
 		for (int i = 0; i < baseTilePosDistance.Count; i++)
 		{
-			var res = GameManager.instance.FindNearestTilePosition(currentFirstPoint + baseTilePosDistance[i],
+			var res = GameManager.Instance.FindNearestTilePosition(currentFirstPoint + baseTilePosDistance[i],
 				baseTiles[i].type);
 			if (res.x + 100 == 0 && res.y == 0)
 			{
@@ -100,17 +100,17 @@ public class CompositeTile : MonoBehaviour
 				currentFirstPoint = res;
 		}
 
-		for (int i = 0; i < baseTiles.Count; i++)
+		for (var i = 0; i < baseTiles.Count; i++)
 		{
 			baseTiles[i].transform.position = desPos[i];
-			GameManager.instance.SetTileToBoard(baseTiles[i]);
+			GameManager.Instance.SetTileToBoard(baseTiles[i]);
 		}
 
-		GameManager.instance.Score += baseTiles.Count;
-		GameManager.instance.tileOnSpawner.Remove(id);
-		SetSortingOrder(rootSortingOrder);
-		GameManager.instance.ClearCross();
-		GameManager.instance.NumberTileOnSpawnZone--;
+		GameManager.Instance.Score += baseTiles.Count;
+		GameManager.Instance.tileOnSpawner.Remove(id);
+		SetSortingOrder(ROOT_SORTING_ORDER);
+		GameManager.Instance.ClearCross();
+		GameManager.Instance.NumberTileOnSpawnZone--;
 		Destroy(gameObject);
 	}
 
@@ -123,7 +123,7 @@ public class CompositeTile : MonoBehaviour
 		if (canPut)
 			tempColor = rootColor;
 		else
-			tempColor = loseColor;
+			tempColor = _loseColor;
 		foreach (var item in baseTiles)
 		{
 			item.SetColor(tempColor);

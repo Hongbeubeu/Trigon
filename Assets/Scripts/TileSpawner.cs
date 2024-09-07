@@ -38,7 +38,7 @@ public class TileSpawner : MonoBehaviour
 
 	public void RandomTile()
 	{
-		GameManager.instance.tileOnSpawner.Clear();
+		GameManager.Instance.tileOnSpawner.Clear();
 		for (int i = 0; i < 3; i++)
 		{
 			var tile = Instantiate(tilePrefabs[Random.Range(0, tilePrefabs.Length)], spawnZones[i].position,
@@ -50,7 +50,7 @@ public class TileSpawner : MonoBehaviour
 			tile.rootScale = scale;
 			tile.transform.localScale = scale;
 			tile.id = i;
-			GameManager.instance.tileOnSpawner.Add(i, tile);
+			GameManager.Instance.tileOnSpawner.Add(i, tile);
 			tile.transform.SetParent(spawnZones[i]);
 			var randColor = colorPack[Random.Range(0, colorPack.Length)];
 			tile.rootColor = randColor;
@@ -58,7 +58,7 @@ public class TileSpawner : MonoBehaviour
 			tile.InitBaseTilePosition();
 		}
 
-		GameManager.instance.NumberTileOnSpawnZone = 3;
+		GameManager.Instance.NumberTileOnSpawnZone = 3;
 	}
 
 	public void ResetSpawnZone()
