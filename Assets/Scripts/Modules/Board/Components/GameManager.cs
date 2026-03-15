@@ -12,7 +12,6 @@ public class GameManager : MonoBehaviour
     [Header("Config Databases")]
     [SerializeField] private LogicConfig logicConfig;
     [SerializeField] private GameViewConfig gameViewConfig;
-    [SerializeField] private UIViewConfig uiViewConfig;
 
     private DataService _dataService;
     private BoardLogic _boardLogic;
@@ -24,7 +23,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        var configService = new ConfigService(logicConfig, gameViewConfig, uiViewConfig);
+        var configService = new ConfigService(logicConfig, gameViewConfig);
         ServiceLocator.Register(configService);
 
         Application.targetFrameRate = logicConfig.TargetFrameRate;

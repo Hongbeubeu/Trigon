@@ -8,14 +8,15 @@ public class UIManager : MonoBehaviour
     [SerializeField] private CanvasGroup playPanel;
     [SerializeField] private TextMeshProUGUI maxScoreText;
     [SerializeField] private TextMeshProUGUI currentScoreText;
+    [SerializeField] private UIViewConfig uiViewConfig;
 
     private string _scoreFormat = "{0}";
 
     private void Awake()
     {
-        if (ServiceLocator.TryGet<ConfigService>(out var config))
+        if (uiViewConfig != null)
         {
-            _scoreFormat = config.UI.ScoreFormat;
+            _scoreFormat = uiViewConfig.ScoreFormat;
         }
     }
 

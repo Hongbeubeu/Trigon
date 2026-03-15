@@ -1,10 +1,9 @@
 {
-    "name": "Trigon.Runtime",
+    "name": "Trigon.Board",
     "rootNamespace": "",
     "references": [
         "Trigon.Core",
-        "Trigon.Data",
-        "Unity.TextMeshPro"
+        "Trigon.Utils"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

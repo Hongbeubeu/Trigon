@@ -1,8 +1,9 @@
 {
-    "name": "Trigon.Data",
+    "name": "Trigon.UI",
     "rootNamespace": "",
     "references": [
-        "Trigon.Core"
+        "Trigon.Core",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
