@@ -16,6 +16,8 @@ public class CompositeTile : MonoBehaviour
     private Color _activeColor;
     private bool _canPlace = true;
     private Camera _cachedCamera;
+    private GameManager _gameManager;
+    private BoardState _boardState;
 
     public int Id { get; set; }
     public List<BaseTile> BaseTiles => baseTiles;
@@ -25,6 +27,8 @@ public class CompositeTile : MonoBehaviour
     {
         _homePosition = transform.position;
         _cachedCamera = Camera.main;
+        _gameManager = ServiceLocator.Get<GameManager>();
+        _boardState = ServiceLocator.Get<BoardState>();
     }
 
     public void Initialize(int id, Vector2 scale, Color color)
@@ -78,21 +82,20 @@ public class CompositeTile : MonoBehaviour
 
     private bool CanInteract()
     {
-        return _canPlace && GameManager.Instance.CurrentState == GameState.Playing;
+        return _canPlace && _gameManager.CurrentState == GameState.Playing;
     }
 
     private void TryPlaceTiles()
     {
-        var board = GameManager.Instance.Board;
         var snappedPositions = new List<Vector2>();
         Vector2 anchorPosition = baseTiles[0].transform.position;
 
         for (int i = 0; i < TileOffsets.Count; i++)
         {
             var candidatePos = anchorPosition + TileOffsets[i];
-            var snappedPos = board.FindNearestAvailablePosition(candidatePos, baseTiles[i].type);
+            var snappedPos = _boardState.FindNearestAvailablePosition(candidatePos, baseTiles[i].type);
 
-            if (board.IsInvalidPosition(snappedPos))
+            if (_boardState.IsInvalidPosition(snappedPos))
             {
                 ResetToHome();
                 return;
@@ -108,12 +111,12 @@ public class CompositeTile : MonoBehaviour
         for (int i = 0; i < baseTiles.Count; i++)
         {
             baseTiles[i].transform.position = snappedPositions[i];
-            var coord = board.PlaceTile(baseTiles[i], GameManager.Instance.TilesOnBoardZone);
+            var coord = _boardState.PlaceTile(baseTiles[i], _gameManager.TilesOnBoardZone);
             placedCoords.Add(coord);
         }
 
         SetSortingOrder(DEFAULT_SORTING_ORDER);
-        GameManager.Instance.OnTilePlacedOnBoard(this, placedCoords);
+        _gameManager.OnTilePlacedOnBoard(this, placedCoords);
         Destroy(gameObject);
     }
 

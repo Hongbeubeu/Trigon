@@ -4,20 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager _instance;
-
-    public static GameManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-                _instance = FindAnyObjectByType<GameManager>();
-            return _instance;
-        }
-    }
-
     private const float LINE_CLEAR_SETTLE_DELAY = 0.26f;
-    private const int TILES_PER_SPAWN = 3;
     private const int TARGET_FRAME_RATE = 120;
 
     [SerializeField] private BoardGenerator boardGenerator;
@@ -42,6 +29,9 @@ public class GameManager : MonoBehaviour
         _boardState = new BoardState();
         _lineClearHandler = new LineClearHandler(_boardState);
         _scoreService = new ScoreService();
+
+        ServiceLocator.Register(this);
+        ServiceLocator.Register(_boardState);
 
         boardGenerator.Generate(_boardState);
         boardGenerator.ScaleBoard();
@@ -165,6 +155,8 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        ServiceLocator.Unregister<GameManager>();
+        ServiceLocator.Unregister<BoardState>();
         StopAllCoroutines();
     }
 }

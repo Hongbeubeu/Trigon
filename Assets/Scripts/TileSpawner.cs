@@ -10,6 +10,8 @@ public class TileSpawner : MonoBehaviour
     [SerializeField] private ColorPalette[] colorPalettes;
 
     private ColorPalette _activeColorPalette;
+    private GameManager _gameManager;
+    private GameManager GameManagerRef => _gameManager ??= ServiceLocator.Get<GameManager>();
 
     public void SpawnTiles()
     {
@@ -25,10 +27,10 @@ public class TileSpawner : MonoBehaviour
             var color = _activeColorPalette.GetRandomColor();
             tile.Initialize(i, scale, color);
 
-            GameManager.Instance.RegisterSpawnedTile(i, tile);
+            GameManagerRef.RegisterSpawnedTile(i, tile);
         }
 
-        GameManager.Instance.SetSpawnCount(TILES_PER_SPAWN);
+        GameManagerRef.SetSpawnCount(TILES_PER_SPAWN);
     }
 
     public void ResetSpawnZones()
