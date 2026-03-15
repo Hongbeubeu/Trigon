@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     private LineClearHandler _lineClearHandler;
     private ScoreService _scoreService;
     private TileViewRegistry _viewRegistry;
+    private StateMachine<GameState> _stateMachine;
 
     public Transform TilesOnBoardZone => tilesOnBoardZone;
 
@@ -34,6 +35,8 @@ public class GameManager : MonoBehaviour
         _scoreService = new ScoreService(_dataService.Session, logicConfig);
         _lineClearHandler = new LineClearHandler(_boardLogic, _viewRegistry);
 
+        InitStateMachine();
+
         ServiceLocator.Register(_dataService);
         ServiceLocator.Register(_boardLogic);
         ServiceLocator.Register(_viewRegistry);
@@ -44,6 +47,21 @@ public class GameManager : MonoBehaviour
         _viewRegistry.SyncWorldPositions(_dataService.Board);
     }
 
+    private void InitStateMachine()
+    {
+        _stateMachine = new StateMachine<GameState>();
+
+        var context = new GameContext(
+            _dataService.Session,
+            _scoreService,
+            _viewRegistry,
+            _stateMachine);
+
+        _stateMachine.RegisterState(GameState.Playing, new PlayingState(context));
+        _stateMachine.RegisterState(GameState.Paused, new PausedState(context));
+        _stateMachine.RegisterState(GameState.Lost, new LostState(context));
+    }
+
     private void Start()
     {
         _dataService.Board.BuildAxisMappings();
@@ -52,12 +70,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (_dataService.Session.State == GameState.Lost) return;
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            TogglePause();
-        }
+        _stateMachine.Update();
     }
 
     private void StartNewGame()
@@ -66,7 +79,7 @@ public class GameManager : MonoBehaviour
         _viewRegistry.ClearSpawnedTiles();
         _viewRegistry.ClearPlacedTiles();
 
-        SetState(GameState.Playing);
+        _stateMachine.ChangeState(GameState.Playing);
         _scoreService.Reset();
         tileSpawner.ResetSpawnZones();
         tileSpawner.SpawnTiles();
@@ -108,25 +121,10 @@ public class GameManager : MonoBehaviour
         StartNewGame();
     }
 
-    private void TogglePause()
-    {
-        var session = _dataService.Session;
-        if (session.State == GameState.Paused)
-            SetState(GameState.Playing);
-        else if (session.State == GameState.Playing)
-            SetState(GameState.Paused);
-    }
-
-    private void SetState(GameState state)
-    {
-        _dataService.Session.State = state;
-        GameEvents.RaiseGameStateChanged(state);
-    }
-
     private void CheckLose()
     {
         var spawnedTiles = _viewRegistry.SpawnedTiles;
-        if (spawnedTiles.Count == 0 || _dataService.Session.State == GameState.Lost) return;
+        if (spawnedTiles.Count == 0 || _stateMachine.CurrentKey == GameState.Lost) return;
 
         bool anyCanPlace = false;
 
@@ -147,9 +145,7 @@ public class GameManager : MonoBehaviour
 
         if (!anyCanPlace)
         {
-            _scoreService.SaveMaxScoreIfNeeded();
-            _viewRegistry.SetAllPlacedTilesToLoseColor();
-            SetState(GameState.Lost);
+            _stateMachine.ChangeState(GameState.Lost);
         }
     }
 
