@@ -1,13 +1,11 @@
-using UnityEngine;
-
 public class TileCellData
 {
-    public Vector3Int Coord { get; }
-    public Vector2 WorldPosition { get; set; }
+    public GridCoord Coord { get; }
+    public Position2D WorldPosition { get; set; }
     public TypeTile Type { get; }
     public bool IsOccupied { get; set; }
 
-    public TileCellData(Vector3Int coord, Vector2 worldPosition, TypeTile type)
+    public TileCellData(GridCoord coord, Position2D worldPosition, TypeTile type)
     {
         Coord = coord;
         WorldPosition = worldPosition;

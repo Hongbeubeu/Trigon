@@ -30,9 +30,10 @@ public class GameManager : MonoBehaviour
         Application.targetFrameRate = logicConfig.TargetFrameRate;
 
         _dataService = new DataService();
-        _boardLogic = new BoardLogic(_dataService.Board, logicConfig);
+        var persistence = new PlayerPrefsScorePersistence(logicConfig.MaxScoreKey);
+        _boardLogic = new BoardLogic(_dataService.Board, logicConfig.SnapThreshold, logicConfig.ExactMatchThreshold);
         _viewRegistry = new TileViewRegistry(logicConfig, gameViewConfig);
-        _scoreService = new ScoreService(_dataService.Session, logicConfig);
+        _scoreService = new ScoreService(_dataService.Session, persistence);
         _lineClearHandler = new LineClearHandler(_boardLogic, _viewRegistry);
 
         InitStateMachine();
@@ -54,7 +55,6 @@ public class GameManager : MonoBehaviour
         var context = new GameContext(
             _dataService.Session,
             _scoreService,
-            _viewRegistry,
             _stateMachine);
 
         _stateMachine.RegisterState(GameState.Playing, new PlayingState(context));
@@ -126,7 +126,7 @@ public class GameManager : MonoBehaviour
         CheckLose();
     }
 
-    public void OnTilePlacedOnBoard(CompositeTile compositeTile, List<Vector3Int> placedCoords)
+    public void OnTilePlacedOnBoard(CompositeTile compositeTile, List<GridCoord> placedCoords)
     {
         _scoreService.AddScore(placedCoords.Count);
         _viewRegistry.RemoveSpawnedTile(compositeTile.Id);
@@ -196,6 +196,7 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        _viewRegistry.Dispose();
         ServiceLocator.Unregister<ConfigService>();
         ServiceLocator.Unregister<DataService>();
         ServiceLocator.Unregister<BoardLogic>();

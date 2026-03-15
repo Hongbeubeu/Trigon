@@ -23,7 +23,7 @@ public class CompositeTile : MonoBehaviour
 
     public int Id { get; set; }
     public List<BaseTile> BaseTiles => baseTiles;
-    public List<Vector2> TileOffsets { get; } = new();
+    public List<Position2D> TileOffsets { get; } = new();
 
     private void Awake()
     {
@@ -99,8 +99,8 @@ public class CompositeTile : MonoBehaviour
 
     private void TryPlaceTiles()
     {
-        var snappedPositions = new List<Vector2>();
-        Vector2 anchorPosition = baseTiles[0].transform.position;
+        var snappedPositions = new List<Position2D>();
+        var anchorPosition = TypeConversions.ToPosition2D(baseTiles[0].transform.position);
 
         for (int i = 0; i < TileOffsets.Count; i++)
         {
@@ -119,10 +119,10 @@ public class CompositeTile : MonoBehaviour
                 anchorPosition = snappedPos;
         }
 
-        var placedCoords = new List<Vector3Int>();
+        var placedCoords = new List<GridCoord>();
         for (int i = 0; i < baseTiles.Count; i++)
         {
-            baseTiles[i].transform.position = snappedPositions[i];
+            baseTiles[i].transform.position = TypeConversions.ToVector2(snappedPositions[i]);
             var coord = _boardLogic.PlaceTile(snappedPositions[i]);
             _viewRegistry.RegisterPlacedTileView(coord, baseTiles[i], _gameManager.TilesOnBoardZone);
             placedCoords.Add(coord);
@@ -144,12 +144,13 @@ public class CompositeTile : MonoBehaviour
     {
         TileOffsets.Clear();
         Vector2 rootPoint = baseTiles[0].transform.position;
-        TileOffsets.Add(Vector2.zero);
+        TileOffsets.Add(Position2D.Zero);
 
         for (int i = 1; i < baseTiles.Count; i++)
         {
             Vector2 tilePoint = baseTiles[i].transform.position;
-            TileOffsets.Add(tilePoint - rootPoint);
+            Vector2 delta = tilePoint - rootPoint;
+            TileOffsets.Add(new Position2D(delta.x, delta.y));
         }
     }
 

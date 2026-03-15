@@ -12,7 +12,7 @@ public class LineClearHandler
         _viewRegistry = viewRegistry;
     }
 
-    public int ClearCompletedLines(List<Vector3Int> recentCoords, MonoBehaviour coroutineHost)
+    public int ClearCompletedLines(List<GridCoord> recentCoords, MonoBehaviour coroutineHost)
     {
         var completedLines = _boardLogic.FindCompletedLines(recentCoords);
         int score = BoardLogic.CalculateLineScore(completedLines);

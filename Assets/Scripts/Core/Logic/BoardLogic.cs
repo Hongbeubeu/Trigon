@@ -1,30 +1,30 @@
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class BoardLogic
 {
-    private static readonly Vector2 INVALID_POSITION = new(-100f, 0f);
+    private static readonly Position2D INVALID_POSITION = new(-100f, 0f);
 
     private readonly BoardData _data;
     private readonly float _snapThreshold;
     private readonly float _exactThreshold;
 
-    public BoardLogic(BoardData data, LogicConfig config)
+    public BoardLogic(BoardData data, float snapThreshold, float exactThreshold)
     {
         _data = data;
-        _snapThreshold = config.SnapThreshold;
-        _exactThreshold = config.ExactMatchThreshold;
+        _snapThreshold = snapThreshold;
+        _exactThreshold = exactThreshold;
     }
 
-    public Vector2 FindNearestAvailablePosition(Vector2 position, TypeTile type)
+    public Position2D FindNearestAvailablePosition(Position2D position, TypeTile type)
     {
         foreach (var kvp in _data.Cells)
         {
             var cell = kvp.Value;
             if (cell.Type != type || cell.IsOccupied) continue;
 
-            if (Mathf.Abs(cell.WorldPosition.x - position.x) < _snapThreshold &&
-                Mathf.Abs(cell.WorldPosition.y - position.y) < _snapThreshold)
+            if (MathF.Abs(cell.WorldPosition.X - position.X) < _snapThreshold &&
+                MathF.Abs(cell.WorldPosition.Y - position.Y) < _snapThreshold)
             {
                 return cell.WorldPosition;
             }
@@ -33,40 +33,40 @@ public class BoardLogic
         return INVALID_POSITION;
     }
 
-    public bool IsInvalidPosition(Vector2 position)
+    public bool IsInvalidPosition(Position2D position)
     {
-        return Mathf.Approximately(position.x, INVALID_POSITION.x) &&
-               Mathf.Approximately(position.y, INVALID_POSITION.y);
+        return MathF.Abs(position.X - INVALID_POSITION.X) < 1e-4f &&
+               MathF.Abs(position.Y - INVALID_POSITION.Y) < 1e-4f;
     }
 
-    public Vector3Int GetCoordAtPosition(Vector2 position)
+    public GridCoord GetCoordAtPosition(Position2D position)
     {
         foreach (var kvp in _data.Cells)
         {
             var cell = kvp.Value;
-            if (Mathf.Abs(cell.WorldPosition.x - position.x) < _exactThreshold &&
-                Mathf.Abs(cell.WorldPosition.y - position.y) < _exactThreshold)
+            if (MathF.Abs(cell.WorldPosition.X - position.X) < _exactThreshold &&
+                MathF.Abs(cell.WorldPosition.Y - position.Y) < _exactThreshold)
             {
                 return cell.Coord;
             }
         }
 
-        return new Vector3Int(-100, 0, 0);
+        return new GridCoord(-100, 0, 0);
     }
 
-    public Vector3Int PlaceTile(Vector2 tileWorldPosition)
+    public GridCoord PlaceTile(Position2D tileWorldPosition)
     {
         var coord = GetCoordAtPosition(tileWorldPosition);
         _data.SetOccupied(coord, true);
         return coord;
     }
 
-    public void RemoveTile(Vector3Int coord)
+    public void RemoveTile(GridCoord coord)
     {
         _data.SetOccupied(coord, false);
     }
 
-    public bool CanFitShape(List<Vector2> offsets, List<TypeTile> types)
+    public bool CanFitShape(List<Position2D> offsets, List<TypeTile> types)
     {
         var rootType = types[0];
 
@@ -75,7 +75,7 @@ public class BoardLogic
             var cell = kvp.Value;
             if (cell.IsOccupied || rootType != cell.Type) continue;
 
-            Vector2 anchorPosition = cell.WorldPosition;
+            var anchorPosition = cell.WorldPosition;
             bool fits = true;
 
             for (int i = 0; i < offsets.Count; i++)
@@ -96,24 +96,24 @@ public class BoardLogic
         return false;
     }
 
-    public List<List<Vector3Int>> FindCompletedLines(List<Vector3Int> recentCoords)
+    public List<List<GridCoord>> FindCompletedLines(List<GridCoord> recentCoords)
     {
-        var result = new List<List<Vector3Int>>();
+        var result = new List<List<GridCoord>>();
         var checkedX = new HashSet<int>();
         var checkedY = new HashSet<int>();
         var checkedZ = new HashSet<int>();
 
         foreach (var coord in recentCoords)
         {
-            TryCollectLine(_data.LinesByX, coord.x, checkedX, result);
-            TryCollectLine(_data.LinesByY, coord.y, checkedY, result);
-            TryCollectLine(_data.LinesByZ, coord.z, checkedZ, result);
+            TryCollectLine(_data.LinesByX, coord.X, checkedX, result);
+            TryCollectLine(_data.LinesByY, coord.Y, checkedY, result);
+            TryCollectLine(_data.LinesByZ, coord.Z, checkedZ, result);
         }
 
         return result;
     }
 
-    public static int CalculateLineScore(List<List<Vector3Int>> lines)
+    public static int CalculateLineScore(List<List<GridCoord>> lines)
     {
         int totalTiles = 0;
         foreach (var line in lines)
@@ -125,10 +125,10 @@ public class BoardLogic
     }
 
     private void TryCollectLine(
-        IReadOnlyDictionary<int, List<Vector3Int>> axisLines,
+        IReadOnlyDictionary<int, List<GridCoord>> axisLines,
         int axisValue,
         HashSet<int> alreadyChecked,
-        List<List<Vector3Int>> results)
+        List<List<GridCoord>> results)
     {
         if (!alreadyChecked.Add(axisValue)) return;
         if (!axisLines.TryGetValue(axisValue, out var line)) return;
@@ -139,6 +139,6 @@ public class BoardLogic
             if (cell == null || !cell.IsOccupied) return;
         }
 
-        results.Add(new List<Vector3Int>(line));
+        results.Add(new List<GridCoord>(line));
     }
 }

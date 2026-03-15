@@ -10,7 +10,6 @@ public class LostState : IState
     public void Enter()
     {
         _context.ScoreService.SaveMaxScoreIfNeeded();
-        _context.ViewRegistry.SetAllPlacedTilesToLoseColor();
         _context.Session.State = GameState.Lost;
         GameEvents.RaiseGameStateChanged(GameState.Lost);
     }

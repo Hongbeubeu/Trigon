@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class PausedState : IState
 {
     private readonly GameContext _context;
@@ -15,13 +13,7 @@ public class PausedState : IState
         GameEvents.RaiseGameStateChanged(GameState.Paused);
     }
 
-    public void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            _context.StateMachine.ChangeState(GameState.Playing);
-        }
-    }
+    public void Update() { }
 
     public void Exit() { }
 }

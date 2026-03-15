@@ -7,8 +7,8 @@ public class TileViewRegistry
     private readonly float _clearTileDelay;
     private readonly float _destroyAnimDuration;
 
-    private readonly Dictionary<Vector3Int, BoardTile> _boardTileViews = new();
-    private readonly Dictionary<Vector3Int, BaseTile> _placedTileViews = new();
+    private readonly Dictionary<GridCoord, BoardTile> _boardTileViews = new();
+    private readonly Dictionary<GridCoord, BaseTile> _placedTileViews = new();
     private readonly Dictionary<int, CompositeTile> _spawnedTileViews = new();
 
     public IReadOnlyDictionary<int, CompositeTile> SpawnedTiles => _spawnedTileViews;
@@ -17,14 +17,21 @@ public class TileViewRegistry
     {
         _clearTileDelay = logicConfig.ClearTileDelay;
         _destroyAnimDuration = viewConfig.DestroyAnimDuration;
+
+        GameEvents.OnGameStateChanged += OnGameStateChanged;
     }
 
-    public void RegisterBoardTileView(Vector3Int coord, BoardTile view)
+    public void Dispose()
+    {
+        GameEvents.OnGameStateChanged -= OnGameStateChanged;
+    }
+
+    public void RegisterBoardTileView(GridCoord coord, BoardTile view)
     {
         _boardTileViews[coord] = view;
     }
 
-    public void RegisterPlacedTileView(Vector3Int coord, BaseTile view, Transform parent)
+    public void RegisterPlacedTileView(GridCoord coord, BaseTile view, Transform parent)
     {
         _placedTileViews[coord] = view;
         view.transform.SetParent(parent);
@@ -40,7 +47,7 @@ public class TileViewRegistry
         _spawnedTileViews.Remove(id);
     }
 
-    public void AnimateRemovePlacedTile(Vector3Int coord)
+    public void AnimateRemovePlacedTile(GridCoord coord)
     {
         if (_placedTileViews.TryGetValue(coord, out var tile))
         {
@@ -50,21 +57,13 @@ public class TileViewRegistry
         _placedTileViews.Remove(coord);
     }
 
-    public IEnumerator AnimateClearLine(List<Vector3Int> line, BoardLogic boardLogic)
+    public IEnumerator AnimateClearLine(List<GridCoord> line, BoardLogic boardLogic)
     {
         foreach (var coord in line)
         {
             boardLogic.RemoveTile(coord);
             AnimateRemovePlacedTile(coord);
             yield return new WaitForSeconds(_clearTileDelay);
-        }
-    }
-
-    public void SetAllPlacedTilesToLoseColor()
-    {
-        foreach (var kvp in _placedTileViews)
-        {
-            kvp.Value.SetLoseColor();
         }
     }
 
@@ -96,8 +95,22 @@ public class TileViewRegistry
             var cell = boardData.GetCell(kvp.Key);
             if (cell != null)
             {
-                cell.WorldPosition = (Vector2)kvp.Value.transform.position;
+                cell.WorldPosition = TypeConversions.ToPosition2D(kvp.Value.transform.position);
             }
+        }
+    }
+
+    private void OnGameStateChanged(GameState state)
+    {
+        if (state == GameState.Lost)
+            SetAllPlacedTilesToLoseColor();
+    }
+
+    private void SetAllPlacedTilesToLoseColor()
+    {
+        foreach (var kvp in _placedTileViews)
+        {
+            kvp.Value.SetLoseColor();
         }
     }
 }

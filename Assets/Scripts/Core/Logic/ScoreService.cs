@@ -1,21 +1,19 @@
-using UnityEngine;
-
 public class ScoreService
 {
     private readonly GameSessionData _session;
-    private readonly string _maxScoreKey;
+    private readonly IScorePersistence _persistence;
 
-    public ScoreService(GameSessionData session, LogicConfig config)
+    public ScoreService(GameSessionData session, IScorePersistence persistence)
     {
         _session = session;
-        _maxScoreKey = config.MaxScoreKey;
+        _persistence = persistence;
     }
 
     public void Reset()
     {
         _session.Score = 0;
         GameEvents.RaiseScoreChanged(0);
-        GameEvents.RaiseMaxScoreLoaded(GetMaxScore());
+        GameEvents.RaiseMaxScoreLoaded(_persistence.LoadMaxScore());
     }
 
     public void AddScore(int points)
@@ -26,15 +24,10 @@ public class ScoreService
 
     public void SaveMaxScoreIfNeeded()
     {
-        if (_session.Score > GetMaxScore())
+        if (_session.Score > _persistence.LoadMaxScore())
         {
-            PlayerPrefs.SetInt(_maxScoreKey, _session.Score);
+            _persistence.SaveMaxScore(_session.Score);
             GameEvents.RaiseMaxScoreLoaded(_session.Score);
         }
-    }
-
-    private int GetMaxScore()
-    {
-        return PlayerPrefs.GetInt(_maxScoreKey, 0);
     }
 }

@@ -52,8 +52,8 @@ public class BoardGenerator : MonoBehaviour
         var tileView = Instantiate(prefab, position, Quaternion.identity, transform);
         tileView.GetComponent<SpriteRenderer>().color = boardColor;
 
-        var coord = new Vector3Int(x, y, z);
-        var cellData = new TileCellData(coord, position, prefab.type);
+        var coord = new GridCoord(x, y, z);
+        var cellData = new TileCellData(coord, new Position2D(position.x, position.y), prefab.type);
         boardData.RegisterCell(cellData);
         viewRegistry.RegisterBoardTileView(coord, tileView);
     }
