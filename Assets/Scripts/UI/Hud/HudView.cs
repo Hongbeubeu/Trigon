@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class UIManager : MonoBehaviour
+public class HudView : MonoBehaviour
 {
     [SerializeField] private CanvasGroup hudPanel;
     [SerializeField] private TextMeshProUGUI maxScoreText;

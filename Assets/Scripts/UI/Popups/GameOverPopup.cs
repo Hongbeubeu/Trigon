@@ -5,46 +5,18 @@ using TMPro;
 public class GameOverPopup : BasePopup
 {
     [Header("Data")]
-    [SerializeField] private GameOverPopupData popupData;
+    [SerializeField] private GameOverPopupData _popupData;
 
     [Header("References")]
-    [SerializeField] private TextMeshProUGUI titleText;
-    [SerializeField] private TextMeshProUGUI scoreText;
-    [SerializeField] private Button replayButton;
-    [SerializeField] private Button quitButton;
-
-    private int _lastScore;
+    [SerializeField] private TextMeshProUGUI _titleText;
+    [SerializeField] private Button _replayButton;
 
     private void Start()
     {
-        if (popupData != null && titleText != null)
-            titleText.text = popupData.Title;
+        if (_popupData != null && _titleText != null)
+            _titleText.text = _popupData.Title;
 
-        replayButton.onClick.AddListener(OnReplayClicked);
-        quitButton.onClick.AddListener(OnQuitClicked);
-    }
-
-    private void OnEnable()
-    {
-        GameEvents.OnScoreChanged += CacheScore;
-    }
-
-    private void OnDisable()
-    {
-        GameEvents.OnScoreChanged -= CacheScore;
-    }
-
-    private void CacheScore(int score)
-    {
-        _lastScore = score;
-    }
-
-    public override void Show()
-    {
-        base.Show();
-
-        if (scoreText != null && popupData != null)
-            scoreText.text = string.Format(popupData.ScoreFormat, _lastScore);
+        _replayButton.onClick.AddListener(OnReplayClicked);
     }
 
     private static void OnReplayClicked()
@@ -59,7 +31,6 @@ public class GameOverPopup : BasePopup
 
     private void OnDestroy()
     {
-        replayButton.onClick.RemoveListener(OnReplayClicked);
-        quitButton.onClick.RemoveListener(OnQuitClicked);
+        _replayButton.onClick.RemoveListener(OnReplayClicked);
     }
 }

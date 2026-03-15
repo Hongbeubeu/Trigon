@@ -5,20 +5,20 @@ using TMPro;
 public class PausePopup : BasePopup
 {
     [Header("Data")]
-    [SerializeField] private PausePopupData popupData;
+    [SerializeField] private PausePopupData _popupData;
 
     [Header("References")]
-    [SerializeField] private TextMeshProUGUI titleText;
-    [SerializeField] private Button continueButton;
-    [SerializeField] private Button quitButton;
+    [SerializeField] private TextMeshProUGUI _titleText;
+    [SerializeField] private Button _continueButton;
+    [SerializeField] private Button _quitButton;
 
     private void Start()
     {
-        if (popupData != null && titleText != null)
-            titleText.text = popupData.Title;
+        if (_popupData != null && _titleText != null)
+            _titleText.text = _popupData.Title;
 
-        continueButton.onClick.AddListener(OnContinueClicked);
-        quitButton.onClick.AddListener(OnQuitClicked);
+        _continueButton.onClick.AddListener(OnContinueClicked);
+        _quitButton.onClick.AddListener(OnQuitClicked);
     }
 
     private void OnContinueClicked()
@@ -33,7 +33,7 @@ public class PausePopup : BasePopup
 
     private void OnDestroy()
     {
-        continueButton.onClick.RemoveListener(OnContinueClicked);
-        quitButton.onClick.RemoveListener(OnQuitClicked);
+        _continueButton.onClick.RemoveListener(OnContinueClicked);
+        _quitButton.onClick.RemoveListener(OnQuitClicked);
     }
 }
