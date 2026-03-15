@@ -3,9 +3,7 @@ using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private CanvasGroup losePanel;
-    [SerializeField] private CanvasGroup pausePanel;
-    [SerializeField] private CanvasGroup playPanel;
+    [SerializeField] private CanvasGroup hudPanel;
     [SerializeField] private TextMeshProUGUI maxScoreText;
     [SerializeField] private TextMeshProUGUI currentScoreText;
     [SerializeField] private UIViewConfig uiViewConfig;
@@ -36,18 +34,7 @@ public class UIManager : MonoBehaviour
 
     private void OnGameStateChanged(GameState state)
     {
-        switch (state)
-        {
-            case GameState.Playing:
-                ActivatePanel(playPanel);
-                break;
-            case GameState.Paused:
-                ActivatePanel(pausePanel);
-                break;
-            case GameState.Lost:
-                ActivatePanel(losePanel);
-                break;
-        }
+        SetPanelVisible(hudPanel, state == GameState.Playing);
     }
 
     private void UpdateCurrentScore(int score)
@@ -60,22 +47,9 @@ public class UIManager : MonoBehaviour
         maxScoreText.SetText(string.Format(_scoreFormat, maxScore));
     }
 
-    private void ActivatePanel(CanvasGroup target)
+    private static void SetPanelVisible(CanvasGroup panel, bool visible)
     {
-        SetPanelState(losePanel, false);
-        SetPanelState(pausePanel, false);
-        SetPanelState(playPanel, false);
-        SetPanelState(target, true);
-    }
-
-    private static void SetPanelState(CanvasGroup panel, bool active)
-    {
-        panel.alpha = active ? 1f : 0f;
-        panel.blocksRaycasts = active;
-    }
-
-    public void Quit()
-    {
-        Application.Quit();
+        panel.alpha = visible ? 1f : 0f;
+        panel.blocksRaycasts = visible;
     }
 }

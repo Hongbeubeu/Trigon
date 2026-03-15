@@ -62,6 +62,18 @@ public class GameManager : MonoBehaviour
         _stateMachine.RegisterState(GameState.Lost, new LostState(context));
     }
 
+    private void OnEnable()
+    {
+        GameEvents.OnResumeRequested += OnResumeRequested;
+        GameEvents.OnReplayRequested += OnReplayRequested;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnResumeRequested -= OnResumeRequested;
+        GameEvents.OnReplayRequested -= OnReplayRequested;
+    }
+
     private void Start()
     {
         _dataService.Board.BuildAxisMappings();
@@ -71,6 +83,16 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         _stateMachine.Update();
+    }
+
+    private void OnResumeRequested()
+    {
+        _stateMachine.ChangeState(GameState.Playing);
+    }
+
+    private void OnReplayRequested()
+    {
+        ReplayGame();
     }
 
     private void StartNewGame()
@@ -113,7 +135,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ReplayGame()
+    private void ReplayGame()
     {
         _viewRegistry.DestroyAllPlacedTileViews();
         DestroyAllCompositeTiles();
