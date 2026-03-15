@@ -1,75 +1,49 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class TileSpawner : MonoBehaviour
 {
-	public Transform[] spawnZones;
-	public Color[] colorPack1;
-	public Color[] colorPack2;
-	public Color[] colorPack3;
-	public Color[] colorPack4;
+    private const int TILES_PER_SPAWN = 3;
+    private const float TILE_SCALE = 0.45f;
 
-	public Color[] colorPack;
+    [SerializeField] private Transform[] spawnZones;
+    [SerializeField] private CompositeTile[] tilePrefabs;
+    [SerializeField] private ColorPalette[] colorPalettes;
 
-	[SerializeField] private CompositeTile[] tilePrefabs;
+    private ColorPalette _activeColorPalette;
 
+    public void SpawnTiles()
+    {
+        SelectRandomPalette();
 
-	public void RandomColorPack()
-	{
-		int randomPack = Random.Range(1, 5);
-		switch (randomPack)
-		{
-			case 1:
-				colorPack = colorPack1;
-				break;
-			case 2:
-				colorPack = colorPack2;
-				break;
-			case 3:
-				colorPack = colorPack3;
-				break;
-			case 4:
-				colorPack = colorPack4;
-				break;
-			default:
-				colorPack = colorPack1;
-				break;
-		}
-	}
+        for (int i = 0; i < TILES_PER_SPAWN; i++)
+        {
+            var prefab = tilePrefabs[Random.Range(0, tilePrefabs.Length)];
+            var tile = Instantiate(prefab, spawnZones[i].position, Quaternion.identity, spawnZones[i]);
+            tile.tag = "Draggable";
 
-	public void RandomTile()
-	{
-		GameManager.Instance.tileOnSpawner.Clear();
-		for (int i = 0; i < 3; i++)
-		{
-			var tile = Instantiate(tilePrefabs[Random.Range(0, tilePrefabs.Length)], spawnZones[i].position,
-				Quaternion.identity);
-			tile.tag = "Draggable";
-			// BoxCollider2D collide = tile.gameObject.AddComponent<BoxCollider2D>();
-			// collide.size = new Vector2(2.5f, 2.5f);
-			var scale = new Vector2(0.45f, 0.45f);
-			tile.rootScale = scale;
-			tile.transform.localScale = scale;
-			tile.id = i;
-			GameManager.Instance.tileOnSpawner.Add(i, tile);
-			tile.transform.SetParent(spawnZones[i]);
-			var randColor = colorPack[Random.Range(0, colorPack.Length)];
-			tile.rootColor = randColor;
-			tile.ChangeColorTile(randColor);
-			tile.InitBaseTilePosition();
-		}
+            var scale = new Vector2(TILE_SCALE, TILE_SCALE);
+            var color = _activeColorPalette.GetRandomColor();
+            tile.Initialize(i, scale, color);
 
-		GameManager.Instance.NumberTileOnSpawnZone = 3;
-	}
+            GameManager.Instance.RegisterSpawnedTile(i, tile);
+        }
 
-	public void ResetSpawnZone()
-	{
-		foreach (var item in spawnZones)
-		{
-			int children = item.childCount;
-			for (int i = 0; i < children; i++)
-			{
-				Destroy(item.GetChild(i).gameObject);
-			}
-		}
-	}
+        GameManager.Instance.SetSpawnCount(TILES_PER_SPAWN);
+    }
+
+    public void ResetSpawnZones()
+    {
+        foreach (var zone in spawnZones)
+        {
+            for (int i = zone.childCount - 1; i >= 0; i--)
+            {
+                Destroy(zone.GetChild(i).gameObject);
+            }
+        }
+    }
+
+    private void SelectRandomPalette()
+    {
+        _activeColorPalette = colorPalettes[Random.Range(0, colorPalettes.Length)];
+    }
 }

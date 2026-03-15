@@ -1,149 +1,155 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CompositeTile : MonoBehaviour
 {
-	public int id;
-	public Vector2 rootPos;
-	public Vector2 rootScale;
-	public Color rootColor;
-	private Color _loseColor;
-	private const int TOP_SORTING_ORDER = 5;
-	private const int ROOT_SORTING_ORDER = 2;
-	public List<BaseTile> baseTiles = new();
-	public List<Vector2> baseTilePosDistance = new();
-	public bool isPause;
-	public bool canPutToBoard = true;
-	public List<SpriteRenderer> spriteChildren;
+    private const int TOP_SORTING_ORDER = 5;
+    private const int DEFAULT_SORTING_ORDER = 2;
+    private const float PICKUP_SCALE = 0.5f;
+    private const float DRAG_Y_OFFSET = 1f;
+    private static readonly Color DISABLED_COLOR = new(176f / 255f, 176f / 255f, 176f / 255f, 1f);
 
-	private void Awake()
-	{
-		rootPos = transform.position;
-		_loseColor = new Color(176f / 255f, 176f / 255f, 176 / 255f, 1);
-	}
+    [SerializeField] private List<BaseTile> baseTiles = new();
 
-	public void InitBaseTilePosition()
-	{
-		Vector2 rootPoint = baseTiles[0].transform.position;
-		baseTilePosDistance.Add(Vector2.zero);
-		for (var i = 1; i < baseTiles.Count; i++)
-		{
-			Vector2 currentPoint = baseTiles[i].transform.position;
-			var distanceVector = currentPoint - rootPoint;
-			baseTilePosDistance.Add(distanceVector);
-		}
-	}
+    private Vector2 _homePosition;
+    private Vector2 _homeScale;
+    private Color _activeColor;
+    private bool _canPlace = true;
+    private Camera _cachedCamera;
 
-	public void ChangeColorTile(Color color)
-	{
-		for (var i = 0; i < spriteChildren.Count; i++)
-		{
-			spriteChildren[i].color = color;
-		}
-	}
+    public int Id { get; set; }
+    public List<BaseTile> BaseTiles => baseTiles;
+    public List<Vector2> TileOffsets { get; } = new();
 
-	private void OnMouseDown()
-	{
-		if (isPause || !canPutToBoard)
-			return;
-		SetScaleOnPickUp();
-	}
+    private void Awake()
+    {
+        _homePosition = transform.position;
+        _cachedCamera = Camera.main;
+    }
 
-	private void OnMouseDrag()
-	{
-		if (isPause || !canPutToBoard)
-			return;
-		var screenPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-		if (Camera.main == null) return;
-		Vector2 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
-		worldPos.y += 1f;
-		transform.position = worldPos;
-	}
+    public void Initialize(int id, Vector2 scale, Color color)
+    {
+        Id = id;
+        _homeScale = scale;
+        _activeColor = color;
+        transform.localScale = scale;
+        SetAllTileColors(color);
+        ComputeTileOffsets();
+    }
 
-	private void OnMouseUp()
-	{
-		if (isPause || !canPutToBoard)
-			return;
-		CheckValidPositionToPutTilesDown();
-	}
+    public void SetPlaceable(bool canPlace)
+    {
+        if (_canPlace == canPlace) return;
+        _canPlace = canPlace;
+        SetAllTileColors(canPlace ? _activeColor : DISABLED_COLOR);
+    }
 
-	private void SetScaleOnPickUp()
-	{
-		transform.localScale = new Vector2(0.5f, 0.5f);
-		SetSortingOrder(TOP_SORTING_ORDER);
-	}
+    public void DestroyTile()
+    {
+        foreach (var tile in baseTiles)
+        {
+            if (tile != null)
+                tile.Destroy();
+        }
+    }
 
-	private void ResetPosition()
-	{
-		transform.position = rootPos;
-		transform.localScale = rootScale;
-		SetSortingOrder(ROOT_SORTING_ORDER);
-	}
+    private void OnMouseDown()
+    {
+        if (!CanInteract()) return;
+        transform.localScale = new Vector2(PICKUP_SCALE, PICKUP_SCALE);
+        SetSortingOrder(TOP_SORTING_ORDER);
+    }
 
-	private void CheckValidPositionToPutTilesDown()
-	{
-		var desPos = new List<Vector2>();
-		Vector2 currentFirstPoint = baseTiles[0].transform.position;
-		for (int i = 0; i < baseTilePosDistance.Count; i++)
-		{
-			var res = GameManager.Instance.FindNearestTilePosition(currentFirstPoint + baseTilePosDistance[i],
-				baseTiles[i].type);
-			if (res.x + 100 == 0 && res.y == 0)
-			{
-				ResetPosition();
-				return;
-			}
+    private void OnMouseDrag()
+    {
+        if (!CanInteract()) return;
+        if (_cachedCamera == null) return;
 
-			desPos.Add(res);
+        Vector2 worldPos = _cachedCamera.ScreenToWorldPoint(Input.mousePosition);
+        worldPos.y += DRAG_Y_OFFSET;
+        transform.position = worldPos;
+    }
 
-			if (i == 0)
-				currentFirstPoint = res;
-		}
+    private void OnMouseUp()
+    {
+        if (!CanInteract()) return;
+        TryPlaceTiles();
+    }
 
-		for (var i = 0; i < baseTiles.Count; i++)
-		{
-			baseTiles[i].transform.position = desPos[i];
-			GameManager.Instance.SetTileToBoard(baseTiles[i]);
-		}
+    private bool CanInteract()
+    {
+        return _canPlace && GameManager.Instance.CurrentState == GameState.Playing;
+    }
 
-		GameManager.Instance.Score += baseTiles.Count;
-		GameManager.Instance.tileOnSpawner.Remove(id);
-		SetSortingOrder(ROOT_SORTING_ORDER);
-		GameManager.Instance.ClearCross();
-		GameManager.Instance.NumberTileOnSpawnZone--;
-		Destroy(gameObject);
-	}
+    private void TryPlaceTiles()
+    {
+        var board = GameManager.Instance.Board;
+        var snappedPositions = new List<Vector2>();
+        Vector2 anchorPosition = baseTiles[0].transform.position;
 
-	public void SetCanPutToBoard(bool canPut)
-	{
-		if (canPutToBoard == canPut)
-			return;
-		canPutToBoard = canPut;
-		Color tempColor;
-		if (canPut)
-			tempColor = rootColor;
-		else
-			tempColor = _loseColor;
-		foreach (var item in baseTiles)
-		{
-			item.SetColor(tempColor);
-		}
-	}
+        for (int i = 0; i < TileOffsets.Count; i++)
+        {
+            var candidatePos = anchorPosition + TileOffsets[i];
+            var snappedPos = board.FindNearestAvailablePosition(candidatePos, baseTiles[i].type);
 
-	void SetSortingOrder(int sortingOrder)
-	{
-		for (int i = 0; i < baseTiles.Count; i++)
-		{
-			baseTiles[i].SetSortingOrder(sortingOrder);
-		}
-	}
+            if (board.IsInvalidPosition(snappedPos))
+            {
+                ResetToHome();
+                return;
+            }
 
-	public void Destroy()
-	{
-		foreach (var item in baseTiles)
-		{
-			if (item != null)
-				item.Destroy();
-		}
-	}
+            snappedPositions.Add(snappedPos);
+
+            if (i == 0)
+                anchorPosition = snappedPos;
+        }
+
+        var placedCoords = new List<Vector3Int>();
+        for (int i = 0; i < baseTiles.Count; i++)
+        {
+            baseTiles[i].transform.position = snappedPositions[i];
+            var coord = board.PlaceTile(baseTiles[i], GameManager.Instance.TilesOnBoardZone);
+            placedCoords.Add(coord);
+        }
+
+        SetSortingOrder(DEFAULT_SORTING_ORDER);
+        GameManager.Instance.OnTilePlacedOnBoard(this, placedCoords);
+        Destroy(gameObject);
+    }
+
+    private void ResetToHome()
+    {
+        transform.position = _homePosition;
+        transform.localScale = _homeScale;
+        SetSortingOrder(DEFAULT_SORTING_ORDER);
+    }
+
+    private void ComputeTileOffsets()
+    {
+        TileOffsets.Clear();
+        Vector2 rootPoint = baseTiles[0].transform.position;
+        TileOffsets.Add(Vector2.zero);
+
+        for (int i = 1; i < baseTiles.Count; i++)
+        {
+            Vector2 tilePoint = baseTiles[i].transform.position;
+            TileOffsets.Add(tilePoint - rootPoint);
+        }
+    }
+
+    private void SetAllTileColors(Color color)
+    {
+        foreach (var tile in baseTiles)
+        {
+            tile.SetColor(color);
+        }
+    }
+
+    private void SetSortingOrder(int order)
+    {
+        foreach (var tile in baseTiles)
+        {
+            tile.SetSortingOrder(order);
+        }
+    }
 }

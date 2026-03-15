@@ -1,64 +1,61 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class BoardGenerator : MonoBehaviour
 {
-	public BoardTile upTilePrefab;
-	public BoardTile downTilePrefab;
-	public Color boardColor;
-	private const float DELTA_X = 0.576f;
-	private const int ROW = 12;
+    private const float TILE_WIDTH = 0.576f;
+    private const int ROW_COUNT = 12;
+    private const float START_Y = 8f;
+    private const int MIN_AXIS_VALUE = 4;
 
-	public void ScaleBoard()
-	{
-		transform.localScale = new Vector2(0.5f, 0.5f);
-	}
+    [SerializeField] private BoardTile upTilePrefab;
+    [SerializeField] private BoardTile downTilePrefab;
+    [SerializeField] private Color boardColor;
 
-	public void GenerateBoard()
-	{
-		const float posX = 0f;
-		const float posY = 8f;
-		var pos = new Vector2(posX, posY);
-		for (var i = 0; i < ROW; i++)
-		{
-			int y;
-			var x = y = i;
-			var z = 0;
-			var indexInRow = 0;
-			for (var j = 0; j < 2 * i + 1; j++)
-			{
-				var tempTile = j % 2 == 0 ? upTilePrefab : downTilePrefab;
+    public void Generate(BoardState boardState)
+    {
+        var position = new Vector2(0f, START_Y);
 
-				if (x > 3 && y < ROW - 4 && z < ROW - 4)
-				{
-					InstantiateBoardTile(tempTile, pos, tempTile.type, x, y, z);
-				}
+        for (int row = 0; row < ROW_COUNT; row++)
+        {
+            int x = row, y = row, z = 0;
+            int tilesInRow = 2 * row + 1;
 
-				pos.x += DELTA_X;
-				indexInRow++;
-				{
-					if (indexInRow % 2 != 0)
-					{
-						y--;
-					}
+            for (int col = 0; col < tilesInRow; col++)
+            {
+                bool isUpTile = col % 2 == 0;
+                var prefab = isUpTile ? upTilePrefab : downTilePrefab;
 
-					if (indexInRow % 2 == 0)
-					{
-						z++;
-					}
-				}
-			}
+                bool isWithinBounds = x > MIN_AXIS_VALUE - 1 &&
+                                      y < ROW_COUNT - MIN_AXIS_VALUE &&
+                                      z < ROW_COUNT - MIN_AXIS_VALUE;
 
-			pos.x -= (2 * i + 1) * DELTA_X + DELTA_X;
-			pos.y--;
-		}
-	}
+                if (isWithinBounds)
+                {
+                    InstantiateTile(prefab, position, x, y, z, boardState);
+                }
 
-	private void InstantiateBoardTile(BoardTile tempTile, Vector2 pos, TypeTile typeTile, int x, int y, int z)
-	{
-		var tile = Instantiate(tempTile, pos, Quaternion.identity);
-		tile.SetProperties(typeTile, new Vector3(x, y, z));
-		tile.transform.SetParent(transform);
-		GameManager.Instance.boardTiles[new Vector3Int(x, y, z)] = tile;
-		tile.GetComponent<SpriteRenderer>().color = boardColor;
-	}
+                position.x += TILE_WIDTH;
+
+                if (col % 2 == 0) y--;
+                else z++;
+            }
+
+            position.x -= tilesInRow * TILE_WIDTH + TILE_WIDTH;
+            position.y--;
+        }
+    }
+
+    public void ScaleBoard()
+    {
+        transform.localScale = new Vector2(0.5f, 0.5f);
+    }
+
+    private void InstantiateTile(BoardTile prefab, Vector2 position, int x, int y, int z, BoardState boardState)
+    {
+        var tile = Instantiate(prefab, position, Quaternion.identity, transform);
+        var coord = new Vector3Int(x, y, z);
+        tile.SetProperties(prefab.type, new Vector3(x, y, z));
+        tile.GetComponent<SpriteRenderer>().color = boardColor;
+        boardState.RegisterTile(coord, tile);
+    }
 }

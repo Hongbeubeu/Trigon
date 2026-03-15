@@ -1,34 +1,39 @@
-﻿using UnityEngine;
+using UnityEngine;
 using DG.Tweening;
 
 public class BaseTile : MonoBehaviour
 {
-	[SerializeField] private SpriteRenderer spriteRenderer;
-	public TypeTile type;
-	public Color loseColor;
+    private const float DESTROY_ANIM_DURATION = 0.25f;
 
-	public void SetColor(Color color)
-	{
-		spriteRenderer.color = color;
-	}
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Color loseColor;
 
-	public void SetLoseColor()
-	{
-		spriteRenderer.color = loseColor;
-	}
+    public TypeTile type;
 
-	public void SetSortingOrder(int sortingOrder)
-	{
-		spriteRenderer.sortingOrder = sortingOrder;
-	}
+    public void SetColor(Color color)
+    {
+        spriteRenderer.color = color;
+    }
 
-	public void DestroyAnim()
-	{
-		transform.DOScale(Vector2.zero, 0.25f).SetEase(Ease.Linear).OnComplete(() => { Destroy(gameObject); });
-	}
+    public void SetLoseColor()
+    {
+        spriteRenderer.color = loseColor;
+    }
 
-	public void Destroy()
-	{
-		Destroy(gameObject);
-	}
+    public void SetSortingOrder(int sortingOrder)
+    {
+        spriteRenderer.sortingOrder = sortingOrder;
+    }
+
+    public void DestroyAnim()
+    {
+        transform.DOScale(Vector2.zero, DESTROY_ANIM_DURATION)
+            .SetEase(Ease.Linear)
+            .OnComplete(() => Destroy(gameObject));
+    }
+
+    public void Destroy()
+    {
+        Destroy(gameObject);
+    }
 }
