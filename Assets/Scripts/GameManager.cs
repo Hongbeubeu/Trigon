@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private const float LINE_CLEAR_SETTLE_DELAY = 0.26f;
-    private const int TARGET_FRAME_RATE = 120;
-
+    [Header("Scene References")]
     [SerializeField] private BoardGenerator boardGenerator;
     [SerializeField] private TileSpawner tileSpawner;
     [SerializeField] private Transform tilesOnBoardZone;
+
+    [Header("Config Databases")]
+    [SerializeField] private LogicConfig logicConfig;
+    [SerializeField] private GameViewConfig gameViewConfig;
+    [SerializeField] private UIViewConfig uiViewConfig;
 
     private DataService _dataService;
     private BoardLogic _boardLogic;
@@ -21,12 +24,15 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        Application.targetFrameRate = TARGET_FRAME_RATE;
+        var configService = new ConfigService(logicConfig, gameViewConfig, uiViewConfig);
+        ServiceLocator.Register(configService);
+
+        Application.targetFrameRate = logicConfig.TargetFrameRate;
 
         _dataService = new DataService();
-        _boardLogic = new BoardLogic(_dataService.Board);
-        _viewRegistry = new TileViewRegistry();
-        _scoreService = new ScoreService(_dataService.Session);
+        _boardLogic = new BoardLogic(_dataService.Board, logicConfig);
+        _viewRegistry = new TileViewRegistry(logicConfig, gameViewConfig);
+        _scoreService = new ScoreService(_dataService.Session, logicConfig);
         _lineClearHandler = new LineClearHandler(_boardLogic, _viewRegistry);
 
         ServiceLocator.Register(_dataService);
@@ -34,8 +40,8 @@ public class GameManager : MonoBehaviour
         ServiceLocator.Register(_viewRegistry);
         ServiceLocator.Register(this);
 
-        boardGenerator.Generate(_dataService.Board, _viewRegistry);
-        boardGenerator.ScaleBoard();
+        boardGenerator.Generate(_dataService.Board, _viewRegistry, logicConfig, gameViewConfig);
+        boardGenerator.ScaleBoard(gameViewConfig.BoardScale);
         _viewRegistry.SyncWorldPositions(_dataService.Board);
     }
 
@@ -150,7 +156,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator DelayedCheckLose()
     {
-        yield return new WaitForSeconds(LINE_CLEAR_SETTLE_DELAY);
+        yield return new WaitForSeconds(logicConfig.LineClearSettleDelay);
         CheckLose();
     }
 
@@ -165,6 +171,7 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        ServiceLocator.Unregister<ConfigService>();
         ServiceLocator.Unregister<DataService>();
         ServiceLocator.Unregister<BoardLogic>();
         ServiceLocator.Unregister<TileViewRegistry>();

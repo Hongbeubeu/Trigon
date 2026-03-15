@@ -2,20 +2,15 @@ using UnityEngine;
 
 public class BoardGenerator : MonoBehaviour
 {
-    private const float TILE_WIDTH = 0.576f;
-    private const int ROW_COUNT = 12;
-    private const float START_Y = 8f;
-    private const int MIN_AXIS_VALUE = 4;
-
-    [SerializeField] private BoardTile upTilePrefab;
-    [SerializeField] private BoardTile downTilePrefab;
-    [SerializeField] private Color boardColor;
-
-    public void Generate(BoardData boardData, TileViewRegistry viewRegistry)
+    public void Generate(BoardData boardData, TileViewRegistry viewRegistry,
+        LogicConfig logicConfig, GameViewConfig viewConfig)
     {
-        var position = new Vector2(0f, START_Y);
+        int rowCount = logicConfig.BoardRowCount;
+        int minAxis = logicConfig.BoardMinAxisValue;
+        float tileWidth = viewConfig.TileWidth;
+        var position = new Vector2(0f, viewConfig.BoardStartY);
 
-        for (int row = 0; row < ROW_COUNT; row++)
+        for (int row = 0; row < rowCount; row++)
         {
             int x = row, y = row, z = 0;
             int tilesInRow = 2 * row + 1;
@@ -23,35 +18,36 @@ public class BoardGenerator : MonoBehaviour
             for (int col = 0; col < tilesInRow; col++)
             {
                 bool isUpTile = col % 2 == 0;
-                var prefab = isUpTile ? upTilePrefab : downTilePrefab;
+                var prefab = isUpTile ? viewConfig.UpTilePrefab : viewConfig.DownTilePrefab;
 
-                bool isWithinBounds = x > MIN_AXIS_VALUE - 1 &&
-                                      y < ROW_COUNT - MIN_AXIS_VALUE &&
-                                      z < ROW_COUNT - MIN_AXIS_VALUE;
+                bool isWithinBounds = x > minAxis - 1 &&
+                                      y < rowCount - minAxis &&
+                                      z < rowCount - minAxis;
 
                 if (isWithinBounds)
                 {
-                    InstantiateTile(prefab, position, x, y, z, boardData, viewRegistry);
+                    InstantiateTile(prefab, position, x, y, z, viewConfig.BoardColor,
+                        boardData, viewRegistry);
                 }
 
-                position.x += TILE_WIDTH;
+                position.x += tileWidth;
 
                 if (col % 2 == 0) y--;
                 else z++;
             }
 
-            position.x -= tilesInRow * TILE_WIDTH + TILE_WIDTH;
+            position.x -= tilesInRow * tileWidth + tileWidth;
             position.y--;
         }
     }
 
-    public void ScaleBoard()
+    public void ScaleBoard(float scale)
     {
-        transform.localScale = new Vector2(0.5f, 0.5f);
+        transform.localScale = new Vector2(scale, scale);
     }
 
     private void InstantiateTile(BoardTile prefab, Vector2 position, int x, int y, int z,
-        BoardData boardData, TileViewRegistry viewRegistry)
+        Color boardColor, BoardData boardData, TileViewRegistry viewRegistry)
     {
         var tileView = Instantiate(prefab, position, Quaternion.identity, transform);
         tileView.GetComponent<SpriteRenderer>().color = boardColor;

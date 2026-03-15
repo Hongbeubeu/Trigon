@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class ScoreService
 {
-    private const string MAX_SCORE_KEY = "MaxScore";
-
     private readonly GameSessionData _session;
+    private readonly string _maxScoreKey;
 
-    public ScoreService(GameSessionData session)
+    public ScoreService(GameSessionData session, LogicConfig config)
     {
         _session = session;
+        _maxScoreKey = config.MaxScoreKey;
     }
 
     public void Reset()
@@ -28,13 +28,13 @@ public class ScoreService
     {
         if (_session.Score > GetMaxScore())
         {
-            PlayerPrefs.SetInt(MAX_SCORE_KEY, _session.Score);
+            PlayerPrefs.SetInt(_maxScoreKey, _session.Score);
             GameEvents.RaiseMaxScoreLoaded(_session.Score);
         }
     }
 
-    private static int GetMaxScore()
+    private int GetMaxScore()
     {
-        return PlayerPrefs.GetInt(MAX_SCORE_KEY, 0);
+        return PlayerPrefs.GetInt(_maxScoreKey, 0);
     }
 }

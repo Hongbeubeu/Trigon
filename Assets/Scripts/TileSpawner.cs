@@ -2,35 +2,35 @@ using UnityEngine;
 
 public class TileSpawner : MonoBehaviour
 {
-    private const int TILES_PER_SPAWN = 3;
-    private const float TILE_SCALE = 0.45f;
-
     [SerializeField] private Transform[] spawnZones;
-    [SerializeField] private CompositeTile[] tilePrefabs;
-    [SerializeField] private ColorPalette[] colorPalettes;
 
-    private ColorPalette _activeColorPalette;
+    private ConfigService _configService;
     private GameManager _gameManager;
+    private ConfigService ConfigRef => _configService ??= ServiceLocator.Get<ConfigService>();
     private GameManager GameManagerRef => _gameManager ??= ServiceLocator.Get<GameManager>();
 
     public void SpawnTiles()
     {
-        SelectRandomPalette();
+        var viewConfig = ConfigRef.GameView;
+        var logicConfig = ConfigRef.Logic;
+        var palettes = viewConfig.ColorPalettes;
+        var activePalette = palettes[Random.Range(0, palettes.Length)];
 
-        for (int i = 0; i < TILES_PER_SPAWN; i++)
+        for (int i = 0; i < logicConfig.TilesPerSpawn; i++)
         {
-            var prefab = tilePrefabs[Random.Range(0, tilePrefabs.Length)];
+            var prefabs = viewConfig.TilePrefabs;
+            var prefab = prefabs[Random.Range(0, prefabs.Length)];
             var tile = Instantiate(prefab, spawnZones[i].position, Quaternion.identity, spawnZones[i]);
             tile.tag = "Draggable";
 
-            var scale = new Vector2(TILE_SCALE, TILE_SCALE);
-            var color = _activeColorPalette.GetRandomColor();
+            var scale = new Vector2(viewConfig.SpawnScale, viewConfig.SpawnScale);
+            var color = activePalette.GetRandomColor();
             tile.Initialize(i, scale, color);
 
             GameManagerRef.RegisterSpawnedTile(i, tile);
         }
 
-        GameManagerRef.SetSpawnCount(TILES_PER_SPAWN);
+        GameManagerRef.SetSpawnCount(logicConfig.TilesPerSpawn);
     }
 
     public void ResetSpawnZones()
@@ -42,10 +42,5 @@ public class TileSpawner : MonoBehaviour
                 Destroy(zone.GetChild(i).gameObject);
             }
         }
-    }
-
-    private void SelectRandomPalette()
-    {
-        _activeColorPalette = colorPalettes[Random.Range(0, colorPalettes.Length)];
     }
 }

@@ -4,13 +4,20 @@ using UnityEngine;
 
 public class TileViewRegistry
 {
-    private const float CLEAR_TILE_DELAY = 0.01f;
+    private readonly float _clearTileDelay;
+    private readonly float _destroyAnimDuration;
 
     private readonly Dictionary<Vector3Int, BoardTile> _boardTileViews = new();
     private readonly Dictionary<Vector3Int, BaseTile> _placedTileViews = new();
     private readonly Dictionary<int, CompositeTile> _spawnedTileViews = new();
 
     public IReadOnlyDictionary<int, CompositeTile> SpawnedTiles => _spawnedTileViews;
+
+    public TileViewRegistry(LogicConfig logicConfig, GameViewConfig viewConfig)
+    {
+        _clearTileDelay = logicConfig.ClearTileDelay;
+        _destroyAnimDuration = viewConfig.DestroyAnimDuration;
+    }
 
     public void RegisterBoardTileView(Vector3Int coord, BoardTile view)
     {
@@ -37,7 +44,7 @@ public class TileViewRegistry
     {
         if (_placedTileViews.TryGetValue(coord, out var tile))
         {
-            tile.DestroyAnim();
+            tile.DestroyAnim(_destroyAnimDuration);
         }
 
         _placedTileViews.Remove(coord);
@@ -49,7 +56,7 @@ public class TileViewRegistry
         {
             boardLogic.RemoveTile(coord);
             AnimateRemovePlacedTile(coord);
-            yield return new WaitForSeconds(CLEAR_TILE_DELAY);
+            yield return new WaitForSeconds(_clearTileDelay);
         }
     }
 

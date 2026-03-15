@@ -9,11 +9,25 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI maxScoreText;
     [SerializeField] private TextMeshProUGUI currentScoreText;
 
+    private string _scoreFormat;
+
     private void OnEnable()
     {
         GameEvents.OnScoreChanged += UpdateCurrentScore;
         GameEvents.OnMaxScoreLoaded += UpdateMaxScore;
         GameEvents.OnGameStateChanged += OnGameStateChanged;
+    }
+
+    private void Start()
+    {
+        if (ServiceLocator.TryGet<ConfigService>(out var config))
+        {
+            _scoreFormat = config.UI.ScoreFormat;
+        }
+        else
+        {
+            _scoreFormat = "{0}";
+        }
     }
 
     private void OnDisable()
@@ -41,12 +55,12 @@ public class UIManager : MonoBehaviour
 
     private void UpdateCurrentScore(int score)
     {
-        currentScoreText.SetText(score.ToString());
+        currentScoreText.SetText(string.Format(_scoreFormat, score));
     }
 
     private void UpdateMaxScore(int maxScore)
     {
-        maxScoreText.SetText(maxScore.ToString());
+        maxScoreText.SetText(string.Format(_scoreFormat, maxScore));
     }
 
     private void ActivatePanel(CanvasGroup target)

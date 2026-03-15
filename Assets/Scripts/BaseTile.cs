@@ -3,8 +3,6 @@ using DG.Tweening;
 
 public class BaseTile : MonoBehaviour
 {
-    private const float DESTROY_ANIM_DURATION = 0.25f;
-
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Color loseColor;
 
@@ -25,9 +23,9 @@ public class BaseTile : MonoBehaviour
         spriteRenderer.sortingOrder = sortingOrder;
     }
 
-    public void DestroyAnim()
+    public void DestroyAnim(float duration)
     {
-        transform.DOScale(Vector2.zero, DESTROY_ANIM_DURATION)
+        transform.DOScale(Vector2.zero, duration)
             .SetEase(Ease.Linear)
             .OnComplete(() => Destroy(gameObject));
     }

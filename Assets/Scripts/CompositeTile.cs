@@ -3,12 +3,6 @@ using UnityEngine;
 
 public class CompositeTile : MonoBehaviour
 {
-    private const int TOP_SORTING_ORDER = 5;
-    private const int DEFAULT_SORTING_ORDER = 2;
-    private const float PICKUP_SCALE = 0.5f;
-    private const float DRAG_Y_OFFSET = 1f;
-    private static readonly Color DISABLED_COLOR = new(176f / 255f, 176f / 255f, 176f / 255f, 1f);
-
     [SerializeField] private List<BaseTile> baseTiles = new();
 
     private Vector2 _homePosition;
@@ -21,6 +15,12 @@ public class CompositeTile : MonoBehaviour
     private TileViewRegistry _viewRegistry;
     private GameManager _gameManager;
 
+    private int _topSortingOrder;
+    private int _defaultSortingOrder;
+    private float _pickupScale;
+    private float _dragYOffset;
+    private Color _disabledColor;
+
     public int Id { get; set; }
     public List<BaseTile> BaseTiles => baseTiles;
     public List<Vector2> TileOffsets { get; } = new();
@@ -29,10 +29,18 @@ public class CompositeTile : MonoBehaviour
     {
         _homePosition = transform.position;
         _cachedCamera = Camera.main;
+
         _dataService = ServiceLocator.Get<DataService>();
         _boardLogic = ServiceLocator.Get<BoardLogic>();
         _viewRegistry = ServiceLocator.Get<TileViewRegistry>();
         _gameManager = ServiceLocator.Get<GameManager>();
+
+        var viewConfig = ServiceLocator.Get<ConfigService>().GameView;
+        _topSortingOrder = viewConfig.TopSortingOrder;
+        _defaultSortingOrder = viewConfig.DefaultSortingOrder;
+        _pickupScale = viewConfig.PickupScale;
+        _dragYOffset = viewConfig.DragYOffset;
+        _disabledColor = viewConfig.DisabledColor;
     }
 
     public void Initialize(int id, Vector2 scale, Color color)
@@ -49,7 +57,7 @@ public class CompositeTile : MonoBehaviour
     {
         if (_canPlace == canPlace) return;
         _canPlace = canPlace;
-        SetAllTileColors(canPlace ? _activeColor : DISABLED_COLOR);
+        SetAllTileColors(canPlace ? _activeColor : _disabledColor);
     }
 
     public void DestroyTile()
@@ -64,8 +72,8 @@ public class CompositeTile : MonoBehaviour
     private void OnMouseDown()
     {
         if (!CanInteract()) return;
-        transform.localScale = new Vector2(PICKUP_SCALE, PICKUP_SCALE);
-        SetSortingOrder(TOP_SORTING_ORDER);
+        transform.localScale = new Vector2(_pickupScale, _pickupScale);
+        SetSortingOrder(_topSortingOrder);
     }
 
     private void OnMouseDrag()
@@ -74,7 +82,7 @@ public class CompositeTile : MonoBehaviour
         if (_cachedCamera == null) return;
 
         Vector2 worldPos = _cachedCamera.ScreenToWorldPoint(Input.mousePosition);
-        worldPos.y += DRAG_Y_OFFSET;
+        worldPos.y += _dragYOffset;
         transform.position = worldPos;
     }
 
@@ -120,7 +128,7 @@ public class CompositeTile : MonoBehaviour
             placedCoords.Add(coord);
         }
 
-        SetSortingOrder(DEFAULT_SORTING_ORDER);
+        SetSortingOrder(_defaultSortingOrder);
         _gameManager.OnTilePlacedOnBoard(this, placedCoords);
         Destroy(gameObject);
     }
@@ -129,7 +137,7 @@ public class CompositeTile : MonoBehaviour
     {
         transform.position = _homePosition;
         transform.localScale = _homeScale;
-        SetSortingOrder(DEFAULT_SORTING_ORDER);
+        SetSortingOrder(_defaultSortingOrder);
     }
 
     private void ComputeTileOffsets()

@@ -3,15 +3,17 @@ using UnityEngine;
 
 public class BoardLogic
 {
-    private const float SNAP_THRESHOLD = 0.25f;
-    private const float EXACT_THRESHOLD = 0.01f;
     private static readonly Vector2 INVALID_POSITION = new(-100f, 0f);
 
     private readonly BoardData _data;
+    private readonly float _snapThreshold;
+    private readonly float _exactThreshold;
 
-    public BoardLogic(BoardData data)
+    public BoardLogic(BoardData data, LogicConfig config)
     {
         _data = data;
+        _snapThreshold = config.SnapThreshold;
+        _exactThreshold = config.ExactMatchThreshold;
     }
 
     public Vector2 FindNearestAvailablePosition(Vector2 position, TypeTile type)
@@ -21,8 +23,8 @@ public class BoardLogic
             var cell = kvp.Value;
             if (cell.Type != type || cell.IsOccupied) continue;
 
-            if (Mathf.Abs(cell.WorldPosition.x - position.x) < SNAP_THRESHOLD &&
-                Mathf.Abs(cell.WorldPosition.y - position.y) < SNAP_THRESHOLD)
+            if (Mathf.Abs(cell.WorldPosition.x - position.x) < _snapThreshold &&
+                Mathf.Abs(cell.WorldPosition.y - position.y) < _snapThreshold)
             {
                 return cell.WorldPosition;
             }
@@ -42,8 +44,8 @@ public class BoardLogic
         foreach (var kvp in _data.Cells)
         {
             var cell = kvp.Value;
-            if (Mathf.Abs(cell.WorldPosition.x - position.x) < EXACT_THRESHOLD &&
-                Mathf.Abs(cell.WorldPosition.y - position.y) < EXACT_THRESHOLD)
+            if (Mathf.Abs(cell.WorldPosition.x - position.x) < _exactThreshold &&
+                Mathf.Abs(cell.WorldPosition.y - position.y) < _exactThreshold)
             {
                 return cell.Coord;
             }
