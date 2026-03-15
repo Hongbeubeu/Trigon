@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class HudView : MonoBehaviour
@@ -6,6 +7,7 @@ public class HudView : MonoBehaviour
     [SerializeField] private CanvasGroup hudPanel;
     [SerializeField] private TextMeshProUGUI maxScoreText;
     [SerializeField] private TextMeshProUGUI currentScoreText;
+    [SerializeField] private Button pauseButton;
     [SerializeField] private UIViewConfig uiViewConfig;
 
     private string _scoreFormat = "{0}";
@@ -23,6 +25,7 @@ public class HudView : MonoBehaviour
         GameEvents.OnScoreChanged += UpdateCurrentScore;
         GameEvents.OnMaxScoreLoaded += UpdateMaxScore;
         GameEvents.OnGameStateChanged += OnGameStateChanged;
+        pauseButton.onClick.AddListener(OnPauseClicked);
     }
 
     private void OnDisable()
@@ -30,6 +33,12 @@ public class HudView : MonoBehaviour
         GameEvents.OnScoreChanged -= UpdateCurrentScore;
         GameEvents.OnMaxScoreLoaded -= UpdateMaxScore;
         GameEvents.OnGameStateChanged -= OnGameStateChanged;
+        pauseButton.onClick.RemoveListener(OnPauseClicked);
+    }
+
+    private static void OnPauseClicked()
+    {
+        GameEvents.RaisePauseRequested();
     }
 
     private void OnGameStateChanged(GameState state)

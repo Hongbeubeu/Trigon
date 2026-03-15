@@ -64,12 +64,14 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
+        GameEvents.OnPauseRequested += OnPauseRequested;
         GameEvents.OnResumeRequested += OnResumeRequested;
         GameEvents.OnReplayRequested += OnReplayRequested;
     }
 
     private void OnDisable()
     {
+        GameEvents.OnPauseRequested -= OnPauseRequested;
         GameEvents.OnResumeRequested -= OnResumeRequested;
         GameEvents.OnReplayRequested -= OnReplayRequested;
     }
@@ -83,6 +85,12 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         _stateMachine.Update();
+    }
+
+    private void OnPauseRequested()
+    {
+        if (_stateMachine.CurrentKey == GameState.Playing)
+            _stateMachine.ChangeState(GameState.Paused);
     }
 
     private void OnResumeRequested()

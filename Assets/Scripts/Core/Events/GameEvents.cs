@@ -12,6 +12,7 @@ public static class GameEvents
     public static event Action<int> OnScoreChanged;
     public static event Action<int> OnMaxScoreLoaded;
     public static event Action<GameState> OnGameStateChanged;
+    public static event Action OnPauseRequested;
     public static event Action OnResumeRequested;
     public static event Action OnReplayRequested;
 
@@ -28,6 +29,11 @@ public static class GameEvents
     public static void RaiseGameStateChanged(GameState state)
     {
         OnGameStateChanged?.Invoke(state);
+    }
+
+    public static void RaisePauseRequested()
+    {
+        OnPauseRequested?.Invoke();
     }
 
     public static void RaiseResumeRequested()
