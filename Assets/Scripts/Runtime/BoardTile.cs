@@ -1,11 +1,5 @@
 using UnityEngine;
 
-public enum TypeTile
-{
-    UP,
-    DOWN
-}
-
 public class BoardTile : MonoBehaviour
 {
     public TypeTile type;
