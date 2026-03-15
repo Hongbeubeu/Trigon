@@ -8,13 +8,7 @@ public enum TypeTile
 
 public class BoardTile : MonoBehaviour
 {
-    public bool isContainsTile;
     public TypeTile type;
-    public Vector3 positionInMatrix;
-
-    public void SetProperties(TypeTile typeTile, Vector3 posInMatrix)
-    {
-        type = typeTile;
-        positionInMatrix = posInMatrix;
-    }
+    [HideInInspector] public bool isContainsTile;
+    [HideInInspector] public Vector3 positionInMatrix;
 }

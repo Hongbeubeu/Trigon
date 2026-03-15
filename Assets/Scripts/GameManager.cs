@@ -11,42 +11,43 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TileSpawner tileSpawner;
     [SerializeField] private Transform tilesOnBoardZone;
 
-    private BoardState _boardState;
+    private DataService _dataService;
+    private BoardLogic _boardLogic;
     private LineClearHandler _lineClearHandler;
     private ScoreService _scoreService;
-    private readonly Dictionary<int, CompositeTile> _spawnedTiles = new();
-    private int _tilesRemainingInSpawn;
-    private GameState _currentState;
+    private TileViewRegistry _viewRegistry;
 
-    public BoardState Board => _boardState;
     public Transform TilesOnBoardZone => tilesOnBoardZone;
-    public GameState CurrentState => _currentState;
 
     private void Awake()
     {
         Application.targetFrameRate = TARGET_FRAME_RATE;
 
-        _boardState = new BoardState();
-        _lineClearHandler = new LineClearHandler(_boardState);
-        _scoreService = new ScoreService();
+        _dataService = new DataService();
+        _boardLogic = new BoardLogic(_dataService.Board);
+        _viewRegistry = new TileViewRegistry();
+        _scoreService = new ScoreService(_dataService.Session);
+        _lineClearHandler = new LineClearHandler(_boardLogic, _viewRegistry);
 
+        ServiceLocator.Register(_dataService);
+        ServiceLocator.Register(_boardLogic);
+        ServiceLocator.Register(_viewRegistry);
         ServiceLocator.Register(this);
-        ServiceLocator.Register(_boardState);
 
-        boardGenerator.Generate(_boardState);
+        boardGenerator.Generate(_dataService.Board, _viewRegistry);
         boardGenerator.ScaleBoard();
+        _viewRegistry.SyncWorldPositions(_dataService.Board);
     }
 
     private void Start()
     {
-        _boardState.BuildPositionMapping();
-        _lineClearHandler.BuildAxisMapping();
+        _dataService.Board.BuildAxisMappings();
         StartNewGame();
     }
 
     private void Update()
     {
-        if (_currentState == GameState.Lost) return;
+        if (_dataService.Session.State == GameState.Lost) return;
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -56,9 +57,9 @@ public class GameManager : MonoBehaviour
 
     private void StartNewGame()
     {
-        _boardState.Reset();
-        _spawnedTiles.Clear();
-        _tilesRemainingInSpawn = 0;
+        _dataService.ResetSession();
+        _viewRegistry.ClearSpawnedTiles();
+        _viewRegistry.ClearPlacedTiles();
 
         SetState(GameState.Playing);
         _scoreService.Reset();
@@ -68,27 +69,27 @@ public class GameManager : MonoBehaviour
 
     public void RegisterSpawnedTile(int id, CompositeTile tile)
     {
-        _spawnedTiles[id] = tile;
+        _viewRegistry.RegisterSpawnedTile(id, tile);
     }
 
     public void SetSpawnCount(int count)
     {
-        _tilesRemainingInSpawn = count;
+        _dataService.Session.TilesRemainingInSpawn = count;
         CheckLose();
     }
 
     public void OnTilePlacedOnBoard(CompositeTile compositeTile, List<Vector3Int> placedCoords)
     {
         _scoreService.AddScore(placedCoords.Count);
-        _spawnedTiles.Remove(compositeTile.Id);
+        _viewRegistry.RemoveSpawnedTile(compositeTile.Id);
 
         int lineScore = _lineClearHandler.ClearCompletedLines(placedCoords, this);
         _scoreService.AddScore(lineScore);
 
         StartCoroutine(DelayedCheckLose());
 
-        _tilesRemainingInSpawn--;
-        if (_tilesRemainingInSpawn <= 0)
+        _dataService.Session.TilesRemainingInSpawn--;
+        if (_dataService.Session.TilesRemainingInSpawn <= 0)
         {
             tileSpawner.SpawnTiles();
         }
@@ -96,7 +97,7 @@ public class GameManager : MonoBehaviour
 
     public void ReplayGame()
     {
-        _boardState.DestroyAllPlacedTiles();
+        _viewRegistry.DestroyAllPlacedTileViews();
         DestroyAllCompositeTiles();
         _scoreService.SaveMaxScoreIfNeeded();
         StartNewGame();
@@ -104,28 +105,37 @@ public class GameManager : MonoBehaviour
 
     private void TogglePause()
     {
-        if (_currentState == GameState.Paused)
+        var session = _dataService.Session;
+        if (session.State == GameState.Paused)
             SetState(GameState.Playing);
-        else if (_currentState == GameState.Playing)
+        else if (session.State == GameState.Playing)
             SetState(GameState.Paused);
     }
 
     private void SetState(GameState state)
     {
-        _currentState = state;
+        _dataService.Session.State = state;
         GameEvents.RaiseGameStateChanged(state);
     }
 
     private void CheckLose()
     {
-        if (_spawnedTiles.Count == 0 || _currentState == GameState.Lost) return;
+        var spawnedTiles = _viewRegistry.SpawnedTiles;
+        if (spawnedTiles.Count == 0 || _dataService.Session.State == GameState.Lost) return;
 
         bool anyCanPlace = false;
 
-        foreach (var kvp in _spawnedTiles)
+        foreach (var kvp in spawnedTiles)
         {
-            bool canFit = _boardState.CanFitCompositeTile(kvp.Value);
-            kvp.Value.SetPlaceable(canFit);
+            var composite = kvp.Value;
+            var types = new List<TypeTile>();
+            foreach (var baseTile in composite.BaseTiles)
+            {
+                types.Add(baseTile.type);
+            }
+
+            bool canFit = _boardLogic.CanFitShape(composite.TileOffsets, types);
+            composite.SetPlaceable(canFit);
 
             if (canFit) anyCanPlace = true;
         }
@@ -133,7 +143,7 @@ public class GameManager : MonoBehaviour
         if (!anyCanPlace)
         {
             _scoreService.SaveMaxScoreIfNeeded();
-            _boardState.SetAllTilesToLoseColor();
+            _viewRegistry.SetAllPlacedTilesToLoseColor();
             SetState(GameState.Lost);
         }
     }
@@ -155,8 +165,10 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        ServiceLocator.Unregister<DataService>();
+        ServiceLocator.Unregister<BoardLogic>();
+        ServiceLocator.Unregister<TileViewRegistry>();
         ServiceLocator.Unregister<GameManager>();
-        ServiceLocator.Unregister<BoardState>();
         StopAllCoroutines();
     }
 }

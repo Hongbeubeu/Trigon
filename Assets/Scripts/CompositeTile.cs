@@ -16,8 +16,10 @@ public class CompositeTile : MonoBehaviour
     private Color _activeColor;
     private bool _canPlace = true;
     private Camera _cachedCamera;
+    private DataService _dataService;
+    private BoardLogic _boardLogic;
+    private TileViewRegistry _viewRegistry;
     private GameManager _gameManager;
-    private BoardState _boardState;
 
     public int Id { get; set; }
     public List<BaseTile> BaseTiles => baseTiles;
@@ -27,8 +29,10 @@ public class CompositeTile : MonoBehaviour
     {
         _homePosition = transform.position;
         _cachedCamera = Camera.main;
+        _dataService = ServiceLocator.Get<DataService>();
+        _boardLogic = ServiceLocator.Get<BoardLogic>();
+        _viewRegistry = ServiceLocator.Get<TileViewRegistry>();
         _gameManager = ServiceLocator.Get<GameManager>();
-        _boardState = ServiceLocator.Get<BoardState>();
     }
 
     public void Initialize(int id, Vector2 scale, Color color)
@@ -82,7 +86,7 @@ public class CompositeTile : MonoBehaviour
 
     private bool CanInteract()
     {
-        return _canPlace && _gameManager.CurrentState == GameState.Playing;
+        return _canPlace && _dataService.Session.State == GameState.Playing;
     }
 
     private void TryPlaceTiles()
@@ -93,9 +97,9 @@ public class CompositeTile : MonoBehaviour
         for (int i = 0; i < TileOffsets.Count; i++)
         {
             var candidatePos = anchorPosition + TileOffsets[i];
-            var snappedPos = _boardState.FindNearestAvailablePosition(candidatePos, baseTiles[i].type);
+            var snappedPos = _boardLogic.FindNearestAvailablePosition(candidatePos, baseTiles[i].type);
 
-            if (_boardState.IsInvalidPosition(snappedPos))
+            if (_boardLogic.IsInvalidPosition(snappedPos))
             {
                 ResetToHome();
                 return;
@@ -111,7 +115,8 @@ public class CompositeTile : MonoBehaviour
         for (int i = 0; i < baseTiles.Count; i++)
         {
             baseTiles[i].transform.position = snappedPositions[i];
-            var coord = _boardState.PlaceTile(baseTiles[i], _gameManager.TilesOnBoardZone);
+            var coord = _boardLogic.PlaceTile(snappedPositions[i]);
+            _viewRegistry.RegisterPlacedTileView(coord, baseTiles[i], _gameManager.TilesOnBoardZone);
             placedCoords.Add(coord);
         }
 

@@ -3,35 +3,33 @@ using UnityEngine;
 public class ScoreService
 {
     private const string MAX_SCORE_KEY = "MaxScore";
-    private int _currentScore;
 
-    public int CurrentScore
+    private readonly GameSessionData _session;
+
+    public ScoreService(GameSessionData session)
     {
-        get => _currentScore;
-        private set
-        {
-            _currentScore = value;
-            GameEvents.RaiseScoreChanged(_currentScore);
-        }
+        _session = session;
     }
 
     public void Reset()
     {
-        CurrentScore = 0;
+        _session.Score = 0;
+        GameEvents.RaiseScoreChanged(0);
         GameEvents.RaiseMaxScoreLoaded(GetMaxScore());
     }
 
     public void AddScore(int points)
     {
-        CurrentScore += points;
+        _session.Score += points;
+        GameEvents.RaiseScoreChanged(_session.Score);
     }
 
     public void SaveMaxScoreIfNeeded()
     {
-        if (_currentScore > GetMaxScore())
+        if (_session.Score > GetMaxScore())
         {
-            PlayerPrefs.SetInt(MAX_SCORE_KEY, _currentScore);
-            GameEvents.RaiseMaxScoreLoaded(_currentScore);
+            PlayerPrefs.SetInt(MAX_SCORE_KEY, _session.Score);
+            GameEvents.RaiseMaxScoreLoaded(_session.Score);
         }
     }
 

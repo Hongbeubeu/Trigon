@@ -11,7 +11,7 @@ public class BoardGenerator : MonoBehaviour
     [SerializeField] private BoardTile downTilePrefab;
     [SerializeField] private Color boardColor;
 
-    public void Generate(BoardState boardState)
+    public void Generate(BoardData boardData, TileViewRegistry viewRegistry)
     {
         var position = new Vector2(0f, START_Y);
 
@@ -31,7 +31,7 @@ public class BoardGenerator : MonoBehaviour
 
                 if (isWithinBounds)
                 {
-                    InstantiateTile(prefab, position, x, y, z, boardState);
+                    InstantiateTile(prefab, position, x, y, z, boardData, viewRegistry);
                 }
 
                 position.x += TILE_WIDTH;
@@ -50,12 +50,15 @@ public class BoardGenerator : MonoBehaviour
         transform.localScale = new Vector2(0.5f, 0.5f);
     }
 
-    private void InstantiateTile(BoardTile prefab, Vector2 position, int x, int y, int z, BoardState boardState)
+    private void InstantiateTile(BoardTile prefab, Vector2 position, int x, int y, int z,
+        BoardData boardData, TileViewRegistry viewRegistry)
     {
-        var tile = Instantiate(prefab, position, Quaternion.identity, transform);
+        var tileView = Instantiate(prefab, position, Quaternion.identity, transform);
+        tileView.GetComponent<SpriteRenderer>().color = boardColor;
+
         var coord = new Vector3Int(x, y, z);
-        tile.SetProperties(prefab.type, new Vector3(x, y, z));
-        tile.GetComponent<SpriteRenderer>().color = boardColor;
-        boardState.RegisterTile(coord, tile);
+        var cellData = new TileCellData(coord, position, prefab.type);
+        boardData.RegisterCell(cellData);
+        viewRegistry.RegisterBoardTileView(coord, tileView);
     }
 }
