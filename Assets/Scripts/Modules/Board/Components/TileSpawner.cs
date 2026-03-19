@@ -1,3 +1,4 @@
+using Lean.Pool;
 using UnityEngine;
 
 public class TileSpawner : MonoBehaviour
@@ -20,7 +21,7 @@ public class TileSpawner : MonoBehaviour
         {
             var prefabs = viewConfig.TilePrefabs;
             var prefab = prefabs[Random.Range(0, prefabs.Length)];
-            var tile = Instantiate(prefab, spawnZones[i].position, Quaternion.identity, spawnZones[i]);
+            var tile = LeanPool.Spawn(prefab, spawnZones[i].position, Quaternion.identity, spawnZones[i]);
             tile.tag = "Draggable";
 
             var scale = new Vector2(viewConfig.SpawnScale, viewConfig.SpawnScale);
@@ -39,7 +40,7 @@ public class TileSpawner : MonoBehaviour
         {
             for (int i = zone.childCount - 1; i >= 0; i--)
             {
-                Destroy(zone.GetChild(i).gameObject);
+                LeanPool.Despawn(zone.GetChild(i).gameObject);
             }
         }
     }

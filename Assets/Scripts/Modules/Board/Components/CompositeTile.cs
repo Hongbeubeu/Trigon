@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using DG.Tweening;
+using Lean.Pool;
 using UnityEngine;
 
 public class CompositeTile : MonoBehaviour
@@ -21,13 +23,21 @@ public class CompositeTile : MonoBehaviour
     private float _dragYOffset;
     private Color _disabledColor;
 
+    // Smooth drag
+    private Vector2 _targetDragPosition;
+    private Vector2 _dragVelocity;
+    private bool _isDragging;
+
+    private const float DragSmoothTime = 0.04f;
+    private const float PickupAnimDuration = 0.15f;
+    private const float ResetAnimDuration = 0.2f;
+
     public int Id { get; set; }
     public List<BaseTile> BaseTiles => baseTiles;
     public List<Position2D> TileOffsets { get; } = new();
 
     private void Awake()
     {
-        _homePosition = transform.position;
         _cachedCamera = Camera.main;
 
         _dataService = ServiceLocator.Get<DataService>();
@@ -48,9 +58,14 @@ public class CompositeTile : MonoBehaviour
         Id = id;
         _homeScale = scale;
         _activeColor = color;
+        _canPlace = true;
+        _isDragging = false;
+        _dragVelocity = Vector2.zero;
+        _homePosition = transform.position;
         transform.localScale = scale;
         SetAllTileColors(color);
         ComputeTileOffsets();
+        SetSortingOrder(_defaultSortingOrder);
     }
 
     public void SetPlaceable(bool canPlace)
@@ -72,24 +87,47 @@ public class CompositeTile : MonoBehaviour
     private void OnMouseDown()
     {
         if (!CanInteract()) return;
-        transform.localScale = new Vector2(_pickupScale, _pickupScale);
+
+        _isDragging = true;
+        transform.DOKill();
+        transform.DOScale(new Vector2(_pickupScale, _pickupScale), PickupAnimDuration)
+            .SetEase(Ease.OutBack);
         SetSortingOrder(_topSortingOrder);
+
+        if (_cachedCamera != null)
+        {
+            Vector2 worldPos = _cachedCamera.ScreenToWorldPoint(Input.mousePosition);
+            worldPos.y += _dragYOffset;
+            _targetDragPosition = worldPos;
+            _dragVelocity = Vector2.zero;
+        }
     }
 
     private void OnMouseDrag()
     {
-        if (!CanInteract()) return;
+        if (!CanInteract() || !_isDragging) return;
         if (_cachedCamera == null) return;
 
         Vector2 worldPos = _cachedCamera.ScreenToWorldPoint(Input.mousePosition);
         worldPos.y += _dragYOffset;
-        transform.position = worldPos;
+        _targetDragPosition = worldPos;
+
+        Vector2 smoothed = Vector2.SmoothDamp(
+            transform.position, _targetDragPosition, ref _dragVelocity, DragSmoothTime);
+        transform.position = smoothed;
     }
 
     private void OnMouseUp()
     {
-        if (!CanInteract()) return;
+        if (!CanInteract() || !_isDragging) return;
+        _isDragging = false;
+        transform.position = _targetDragPosition;
         TryPlaceTiles();
+    }
+
+    private void OnDisable()
+    {
+        transform.DOKill();
     }
 
     private bool CanInteract()
@@ -128,15 +166,18 @@ public class CompositeTile : MonoBehaviour
             placedCoords.Add(coord);
         }
 
+        transform.DOKill();
         SetSortingOrder(_defaultSortingOrder);
         _gameManager.OnTilePlacedOnBoard(this, placedCoords);
+        LeanPool.Detach(gameObject, true);
         Destroy(gameObject);
     }
 
     private void ResetToHome()
     {
-        transform.position = _homePosition;
-        transform.localScale = _homeScale;
+        transform.DOKill();
+        transform.DOMove(_homePosition, ResetAnimDuration).SetEase(Ease.OutCubic);
+        transform.DOScale(_homeScale, ResetAnimDuration).SetEase(Ease.OutCubic);
         SetSortingOrder(_defaultSortingOrder);
     }
 

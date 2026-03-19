@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Lean.Pool;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -190,7 +191,7 @@ public class GameManager : MonoBehaviour
         var compositeTiles = FindObjectsByType<CompositeTile>(FindObjectsSortMode.None);
         foreach (var tile in compositeTiles)
         {
-            tile.DestroyTile();
+            LeanPool.Despawn(tile);
         }
     }
 
