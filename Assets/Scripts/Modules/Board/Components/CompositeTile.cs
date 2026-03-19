@@ -22,13 +22,13 @@ public class CompositeTile : MonoBehaviour
     private float _pickupScale;
     private float _dragYOffset;
     private Color _disabledColor;
+    private float _placeholderAlpha;
 
     // Smooth drag
     private Vector2 _targetDragPosition;
-    private Vector2 _dragVelocity;
     private bool _isDragging;
+    private float _dragSpeed;
 
-    private const float DragSmoothTime = 0.04f;
     private const float PickupAnimDuration = 0.15f;
     private const float ResetAnimDuration = 0.2f;
 
@@ -50,6 +50,8 @@ public class CompositeTile : MonoBehaviour
         _defaultSortingOrder = viewConfig.DefaultSortingOrder;
         _pickupScale = viewConfig.PickupScale;
         _dragYOffset = viewConfig.DragYOffset;
+        _dragSpeed = viewConfig.DragSpeed;
+        _placeholderAlpha = viewConfig.PlaceholderAlpha;
         _disabledColor = viewConfig.DisabledColor;
     }
 
@@ -60,7 +62,6 @@ public class CompositeTile : MonoBehaviour
         _activeColor = color;
         _canPlace = true;
         _isDragging = false;
-        _dragVelocity = Vector2.zero;
         _homePosition = transform.position;
         transform.localScale = scale;
         SetAllTileColors(color);
@@ -99,7 +100,6 @@ public class CompositeTile : MonoBehaviour
             Vector2 worldPos = _cachedCamera.ScreenToWorldPoint(Input.mousePosition);
             worldPos.y += _dragYOffset;
             _targetDragPosition = worldPos;
-            _dragVelocity = Vector2.zero;
         }
     }
 
@@ -112,21 +112,25 @@ public class CompositeTile : MonoBehaviour
         worldPos.y += _dragYOffset;
         _targetDragPosition = worldPos;
 
-        Vector2 smoothed = Vector2.SmoothDamp(
-            transform.position, _targetDragPosition, ref _dragVelocity, DragSmoothTime);
+        float t = 1f - Mathf.Exp(-_dragSpeed * Time.deltaTime);
+        Vector2 smoothed = Vector2.Lerp(transform.position, _targetDragPosition, t);
         transform.position = smoothed;
+
+        UpdatePlaceholder();
     }
 
     private void OnMouseUp()
     {
         if (!CanInteract() || !_isDragging) return;
         _isDragging = false;
+        _viewRegistry.ClearPlaceholder();
         transform.position = _targetDragPosition;
         TryPlaceTiles();
     }
 
     private void OnDisable()
     {
+        _viewRegistry.ClearPlaceholder();
         transform.DOKill();
     }
 
@@ -160,25 +164,67 @@ public class CompositeTile : MonoBehaviour
         var placedCoords = new List<GridCoord>();
         for (int i = 0; i < baseTiles.Count; i++)
         {
-            baseTiles[i].transform.position = TypeConversions.ToVector2(snappedPositions[i]);
+            var worldPos = TypeConversions.ToVector2(snappedPositions[i]);
             var coord = _boardLogic.PlaceTile(snappedPositions[i]);
-            _viewRegistry.RegisterPlacedTileView(coord, baseTiles[i], _gameManager.TilesOnBoardZone);
+            _viewRegistry.SpawnPlacedTile(coord, baseTiles[i].type, worldPos, _activeColor,
+                _defaultSortingOrder, _gameManager.TilesOnBoardZone);
             placedCoords.Add(coord);
         }
 
         transform.DOKill();
-        SetSortingOrder(_defaultSortingOrder);
         _gameManager.OnTilePlacedOnBoard(this, placedCoords);
-        LeanPool.Detach(gameObject, true);
-        Destroy(gameObject);
+        LeanPool.Despawn(gameObject);
     }
 
     private void ResetToHome()
     {
+        _viewRegistry.ClearPlaceholder();
         transform.DOKill();
         transform.DOMove(_homePosition, ResetAnimDuration).SetEase(Ease.OutCubic);
         transform.DOScale(_homeScale, ResetAnimDuration).SetEase(Ease.OutCubic);
         SetSortingOrder(_defaultSortingOrder);
+    }
+
+    private void UpdatePlaceholder()
+    {
+        var snappedPositions = TryGetSnappedPositions();
+        if (snappedPositions == null)
+        {
+            _viewRegistry.ClearPlaceholder();
+            return;
+        }
+
+        var coords = new List<GridCoord>();
+        foreach (var pos in snappedPositions)
+        {
+            coords.Add(_boardLogic.GetCoordAtPosition(pos));
+        }
+
+        var previewColor = _activeColor;
+        previewColor.a = _placeholderAlpha;
+        _viewRegistry.ShowPlaceholder(coords, previewColor);
+    }
+
+    private List<Position2D> TryGetSnappedPositions()
+    {
+        var snappedPositions = new List<Position2D>();
+        var anchorPosition = TypeConversions.ToPosition2D(baseTiles[0].transform.position);
+
+        for (int i = 0; i < TileOffsets.Count; i++)
+        {
+            var candidatePos = anchorPosition + TileOffsets[i];
+            var snappedPos = _boardLogic.FindNearestAvailablePosition(candidatePos, baseTiles[i].type);
+
+            if (_boardLogic.IsInvalidPosition(snappedPos))
+                return null;
+
+            snappedPositions.Add(snappedPos);
+
+            if (i == 0)
+                anchorPosition = snappedPos;
+        }
+
+        return snappedPositions;
     }
 
     private void ComputeTileOffsets()

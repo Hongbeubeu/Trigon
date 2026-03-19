@@ -1,5 +1,6 @@
 using UnityEngine;
 using DG.Tweening;
+using Lean.Pool;
 
 public class BaseTile : MonoBehaviour
 {
@@ -28,6 +29,17 @@ public class BaseTile : MonoBehaviour
         transform.DOScale(Vector2.zero, duration)
             .SetEase(Ease.Linear)
             .OnComplete(() => Destroy(gameObject));
+    }
+
+    public void DespawnAnim(float duration)
+    {
+        transform.DOScale(Vector2.zero, duration)
+            .SetEase(Ease.Linear)
+            .OnComplete(() =>
+            {
+                transform.localScale = Vector3.one;
+                LeanPool.Despawn(gameObject);
+            });
     }
 
     public void Destroy()

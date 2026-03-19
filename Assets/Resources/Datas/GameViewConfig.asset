@@ -15,7 +15,7 @@ MonoBehaviour:
   tileWidth: 0.576
   boardStartY: 8
   boardScale: 0.5
-  boardColor: {r: 0.23584908, g: 0.23584908, b: 0.23584908, a: 1}
+  boardColor: {r: 0.1981132, g: 0.1981132, b: 0.1981132, a: 0.85882354}
   upTilePrefab: {fileID: 720134715493726965, guid: 1e35e3efcddaf0744a3c2983b6976dfb,
     type: 3}
   downTilePrefab: {fileID: -1164273498409438937, guid: 00700baee12ceb2479f967131db27b84,
@@ -24,9 +24,16 @@ MonoBehaviour:
   defaultSortingOrder: 2
   pickupScale: 0.5
   spawnScale: 0.45
-  dragYOffset: 1
-  destroyAnimDuration: 0.25
-  disabledColor: {r: 0.6901961, g: 0.6901961, b: 0.6901961, a: 1}
+  dragYOffset: 2
+  dragSpeed: 100
+  destroyAnimDuration: 0.3
+  placeholderAlpha: 0.5
+  disabledColor: {r: 0.6901961, g: 0.6901961, b: 0.6901961, a: 0.7529412}
+  placedTileScale: 0.475
+  placedTileUpPrefab: {fileID: -1573004039936141054, guid: 281dc12a6e082a54aa175fd09a1f7139,
+    type: 3}
+  placedTileDownPrefab: {fileID: 716269669669041148, guid: b5f652415a1d18143be4371ffc0bb180,
+    type: 3}
   tilePrefabs:
   - {fileID: -460626584447205692, guid: e79a4556fa1c12a498098d8498117672, type: 3}
   - {fileID: 3558707901198481265, guid: b73a5879557c656429323c4c3c9d8adf, type: 3}

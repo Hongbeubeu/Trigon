@@ -1,15 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using Lean.Pool;
 using UnityEngine;
 
 public class TileViewRegistry
 {
     private readonly float _clearTileDelay;
     private readonly float _destroyAnimDuration;
+    private readonly Color _boardColor;
+    private readonly float _placedTileScale;
+    private readonly BaseTile _placedTileUpPrefab;
+    private readonly BaseTile _placedTileDownPrefab;
 
     private readonly Dictionary<GridCoord, BoardTile> _boardTileViews = new();
     private readonly Dictionary<GridCoord, BaseTile> _placedTileViews = new();
     private readonly Dictionary<int, CompositeTile> _spawnedTileViews = new();
+    private readonly List<GridCoord> _currentPlaceholderCoords = new();
 
     public IReadOnlyDictionary<int, CompositeTile> SpawnedTiles => _spawnedTileViews;
 
@@ -17,6 +23,10 @@ public class TileViewRegistry
     {
         _clearTileDelay = logicConfig.ClearTileDelay;
         _destroyAnimDuration = viewConfig.DestroyAnimDuration;
+        _boardColor = viewConfig.BoardColor;
+        _placedTileScale = viewConfig.PlacedTileScale;
+        _placedTileUpPrefab = viewConfig.PlacedTileUpPrefab;
+        _placedTileDownPrefab = viewConfig.PlacedTileDownPrefab;
 
         GameEvents.OnGameStateChanged += OnGameStateChanged;
     }
@@ -31,10 +41,15 @@ public class TileViewRegistry
         _boardTileViews[coord] = view;
     }
 
-    public void RegisterPlacedTileView(GridCoord coord, BaseTile view, Transform parent)
+    public void SpawnPlacedTile(GridCoord coord, TypeTile type, Vector2 position, Color color,
+        int sortingOrder, Transform parent)
     {
-        _placedTileViews[coord] = view;
-        view.transform.SetParent(parent);
+        var prefab = type == TypeTile.UP ? _placedTileUpPrefab : _placedTileDownPrefab;
+        var tile = LeanPool.Spawn(prefab, position, Quaternion.identity, parent);
+        tile.transform.localScale = Vector3.one * _placedTileScale;
+        tile.SetColor(color);
+        tile.SetSortingOrder(sortingOrder);
+        _placedTileViews[coord] = tile;
     }
 
     public void RegisterSpawnedTile(int id, CompositeTile view)
@@ -51,7 +66,7 @@ public class TileViewRegistry
     {
         if (_placedTileViews.TryGetValue(coord, out var tile))
         {
-            tile.DestroyAnim(_destroyAnimDuration);
+            tile.DespawnAnim(_destroyAnimDuration);
         }
 
         _placedTileViews.Remove(coord);
@@ -67,12 +82,12 @@ public class TileViewRegistry
         }
     }
 
-    public void DestroyAllPlacedTileViews()
+    public void DespawnAllPlacedTileViews()
     {
         foreach (var kvp in _placedTileViews)
         {
             if (kvp.Value != null)
-                kvp.Value.Destroy();
+                LeanPool.Despawn(kvp.Value);
         }
 
         _placedTileViews.Clear();
@@ -86,6 +101,33 @@ public class TileViewRegistry
     public void ClearPlacedTiles()
     {
         _placedTileViews.Clear();
+    }
+
+    public void ShowPlaceholder(List<GridCoord> coords, Color color)
+    {
+        ClearPlaceholder();
+
+        foreach (var coord in coords)
+        {
+            if (_boardTileViews.TryGetValue(coord, out var boardTile))
+            {
+                boardTile.SpriteRenderer.color = color;
+                _currentPlaceholderCoords.Add(coord);
+            }
+        }
+    }
+
+    public void ClearPlaceholder()
+    {
+        foreach (var coord in _currentPlaceholderCoords)
+        {
+            if (_boardTileViews.TryGetValue(coord, out var boardTile))
+            {
+                boardTile.SpriteRenderer.color = _boardColor;
+            }
+        }
+
+        _currentPlaceholderCoords.Clear();
     }
 
     public void SyncWorldPositions(BoardData boardData)

@@ -146,7 +146,7 @@ public class GameManager : MonoBehaviour
 
     private void ReplayGame()
     {
-        _viewRegistry.DestroyAllPlacedTileViews();
+        _viewRegistry.DespawnAllPlacedTileViews();
         DestroyAllCompositeTiles();
         _scoreService.SaveMaxScoreIfNeeded();
         StartNewGame();
