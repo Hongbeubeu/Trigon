@@ -23,8 +23,8 @@ public class BoardLogic
             var cell = kvp.Value;
             if (cell.Type != type || cell.IsOccupied) continue;
 
-            if (MathF.Abs(cell.WorldPosition.X - position.X) < _snapThreshold &&
-                MathF.Abs(cell.WorldPosition.Y - position.Y) < _snapThreshold)
+            if (MathF.Abs(cell.WorldPosition.x - position.x) < _snapThreshold &&
+                MathF.Abs(cell.WorldPosition.y - position.y) < _snapThreshold)
             {
                 return cell.WorldPosition;
             }
@@ -35,8 +35,8 @@ public class BoardLogic
 
     public bool IsInvalidPosition(Position2D position)
     {
-        return MathF.Abs(position.X - INVALID_POSITION.X) < 1e-4f &&
-               MathF.Abs(position.Y - INVALID_POSITION.Y) < 1e-4f;
+        return MathF.Abs(position.x - INVALID_POSITION.x) < 1e-4f &&
+               MathF.Abs(position.y - INVALID_POSITION.y) < 1e-4f;
     }
 
     public GridCoord GetCoordAtPosition(Position2D position)
@@ -44,8 +44,8 @@ public class BoardLogic
         foreach (var kvp in _data.Cells)
         {
             var cell = kvp.Value;
-            if (MathF.Abs(cell.WorldPosition.X - position.X) < _exactThreshold &&
-                MathF.Abs(cell.WorldPosition.Y - position.Y) < _exactThreshold)
+            if (MathF.Abs(cell.WorldPosition.x - position.x) < _exactThreshold &&
+                MathF.Abs(cell.WorldPosition.y - position.y) < _exactThreshold)
             {
                 return cell.Coord;
             }
@@ -105,9 +105,9 @@ public class BoardLogic
 
         foreach (var coord in recentCoords)
         {
-            TryCollectLine(_data.LinesByX, coord.X, checkedX, result);
-            TryCollectLine(_data.LinesByY, coord.Y, checkedY, result);
-            TryCollectLine(_data.LinesByZ, coord.Z, checkedZ, result);
+            TryCollectLine(_data.LinesByX, coord.x, checkedX, result);
+            TryCollectLine(_data.LinesByY, coord.y, checkedY, result);
+            TryCollectLine(_data.LinesByZ, coord.z, checkedZ, result);
         }
 
         return result;

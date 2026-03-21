@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LogicConfig
   boardRowCount: 12
   boardMinAxisValue: 4
-  snapThreshold: 0.25
+  snapThreshold: 0.3
   exactMatchThreshold: 0.01
   tilesPerSpawn: 3
   targetFrameRate: 120

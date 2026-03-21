@@ -231,7 +231,7 @@ public class CompositeTile : MonoBehaviour
     {
         TileOffsets.Clear();
         Vector2 rootPoint = baseTiles[0].transform.position;
-        TileOffsets.Add(Position2D.Zero);
+        TileOffsets.Add(Position2D.ZERO);
 
         for (int i = 1; i < baseTiles.Count; i++)
         {

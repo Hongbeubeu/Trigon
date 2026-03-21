@@ -45,7 +45,6 @@ public class GameManager : MonoBehaviour
         ServiceLocator.Register(this);
 
         boardGenerator.Generate(_dataService.Board, _viewRegistry, logicConfig, gameViewConfig);
-        boardGenerator.ScaleBoard(gameViewConfig.BoardScale);
         _viewRegistry.SyncWorldPositions(_dataService.Board);
     }
 
@@ -53,10 +52,7 @@ public class GameManager : MonoBehaviour
     {
         _stateMachine = new StateMachine<GameState>();
 
-        var context = new GameContext(
-            _dataService.Session,
-            _scoreService,
-            _stateMachine);
+        var context = new GameContext(_dataService.Session, _scoreService, _stateMachine);
 
         _stateMachine.RegisterState(GameState.Playing, new PlayingState(context));
         _stateMachine.RegisterState(GameState.Paused, new PausedState(context));

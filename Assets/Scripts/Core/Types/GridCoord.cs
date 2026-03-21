@@ -1,21 +1,21 @@
 using System;
 
-public readonly struct GridCoord : IEquatable<GridCoord>
+public struct GridCoord : IEquatable<GridCoord>
 {
-    public readonly int X;
-    public readonly int Y;
-    public readonly int Z;
+    public int x;
+    public int y;
+    public int z;
 
     public GridCoord(int x, int y, int z)
     {
-        X = x;
-        Y = y;
-        Z = z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     public bool Equals(GridCoord other)
     {
-        return X == other.X && Y == other.Y && Z == other.Z;
+        return x == other.x && y == other.y && z == other.z;
     }
 
     public override bool Equals(object obj)
@@ -25,11 +25,11 @@ public readonly struct GridCoord : IEquatable<GridCoord>
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(X, Y, Z);
+        return HashCode.Combine(x, y, z);
     }
 
     public static bool operator ==(GridCoord a, GridCoord b) => a.Equals(b);
     public static bool operator !=(GridCoord a, GridCoord b) => !a.Equals(b);
 
-    public override string ToString() => $"({X}, {Y}, {Z})";
+    public override string ToString() => $"({x}, {y}, {z})";
 }

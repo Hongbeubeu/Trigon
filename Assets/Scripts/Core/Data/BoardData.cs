@@ -31,9 +31,9 @@ public class BoardData
         foreach (var kvp in _cells)
         {
             var coord = kvp.Key;
-            AddToAxis(_linesByX, coord.X, coord);
-            AddToAxis(_linesByY, coord.Y, coord);
-            AddToAxis(_linesByZ, coord.Z, coord);
+            AddToAxis(_linesByX, coord.x, coord);
+            AddToAxis(_linesByY, coord.y, coord);
+            AddToAxis(_linesByZ, coord.z, coord);
         }
     }
 

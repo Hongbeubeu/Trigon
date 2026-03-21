@@ -332,6 +332,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92e6b8200ad528c43b61a4e33a1c8078, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _showGizmos: 1
+  _gizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  _gizmoFontSize: 20
 --- !u!1 &912963962
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,12 +1,7 @@
 {
-    "name": "Trigon.Board",
+    "name": "Trigon.Generated",
     "rootNamespace": "",
-    "references": [
-        "Trigon.Core",
-        "Trigon.Utils",
-        "Trigon.Generated",
-        "LeanPool"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
