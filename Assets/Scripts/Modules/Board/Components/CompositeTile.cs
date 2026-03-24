@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using DG.Tweening;
 using Lean.Pool;
 using UnityEditor;
@@ -13,7 +12,8 @@ public class CompositeTile : MonoBehaviour
     [SerializeField] private BaseTile _tilePrefab;
     public int Id { get; private set; }
     public List<BaseTile> BaseTiles => _baseTiles;
-    public List<Position2D> TileOffsets { get; } = new();
+    private List<Position2D> TileOffsets { get; } = new();
+    public List<GridCoord> GridOffsets { get; } = new();
     private Vector2 _homePosition;
     private Vector2 _homeScale;
     private Color _activeColor;
@@ -186,27 +186,19 @@ public class CompositeTile : MonoBehaviour
 
     private void TryPlaceTiles()
     {
-        var snappedPositions = new List<Position2D>();
-        var anchorPosition = TypeConversions.ToPosition2D(_baseTiles[0].transform.position);
-        for (int i = 0; i < TileOffsets.Count; i++)
+        var snappedPositions = TryGetSnappedPositions();
+        if (snappedPositions == null)
         {
-            var candidatePos = anchorPosition + TileOffsets[i];
-            var snappedPos = _boardLogic.FindNearestAvailablePosition(candidatePos, _baseTiles[i].type);
-            if (_boardLogic.IsInvalidPosition(snappedPos))
-            {
-                ResetToHome();
-                return;
-            }
-            snappedPositions.Add(snappedPos);
-            if (i == 0) anchorPosition = snappedPos;
+            ResetToHome();
+            return;
         }
+        
         var placedCoords = new List<GridCoord>();
-        for (int i = 0; i < _baseTiles.Count; i++)
+        for (var i = 0; i < _baseTiles.Count; i++)
         {
             var worldPos = TypeConversions.ToVector2(snappedPositions[i]);
             var coord = _boardLogic.PlaceTile(snappedPositions[i]);
-            _viewRegistry.SpawnPlacedTile(coord, _baseTiles[i].type, worldPos, _activeColor,
-                _defaultSortingOrder, _gameManager.TilesOnBoardZone);
+            _viewRegistry.SpawnPlacedTile(coord, _baseTiles[i].type, worldPos, _activeColor, _defaultSortingOrder, _gameManager.TilesOnBoardZone);
             placedCoords.Add(coord);
         }
         transform.DOKill();
@@ -243,29 +235,52 @@ public class CompositeTile : MonoBehaviour
 
     private List<Position2D> TryGetSnappedPositions()
     {
+        if (GridOffsets.Count != _baseTiles.Count) return null;
+
         var snappedPositions = new List<Position2D>();
-        var anchorPosition = TypeConversions.ToPosition2D(_baseTiles[0].transform.position);
-        for (var i = 0; i < TileOffsets.Count; i++)
+        var rootPos = TypeConversions.ToPosition2D(_baseTiles[0].transform.position);
+        var rootSnappedPos = _boardLogic.FindNearestAvailablePosition(rootPos, _baseTiles[0].type);
+        
+        if (_boardLogic.IsInvalidPosition(rootSnappedPos)) return null;
+
+        var rootCoord = _boardLogic.GetCoordAtPosition(rootSnappedPos);
+        snappedPositions.Add(rootSnappedPos);
+
+        for (var i = 1; i < _baseTiles.Count; i++)
         {
-            var candidatePos = anchorPosition + TileOffsets[i];
-            var snappedPos = _boardLogic.FindNearestAvailablePosition(candidatePos, _baseTiles[i].type);
-            if (_boardLogic.IsInvalidPosition(snappedPos)) return null;
-            snappedPositions.Add(snappedPos);
-            if (i == 0) anchorPosition = snappedPos;
+            var offset = GridOffsets[i];
+            var targetCoord = new GridCoord(rootCoord.x + offset.x, rootCoord.y + offset.y, rootCoord.z + offset.z);
+            var targetCell = _dataService.Board.GetTile(targetCoord);
+            
+            if (targetCell == null || targetCell.IsOccupied) return null;
+            
+            snappedPositions.Add(targetCell.WorldPosition);
         }
+
         return snappedPositions;
     }
 
     private void ComputeTileOffsets()
     {
         TileOffsets.Clear();
+        GridOffsets.Clear();
         Vector2 rootPoint = _baseTiles[0].transform.position;
         TileOffsets.Add(Position2D.ZERO);
+        GridOffsets.Add(new GridCoord(0, 0, 0));
+
+        var rootOccupied = _occupiedCoords.Count > 0 ? TypeConversions.ToGridCoord(_occupiedCoords[0]) : new GridCoord(0,0,0);
+
         for (var i = 1; i < _baseTiles.Count; i++)
         {
             Vector2 tilePoint = _baseTiles[i].transform.position;
             var delta = tilePoint - rootPoint;
             TileOffsets.Add(new Position2D(delta.x, delta.y));
+
+            if (i < _occupiedCoords.Count)
+            {
+                var coord = TypeConversions.ToGridCoord(_occupiedCoords[i]);
+                GridOffsets.Add(new GridCoord(coord.x - rootOccupied.x, coord.y - rootOccupied.y, coord.z - rootOccupied.z));
+            }
         }
     }
 

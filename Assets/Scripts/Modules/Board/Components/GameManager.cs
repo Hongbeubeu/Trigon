@@ -129,7 +129,7 @@ public class GameManager : MonoBehaviour
         _scoreService.AddScore(placedCoords.Count);
         _viewRegistry.RemoveSpawnedTile(compositeTile.Id);
 
-        int lineScore = _lineClearHandler.ClearCompletedLines(placedCoords, this);
+        var lineScore = _lineClearHandler.ClearCompletedLines(placedCoords, this);
         _scoreService.AddScore(lineScore);
 
         StartCoroutine(DelayedCheckLose());
@@ -158,10 +158,10 @@ public class GameManager : MonoBehaviour
 
         foreach (var kvp in spawnedTiles)
         {
-            var composite = kvp.Value;
-            var types = composite.BaseTiles.Select(baseTile => baseTile.type).ToList();
-            var canFit = _boardLogic.CanFitShape(composite.TileOffsets, types);
-            composite.SetPlaceable(canFit);
+            var compositeTile = kvp.Value;
+            var rootType = compositeTile.BaseTiles[0].type;
+            var canFit = _boardLogic.CanFitShape(compositeTile.GridOffsets, rootType);
+            compositeTile.SetPlaceable(canFit);
 
             if (canFit) anyCanPlace = true;
         }

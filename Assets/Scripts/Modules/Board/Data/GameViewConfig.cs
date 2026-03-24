@@ -4,12 +4,10 @@ using UnityEngine;
 public class GameViewConfig : ScriptableObject
 {
     [Header("Board")]
-    [SerializeField] private float tileWidth = 0.576f;
-    [SerializeField] private float boardStartY = 8f;
-    [SerializeField] private float boardScale = 0.5f;
+    [SerializeField] private float _tileWidth = 1f;
+    [SerializeField] private float _boardStartY;
+    [SerializeField] private float _boardScale = 1f;
     [SerializeField] private Color boardColor;
-    [SerializeField] private BoardTile upTilePrefab;
-    [SerializeField] private BoardTile downTilePrefab;
     [SerializeField] private BoardTile _boardTilePrefab;
 
     [Header("Tile Visuals")]
@@ -24,20 +22,17 @@ public class GameViewConfig : ScriptableObject
     [SerializeField] private Color disabledColor = new(176f / 255f, 176f / 255f, 176f / 255f, 1f);
 
     [Header("Placed Tiles")]
-    [SerializeField] private float placedTileScale = 1f;
-    [SerializeField] private BaseTile placedTileUpPrefab;
-    [SerializeField] private BaseTile placedTileDownPrefab;
+    [SerializeField] private float _placedTileScale = 1f;
+    [SerializeField] private BaseTile _placedTilePrefab;
 
     [Header("Spawning")]
     [SerializeField] private CompositeTile[] tilePrefabs;
     [SerializeField] private ColorPalette[] colorPalettes;
 
-    public float TileWidth => tileWidth;
-    public float BoardStartY => boardStartY;
-    public float BoardScale => boardScale;
+    public float TileWidth => _tileWidth;
+    public float BoardStartY => _boardStartY;
+    public float BoardScale => _boardScale;
     public Color BoardColor => boardColor;
-    public BoardTile UpTilePrefab => upTilePrefab;
-    public BoardTile DownTilePrefab => downTilePrefab;
     public BoardTile BoardTilePrefab => _boardTilePrefab;
 
     public int TopSortingOrder => topSortingOrder;
@@ -50,9 +45,8 @@ public class GameViewConfig : ScriptableObject
     public float PlaceholderAlpha => placeholderAlpha;
     public Color DisabledColor => disabledColor;
 
-    public float PlacedTileScale => placedTileScale;
-    public BaseTile PlacedTileUpPrefab => placedTileUpPrefab;
-    public BaseTile PlacedTileDownPrefab => placedTileDownPrefab;
+    public float PlacedTileScale => _placedTileScale;
+    public BaseTile PlacedTilePrefab => _placedTilePrefab;
 
     public CompositeTile[] TilePrefabs => tilePrefabs;
     public ColorPalette[] ColorPalettes => colorPalettes;

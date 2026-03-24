@@ -30,6 +30,7 @@ public struct GridCoord : IEquatable<GridCoord>
 
     public static bool operator ==(GridCoord a, GridCoord b) => a.Equals(b);
     public static bool operator !=(GridCoord a, GridCoord b) => !a.Equals(b);
-
+    public static GridCoord operator +(GridCoord a, GridCoord b) => new(a.x + b.x, a.y + b.y, a.z + b.z);
+    public static GridCoord operator -(GridCoord a, GridCoord b) => new(a.x - b.x, a.y - b.y, a.z - b.z);
     public override string ToString() => $"({x}, {y}, {z})";
 }

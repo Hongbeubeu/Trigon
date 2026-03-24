@@ -9,8 +9,7 @@ public class TileViewRegistry
     private readonly float _destroyAnimDuration;
     private readonly Color _boardColor;
     private readonly float _placedTileScale;
-    private readonly BaseTile _placedTileUpPrefab;
-    private readonly BaseTile _placedTileDownPrefab;
+    private readonly BaseTile _placedTilePrefab;
 
     private readonly Dictionary<GridCoord, BoardTile> _boardTileViews = new();
     private readonly Dictionary<GridCoord, BaseTile> _placedTileViews = new();
@@ -25,8 +24,7 @@ public class TileViewRegistry
         _destroyAnimDuration = viewConfig.DestroyAnimDuration;
         _boardColor = viewConfig.BoardColor;
         _placedTileScale = viewConfig.PlacedTileScale;
-        _placedTileUpPrefab = viewConfig.PlacedTileUpPrefab;
-        _placedTileDownPrefab = viewConfig.PlacedTileDownPrefab;
+        _placedTilePrefab = viewConfig.PlacedTilePrefab;
 
         GameEvents.OnGameStateChanged += OnGameStateChanged;
     }
@@ -41,14 +39,14 @@ public class TileViewRegistry
         _boardTileViews[coord] = view;
     }
 
-    public void SpawnPlacedTile(GridCoord coord, TypeTile type, Vector2 position, Color color,
-        int sortingOrder, Transform parent)
+    public void SpawnPlacedTile(GridCoord coord, TypeTile type, Vector2 position, Color color, int sortingOrder, Transform parent)
     {
-        var prefab = type == TypeTile.Up ? _placedTileUpPrefab : _placedTileDownPrefab;
-        var tile = LeanPool.Spawn(prefab, position, Quaternion.identity, parent);
+        var tile = LeanPool.Spawn(_placedTilePrefab, position, Quaternion.identity, parent);
         tile.transform.localScale = Vector3.one * _placedTileScale;
         tile.SetColor(color);
         tile.SetSortingOrder(sortingOrder);
+        tile.type = type;
+        tile.transform.rotation = type == TypeTile.Up ? Quaternion.identity : Quaternion.Euler(0f, 0f, 180f);
         _placedTileViews[coord] = tile;
     }
 
@@ -134,7 +132,7 @@ public class TileViewRegistry
     {
         foreach (var kvp in _boardTileViews)
         {
-            var cell = boardData.GetCell(kvp.Key);
+            var cell = boardData.GetTile(kvp.Key);
             if (cell != null)
             {
                 cell.WorldPosition = TypeConversions.ToPosition2D(kvp.Value.transform.position);

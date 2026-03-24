@@ -122,13 +122,13 @@ public class BoardGenerator : MonoBehaviour
     private void InstantiateTile(BoardTile prefab, Vector2 position, bool isUpTile, GridCoord gridCoord, Color boardColor, BoardData boardData, TileViewRegistry viewRegistry)
     {
         var rotation = isUpTile ? Quaternion.identity : Quaternion.Euler(0f, 0f, 180f);
-        var tileView = LeanPool.Spawn(prefab, position, rotation, transform);
-        tileView.TypeTile = isUpTile ? TypeTile.Up : TypeTile.Down;
-        tileView.SpriteRenderer.color = boardColor;
-        var cellData = new TileCellData(gridCoord, new Position2D(position.x, position.y), prefab.TypeTile);
-        boardData.RegisterCell(cellData);
-        viewRegistry.RegisterBoardTileView(gridCoord, tileView);
-        _spawnedBoardTiles.Add(tileView);
+        var boardTile = LeanPool.Spawn(prefab, position, rotation, transform);
+        boardTile.TypeTile = isUpTile ? TypeTile.Up : TypeTile.Down;
+        boardTile.SpriteRenderer.color = boardColor;
+        var tileData = new TileData(gridCoord, new Position2D(position.x, position.y), boardTile.TypeTile);
+        boardData.RegisterTiles(tileData);
+        viewRegistry.RegisterBoardTileView(gridCoord, boardTile);
+        _spawnedBoardTiles.Add(boardTile);
 #if UNITY_EDITOR
         _debugTiles.Add((position, gridCoord));
 #endif

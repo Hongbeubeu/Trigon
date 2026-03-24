@@ -24,10 +24,8 @@ public class ScoreService
 
     public void SaveMaxScoreIfNeeded()
     {
-        if (_session.Score > _persistence.LoadMaxScore())
-        {
-            _persistence.SaveMaxScore(_session.Score);
-            GameEvents.RaiseMaxScoreLoaded(_session.Score);
-        }
+        if (_session.Score <= _persistence.LoadMaxScore()) return;
+        _persistence.SaveMaxScore(_session.Score);
+        GameEvents.RaiseMaxScoreLoaded(_session.Score);
     }
 }

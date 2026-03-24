@@ -3,24 +3,24 @@ using System.Linq;
 
 public class BoardData
 {
-    private readonly Dictionary<GridCoord, TileCellData> _cells = new();
+    private readonly Dictionary<GridCoord, TileData> _tiles = new();
     private readonly Dictionary<int, List<GridCoord>> _linesByX = new();
     private readonly Dictionary<int, List<GridCoord>> _linesByY = new();
     private readonly Dictionary<int, List<GridCoord>> _linesByZ = new();
 
-    public IReadOnlyDictionary<GridCoord, TileCellData> Cells => _cells;
+    public IReadOnlyDictionary<GridCoord, TileData> Tiles => _tiles;
     public IReadOnlyDictionary<int, List<GridCoord>> LinesByX => _linesByX;
     public IReadOnlyDictionary<int, List<GridCoord>> LinesByY => _linesByY;
     public IReadOnlyDictionary<int, List<GridCoord>> LinesByZ => _linesByZ;
 
-    public void RegisterCell(TileCellData cell)
+    public void RegisterTiles(TileData tile)
     {
-        _cells[cell.Coord] = cell;
+        _tiles[tile.Coord] = tile;
     }
 
-    public TileCellData GetCell(GridCoord coord)
+    public TileData GetTile(GridCoord coord)
     {
-        return _cells.GetValueOrDefault(coord);
+        return _tiles.GetValueOrDefault(coord);
     }
 
     public void BuildAxisMappings()
@@ -29,7 +29,7 @@ public class BoardData
         _linesByY.Clear();
         _linesByZ.Clear();
 
-        foreach (var coord in _cells.Select(kvp => kvp.Key))
+        foreach (var coord in _tiles.Select(kvp => kvp.Key))
         {
             AddToAxis(_linesByX, coord.x, coord);
             AddToAxis(_linesByY, coord.y, coord);
@@ -39,7 +39,7 @@ public class BoardData
 
     public void ResetOccupancy()
     {
-        foreach (var kvp in _cells)
+        foreach (var kvp in _tiles)
         {
             kvp.Value.IsOccupied = false;
         }
@@ -47,7 +47,7 @@ public class BoardData
 
     public void SetOccupied(GridCoord coord, bool occupied)
     {
-        if (_cells.TryGetValue(coord, out var cell))
+        if (_tiles.TryGetValue(coord, out var cell))
             cell.IsOccupied = occupied;
     }
 

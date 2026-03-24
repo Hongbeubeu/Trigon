@@ -18,7 +18,7 @@ public class BoardLogic
 
     public Position2D FindNearestAvailablePosition(Position2D position, TypeTile type)
     {
-        foreach (var kvp in _data.Cells)
+        foreach (var kvp in _data.Tiles)
         {
             var cell = kvp.Value;
             if (cell.Type != type || cell.IsOccupied) continue;
@@ -39,7 +39,7 @@ public class BoardLogic
 
     public GridCoord GetCoordAtPosition(Position2D position)
     {
-        foreach (var kvp in _data.Cells)
+        foreach (var kvp in _data.Tiles)
         {
             var cell = kvp.Value;
             if (MathF.Abs(cell.WorldPosition.x - position.x) < _exactThreshold &&
@@ -63,22 +63,23 @@ public class BoardLogic
         _data.SetOccupied(coord, false);
     }
 
-    public bool CanFitShape(List<Position2D> offsets, List<TypeTile> types)
+    public bool CanFitShape(List<GridCoord> gridOffsets, TypeTile rootType)
     {
-        var rootType = types[0];
-        foreach (var kvp in _data.Cells)
+        foreach (var kvp in _data.Tiles)
         {
-            var cell = kvp.Value;
-            if (cell.IsOccupied || rootType != cell.Type) continue;
-            var anchorPosition = cell.WorldPosition;
+            var tile = kvp.Value;
+            if (tile.IsOccupied || tile.Type != rootType) continue;
+
             var canFit = true;
-            for (var i = 0; i < offsets.Count; i++)
+            foreach (var offset in gridOffsets)
             {
-                var candidatePos = FindNearestAvailablePosition(anchorPosition + offsets[i], types[i]);
-                if (!IsInvalidPosition(candidatePos)) continue;
+                var targetCoord = tile.Coord + offset;
+                var targetCell = _data.GetTile(targetCoord);
+                if (targetCell is { IsOccupied: false }) continue;
                 canFit = false;
                 break;
             }
+
             if (canFit) return true;
         }
         return false;
@@ -101,7 +102,7 @@ public class BoardLogic
 
     public static int CalculateLineScore(List<List<GridCoord>> lines)
     {
-        int totalTiles = 0;
+        var totalTiles = 0;
         foreach (var line in lines)
         {
             totalTiles += line.Count;
@@ -115,7 +116,7 @@ public class BoardLogic
         if (!axisLines.TryGetValue(axisValue, out var line)) return;
         foreach (var coord in line)
         {
-            var cell = _data.GetCell(coord);
+            var cell = _data.GetTile(coord);
             if (cell == null || !cell.IsOccupied) return;
         }
         results.Add(new List<GridCoord>(line));
