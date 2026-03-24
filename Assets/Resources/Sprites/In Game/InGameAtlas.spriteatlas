@@ -6,7 +6,7 @@ SpriteAtlas:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Sprite Atlas
+  m_Name: InGameAtlas
   m_EditorData:
     serializedVersion: 2
     textureSettings:
@@ -37,27 +37,18 @@ SpriteAtlas:
     isAtlasV2: 0
     cachedData: {fileID: 0}
     packedSpriteRenderDataKeys:
-    - e95fddb8c77dffe4c976fc074c532e2d: 21300000
     - 180b103a7b363ff419708ce2aa8436aa: 21300000
-    - 4ac913fb995b3594092dff870afefd37: 21300000
     - 14756c9c74e7344408193e3237748c1d: 21300000
     - a554d3de9297a1e47aa061ded683d687: 21300000
-    - 08915dbfb495eff4d8fa840739e5b362: 21300000
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
-  - {fileID: 21300000, guid: e95fddb8c77dffe4c976fc074c532e2d, type: 3}
   - {fileID: 21300000, guid: 180b103a7b363ff419708ce2aa8436aa, type: 3}
-  - {fileID: 21300000, guid: 4ac913fb995b3594092dff870afefd37, type: 3}
   - {fileID: 21300000, guid: 14756c9c74e7344408193e3237748c1d, type: 3}
   - {fileID: 21300000, guid: a554d3de9297a1e47aa061ded683d687, type: 3}
-  - {fileID: 21300000, guid: 08915dbfb495eff4d8fa840739e5b362, type: 3}
   m_PackedSpriteNamesToIndex:
-  - Mask Down
   - BG
-  - Mask Up
   - Trigon
   - FadeBG
-  - Triangle
   m_RenderDataMap: {}
-  m_Tag: New Sprite Atlas
+  m_Tag: InGameAtlas
   m_IsVariant: 0

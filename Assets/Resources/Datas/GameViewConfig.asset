@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c6f0e367aa2b8a498b3109507c366e6, type: 3}
   m_Name: GameViewConfig
   m_EditorClassIdentifier: Assembly-CSharp::GameViewConfig
-  tileWidth: 1
-  boardStartY: 8
-  boardScale: 1
-  boardColor: {r: 0.1981132, g: 0.1981132, b: 0.1981132, a: 0.85882354}
+  _tileWidth: 1
+  _boardScale: 1
+  boardColor: {r: 0.25490198, g: 0.2509804, b: 0.27058825, a: 1}
   _boardTilePrefab: {fileID: 720134715493726965, guid: 4cf12d63af0151d439f53567cbc8395f,
     type: 3}
   topSortingOrder: 5
@@ -26,7 +25,7 @@ MonoBehaviour:
   dragSpeed: 100
   destroyAnimDuration: 0.3
   placeholderAlpha: 0.5
-  disabledColor: {r: 0.6901961, g: 0.6901961, b: 0.6901961, a: 0.7529412}
+  disabledColor: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 0.5686275}
   _placedTileScale: 0.95
   _placedTilePrefab: {fileID: -1573004039936141054, guid: b5c8a6124d0b2424c84ed1fa0939e77a,
     type: 3}

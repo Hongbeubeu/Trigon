@@ -5,7 +5,6 @@ public class GameViewConfig : ScriptableObject
 {
     [Header("Board")]
     [SerializeField] private float _tileWidth = 1f;
-    [SerializeField] private float _boardStartY;
     [SerializeField] private float _boardScale = 1f;
     [SerializeField] private Color boardColor;
     [SerializeField] private BoardTile _boardTilePrefab;
@@ -30,7 +29,6 @@ public class GameViewConfig : ScriptableObject
     [SerializeField] private ColorPalette[] colorPalettes;
 
     public float TileWidth => _tileWidth;
-    public float BoardStartY => _boardStartY;
     public float BoardScale => _boardScale;
     public Color BoardColor => boardColor;
     public BoardTile BoardTilePrefab => _boardTilePrefab;
