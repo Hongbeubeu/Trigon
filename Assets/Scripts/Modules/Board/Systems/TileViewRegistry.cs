@@ -44,7 +44,7 @@ public class TileViewRegistry
     public void SpawnPlacedTile(GridCoord coord, TypeTile type, Vector2 position, Color color,
         int sortingOrder, Transform parent)
     {
-        var prefab = type == TypeTile.UP ? _placedTileUpPrefab : _placedTileDownPrefab;
+        var prefab = type == TypeTile.Up ? _placedTileUpPrefab : _placedTileDownPrefab;
         var tile = LeanPool.Spawn(prefab, position, Quaternion.identity, parent);
         tile.transform.localScale = Vector3.one * _placedTileScale;
         tile.SetColor(color);

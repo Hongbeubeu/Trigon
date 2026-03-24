@@ -10,6 +10,7 @@ public class GameViewConfig : ScriptableObject
     [SerializeField] private Color boardColor;
     [SerializeField] private BoardTile upTilePrefab;
     [SerializeField] private BoardTile downTilePrefab;
+    [SerializeField] private BoardTile _boardTilePrefab;
 
     [Header("Tile Visuals")]
     [SerializeField] private int topSortingOrder = 5;
@@ -37,6 +38,7 @@ public class GameViewConfig : ScriptableObject
     public Color BoardColor => boardColor;
     public BoardTile UpTilePrefab => upTilePrefab;
     public BoardTile DownTilePrefab => downTilePrefab;
+    public BoardTile BoardTilePrefab => _boardTilePrefab;
 
     public int TopSortingOrder => topSortingOrder;
     public int DefaultSortingOrder => defaultSortingOrder;

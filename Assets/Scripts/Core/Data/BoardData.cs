@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 public class BoardData
 {
@@ -19,7 +20,7 @@ public class BoardData
 
     public TileCellData GetCell(GridCoord coord)
     {
-        return _cells.TryGetValue(coord, out var cell) ? cell : null;
+        return _cells.GetValueOrDefault(coord);
     }
 
     public void BuildAxisMappings()
@@ -28,9 +29,8 @@ public class BoardData
         _linesByY.Clear();
         _linesByZ.Clear();
 
-        foreach (var kvp in _cells)
+        foreach (var coord in _cells.Select(kvp => kvp.Key))
         {
-            var coord = kvp.Key;
             AddToAxis(_linesByX, coord.x, coord);
             AddToAxis(_linesByY, coord.y, coord);
             AddToAxis(_linesByZ, coord.z, coord);

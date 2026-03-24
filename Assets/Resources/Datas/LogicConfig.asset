@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: LogicConfig
   m_EditorClassIdentifier: Assembly-CSharp::LogicConfig
   boardRowCount: 12
-  boardMinAxisValue: 4
+  _cutOffLines: 4
   snapThreshold: 0.3
   exactMatchThreshold: 0.01
   tilesPerSpawn: 3

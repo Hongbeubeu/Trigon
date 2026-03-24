@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Lean.Pool;
 using UnityEngine;
 
@@ -153,18 +154,13 @@ public class GameManager : MonoBehaviour
         var spawnedTiles = _viewRegistry.SpawnedTiles;
         if (spawnedTiles.Count == 0 || _stateMachine.CurrentKey == GameState.Lost) return;
 
-        bool anyCanPlace = false;
+        var anyCanPlace = false;
 
         foreach (var kvp in spawnedTiles)
         {
             var composite = kvp.Value;
-            var types = new List<TypeTile>();
-            foreach (var baseTile in composite.BaseTiles)
-            {
-                types.Add(baseTile.type);
-            }
-
-            bool canFit = _boardLogic.CanFitShape(composite.TileOffsets, types);
+            var types = composite.BaseTiles.Select(baseTile => baseTile.type).ToList();
+            var canFit = _boardLogic.CanFitShape(composite.TileOffsets, types);
             composite.SetPlaceable(canFit);
 
             if (canFit) anyCanPlace = true;

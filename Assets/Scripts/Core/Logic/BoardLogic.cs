@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 public class BoardLogic
 {
-    private static readonly Position2D INVALID_POSITION = new(-100f, 0f);
-
+    // todo Fix logic check loose
+    private static readonly Position2D InvalidPosition = new(float.MaxValue, float.MaxValue);
     private readonly BoardData _data;
     private readonly float _snapThreshold;
     private readonly float _exactThreshold;
@@ -22,21 +22,19 @@ public class BoardLogic
         {
             var cell = kvp.Value;
             if (cell.Type != type || cell.IsOccupied) continue;
-
             if (MathF.Abs(cell.WorldPosition.x - position.x) < _snapThreshold &&
                 MathF.Abs(cell.WorldPosition.y - position.y) < _snapThreshold)
             {
                 return cell.WorldPosition;
             }
         }
-
-        return INVALID_POSITION;
+        return InvalidPosition;
     }
 
     public bool IsInvalidPosition(Position2D position)
     {
-        return MathF.Abs(position.x - INVALID_POSITION.x) < 1e-4f &&
-               MathF.Abs(position.y - INVALID_POSITION.y) < 1e-4f;
+        return MathF.Abs(position.x - InvalidPosition.x) < 1e-4f &&
+               MathF.Abs(position.y - InvalidPosition.y) < 1e-4f;
     }
 
     public GridCoord GetCoordAtPosition(Position2D position)
@@ -50,14 +48,13 @@ public class BoardLogic
                 return cell.Coord;
             }
         }
-
         return new GridCoord(-100, 0, 0);
     }
 
     public GridCoord PlaceTile(Position2D tileWorldPosition)
     {
         var coord = GetCoordAtPosition(tileWorldPosition);
-        _data.SetOccupied(coord, true);
+        _data.SetOccupied(coord, true); 
         return coord;
     }
 
@@ -69,30 +66,21 @@ public class BoardLogic
     public bool CanFitShape(List<Position2D> offsets, List<TypeTile> types)
     {
         var rootType = types[0];
-
         foreach (var kvp in _data.Cells)
         {
             var cell = kvp.Value;
             if (cell.IsOccupied || rootType != cell.Type) continue;
-
             var anchorPosition = cell.WorldPosition;
-            bool fits = true;
-
-            for (int i = 0; i < offsets.Count; i++)
+            var canFit = true;
+            for (var i = 0; i < offsets.Count; i++)
             {
-                var candidatePos = FindNearestAvailablePosition(
-                    anchorPosition + offsets[i], types[i]);
-
-                if (IsInvalidPosition(candidatePos))
-                {
-                    fits = false;
-                    break;
-                }
+                var candidatePos = FindNearestAvailablePosition(anchorPosition + offsets[i], types[i]);
+                if (!IsInvalidPosition(candidatePos)) continue;
+                canFit = false;
+                break;
             }
-
-            if (fits) return true;
+            if (canFit) return true;
         }
-
         return false;
     }
 
@@ -102,14 +90,12 @@ public class BoardLogic
         var checkedX = new HashSet<int>();
         var checkedY = new HashSet<int>();
         var checkedZ = new HashSet<int>();
-
         foreach (var coord in recentCoords)
         {
             TryCollectLine(_data.LinesByX, coord.x, checkedX, result);
             TryCollectLine(_data.LinesByY, coord.y, checkedY, result);
             TryCollectLine(_data.LinesByZ, coord.z, checkedZ, result);
         }
-
         return result;
     }
 
@@ -120,25 +106,18 @@ public class BoardLogic
         {
             totalTiles += line.Count;
         }
-
         return totalTiles * lines.Count;
     }
 
-    private void TryCollectLine(
-        IReadOnlyDictionary<int, List<GridCoord>> axisLines,
-        int axisValue,
-        HashSet<int> alreadyChecked,
-        List<List<GridCoord>> results)
+    private void TryCollectLine(IReadOnlyDictionary<int, List<GridCoord>> axisLines, int axisValue, HashSet<int> alreadyChecked, List<List<GridCoord>> results)
     {
         if (!alreadyChecked.Add(axisValue)) return;
         if (!axisLines.TryGetValue(axisValue, out var line)) return;
-
         foreach (var coord in line)
         {
             var cell = _data.GetCell(coord);
             if (cell == null || !cell.IsOccupied) return;
         }
-
         results.Add(new List<GridCoord>(line));
     }
 }

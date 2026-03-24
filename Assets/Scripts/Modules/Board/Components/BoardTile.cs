@@ -2,10 +2,7 @@ using UnityEngine;
 
 public class BoardTile : MonoBehaviour
 {
-    public TypeTile type;
-    [HideInInspector] public bool isContainsTile;
-    [HideInInspector] public Vector3 positionInMatrix;
-
-    private SpriteRenderer _spriteRenderer;
+    [SerializeField] private SpriteRenderer _spriteRenderer;
+    public TypeTile TypeTile { get; set; }
     public SpriteRenderer SpriteRenderer => _spriteRenderer ??= GetComponent<SpriteRenderer>();
 }

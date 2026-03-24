@@ -1,5 +1,5 @@
 public enum TypeTile
 {
-    UP,
-    DOWN
+    Up,
+    Down
 }

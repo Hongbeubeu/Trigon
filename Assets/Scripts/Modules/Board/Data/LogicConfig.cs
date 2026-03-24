@@ -5,7 +5,7 @@ public class LogicConfig : ScriptableObject
 {
     [Header("Board Rules")]
     [SerializeField] private int boardRowCount = 12;
-    [SerializeField] private int boardMinAxisValue = 4;
+    [SerializeField] private int _cutOffLines = 4;
     [SerializeField] private float snapThreshold = 0.25f;
     [SerializeField] private float exactMatchThreshold = 0.01f;
 
@@ -19,7 +19,7 @@ public class LogicConfig : ScriptableObject
     [SerializeField] private string maxScoreKey = "MaxScore";
 
     public int BoardRowCount => boardRowCount;
-    public int BoardMinAxisValue => boardMinAxisValue;
+    public int CutOffLines => _cutOffLines;
     public float SnapThreshold => snapThreshold;
     public float ExactMatchThreshold => exactMatchThreshold;
     public int TilesPerSpawn => tilesPerSpawn;
