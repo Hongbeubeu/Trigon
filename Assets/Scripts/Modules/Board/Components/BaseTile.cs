@@ -2,6 +2,10 @@ using UnityEngine;
 using DG.Tweening;
 using Lean.Pool;
 
+/// <summary>
+/// Simple logical representation of a single hexagonal piece
+/// used to assemble larger CompositeTiles.
+/// </summary>
 public class BaseTile : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer spriteRenderer;

@@ -1,6 +1,9 @@
 using Lean.Pool;
 using UnityEngine;
 
+/// <summary>
+/// Responsible for instantiating new randomized puzzle pieces into the player's UI rack.
+/// </summary>
 public class TileSpawner : MonoBehaviour
 {
     [SerializeField] private Transform[] _spawnZones;

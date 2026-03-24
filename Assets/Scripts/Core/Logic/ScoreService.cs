@@ -1,4 +1,7 @@
-public class ScoreService
+/// <summary>
+/// Manages player scoring across game sessions and persisting high scores.
+/// </summary>
+public class ScoreService : IScoreService
 {
     private readonly GameSessionData _session;
     private readonly IScorePersistence _persistence;

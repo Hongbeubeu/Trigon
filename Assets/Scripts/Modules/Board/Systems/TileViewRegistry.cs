@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using Lean.Pool;
 using UnityEngine;
 
-public class TileViewRegistry
+/// <summary>
+/// An isolation dictionary connecting pure mathematical logic grid coordinates
+/// to their visually instantiated Unity GameObject representations on screen.
+/// </summary>
+public class TileViewRegistry : ITileViewRegistry
 {
     private readonly float _clearTileDelay;
     private readonly float _destroyAnimDuration;
@@ -70,7 +74,7 @@ public class TileViewRegistry
         _placedTileViews.Remove(coord);
     }
 
-    public IEnumerator AnimateClearLine(List<GridCoord> line, BoardLogic boardLogic)
+    public IEnumerator AnimateClearLine(List<GridCoord> line, IBoardLogic boardLogic)
     {
         foreach (var coord in line)
         {

@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 
+/// <summary>
+/// Acts as the source-of-truth container for all hexagonal grid cells.
+/// Tracks line axes and cell occupancies internally.
+/// </summary>
 public class BoardData
 {
     private readonly Dictionary<GridCoord, TileData> _tiles = new();

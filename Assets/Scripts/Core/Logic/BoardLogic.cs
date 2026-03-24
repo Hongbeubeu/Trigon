@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
 
-public class BoardLogic
+/// <summary>
+/// Provides mathematics and collision detection for hexagon tile placement.
+/// Operates exclusively on GridCoords without Unity physics bindings.
+/// </summary>
+public class BoardLogic : IBoardLogic
 {
     // todo Fix logic check loose
     private static readonly Position2D InvalidPosition = new(float.MaxValue, float.MaxValue);

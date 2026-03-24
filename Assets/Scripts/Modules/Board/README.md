@@ -1,54 +1,15 @@
-# Board Module (`Trigon.Board`)
+# Trigon `Modules.Board` Assembly
 
-Unity bridge layer that connects the pure C# core to Unity's runtime. Contains all MonoBehaviours, ScriptableObject configs, visual rendering, and input handling.
+This module represents the active Gameplay implementation layer. It marries the pure mathematical `Core` structures to tangible Unity rendering, input, and lifecycle events.
 
-**Dependencies:** `Trigon.Core`, `Trigon.Utils`
+## Architectural Rules
 
-## Structure
+1. **SOLID Principles Enforcement**: Scripts must adhere strictly to SOLID, especially Single Responsibility. God classes are not permitted; components should handle distinct, laser-focused jobs.
+2. **Dependency Inversion**: You should retrieve `Core` functionality through explicitly defined Interfaces (`IBoardLogic`, `IDataService`) via `ServiceLocator.Get<T>()`, NOT by instantiating complex concrete types manually.
+3. **Scope Segregation**: Do not put non-gameplay UI components here. Visuals here are strictly world-space gameplay implementations (Tiles, Board Generation, Visual Polish).
 
-```
-Modules/Board/
-├── Components/     MonoBehaviours attached to GameObjects
-│   ├── GameManager       Orchestrator: creates services, wires events, manages game flow
-│   ├── BaseTile          Tile view: sprite color, sorting order, destroy animation
-│   ├── BoardTile         Board cell view: holds TypeTile for prefab identity
-│   ├── CompositeTile     Drag-and-drop input + placement validation + visual feedback
-│   ├── BoardGenerator    Instantiates board tile prefabs, populates BoardData
-│   ├── TileSpawner       Spawns random composite tile pieces in spawn zones
-│   └── InputHandler      Keyboard input (Escape key → fires OnPauseRequested)
-├── Data/           ScriptableObject configuration databases
-│   ├── LogicConfig       Game rules: thresholds, timings, row count, frame rate
-│   ├── GameViewConfig    Visual config: prefabs, colors, scales, sorting orders
-│   └── ColorPalette      Color pack arrays for random tile coloring
-├── Systems/        Services and coordinators (plain C# classes using Unity APIs)
-│   ├── ConfigService              Provides LogicConfig + GameViewConfig to consumers
-│   ├── TileViewRegistry           Maps GridCoord → view GameObjects, handles animations
-│   ├── LineClearHandler           Coordinates line detection (core) + clearing animation (view)
-│   └── PlayerPrefsScorePersistence  Implements IScorePersistence via PlayerPrefs
-└── Bridge/         Type conversion utilities
-    └── TypeConversions    GridCoord ↔ Vector3Int, Position2D ↔ Vector2
-```
-
-## Data Flow
-
-```
-Unity Input (CompositeTile drag, InputHandler keys)
-    ↓
-GameManager (orchestrator)
-    ↓
-Core Logic (BoardLogic, ScoreService, StateMachine)
-    ↓
-GameEvents (pure C# events)
-    ↓
-View Updates (TileViewRegistry, PopupManager, HudView)
-```
-
-## ScriptableObject Setup
-
-Create these assets via **Right-click → Create → Trigon**:
-
-| Asset | Menu Path | Assign To |
-|---|---|---|
-| LogicConfig | Trigon / Logic Config | GameManager |
-| GameViewConfig | Trigon / Game View Config | GameManager |
-| ColorPalette | Trigon / Color Palette | GameViewConfig |
+## Core Components
+- **`GameBootstrapper`**: Governs Unity initialization execution order, instantiating services, and writing them into the app's `ServiceLocator` during `Awake()`.
+- **`GameStateController`**: Drives transitioning logic across states (idle, dragging, pause menus).
+- **`CompositeTile`**: User-interactable shape objects that compute internal Unity bounds to evaluate grid placement routing.
+- **`TileViewRegistry`**: In-game dictionary of visual `BoardTile` and spawned instances—an isolation boundary between pure physics placement coordinates and active rendering.

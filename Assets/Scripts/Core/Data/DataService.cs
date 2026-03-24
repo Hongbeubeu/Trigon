@@ -1,4 +1,4 @@
-public class DataService
+public class DataService : IDataService
 {
     public BoardData Board { get; } = new();
     public GameSessionData Session { get; } = new();

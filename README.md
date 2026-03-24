@@ -34,20 +34,23 @@ Each layer is compiled as a separate **Assembly Definition**:
 | `Trigon.Board` | Unity | MonoBehaviours, visual rendering, input |
 | `Trigon.UI` | Unity + TMPro | HUD, popup manager, concrete popups |
 | `Trigon.Utils` | Unity | ServiceLocator IoC container |
+| `Trigon.Generated` | Unity | Auto-generated standard bindings |
 
-See each folder's README for details:
+See each folder's README for detailed architectural rules:
 - [Core](Assets/Scripts/Core/README.md) - Pure C# gameplay engine
 - [Modules/Board](Assets/Scripts/Modules/Board/README.md) - Unity bridge and game components
 - [UI](Assets/Scripts/UI/README.md) - UI framework and popups
 - [Utils](Assets/Scripts/Utils/README.md) - Utility patterns
+- [Generated](Assets/Scripts/Generated/README.md) - Auto-generated scripts
 
-## Key Design Patterns
+## Key Design Patterns & SOLID Integrity
 
-- **State Machine** - Generic `StateMachine<T>` manages game states (Playing, Paused, Lost)
-- **Service Locator** - Lightweight IoC container for dependency resolution
-- **Event Bus** - Static `GameEvents` decouples systems via `Action` delegates
-- **ScriptableObject Databases** - `LogicConfig`, `GameViewConfig`, `ColorPalette` for data-driven design
-- **Popup System** - `BasePopup`/`PopupManager` framework with self-managed popup instances
+- **Dependency Inversion (DIP)** - Abstract logic heavily favors interface injection (`IDataService`, `IBoardLogic`) to protect the pure Core.
+- **Single Responsibility (SRP)** - Systems are aggressively decoupled (e.g. `GameBootstrapper` for initialization vs. `GameStateController` for logic).
+- **State Machine** - Generic `StateMachine<T>` manages game states (Playing, Paused, Lost).
+- **Service Locator** - Lightweight IoC container for abstracted dependency resolution.
+- **Event Bus** - Static `GameEvents` decouples systems via `Action` delegates.
+- **Popup System** - `BasePopup`/`PopupManager` framework with self-managed popup instances.
 
 ## Installation
 

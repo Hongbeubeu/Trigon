@@ -1,99 +1,52 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Lean.Pool;
 using UnityEngine;
 
+/// <summary>
+/// The central routing component for active gameplay. Exclusively manages
+/// checking lose conditions and broadcasting score/line clear events.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     [Header("Scene References")]
-    [SerializeField] private BoardGenerator boardGenerator;
     [SerializeField] private TileSpawner tileSpawner;
     [SerializeField] private Transform tilesOnBoardZone;
 
-    [Header("Config Databases")]
-    [SerializeField] private LogicConfig logicConfig;
-    [SerializeField] private GameViewConfig gameViewConfig;
-
-    private DataService _dataService;
-    private BoardLogic _boardLogic;
-    private LineClearHandler _lineClearHandler;
-    private ScoreService _scoreService;
-    private TileViewRegistry _viewRegistry;
-    private StateMachine<GameState> _stateMachine;
+    private IDataService _dataService;
+    private IBoardLogic _boardLogic;
+    private ILineClearHandler _lineClearHandler;
+    private IScoreService _scoreService;
+    private ITileViewRegistry _viewRegistry;
+    private GameStateController _stateController;
+    private ConfigService _configService;
 
     public Transform TilesOnBoardZone => tilesOnBoardZone;
 
-    private void Awake()
+    private void Start()
     {
-        var configService = new ConfigService(logicConfig, gameViewConfig);
-        ServiceLocator.Register(configService);
+        _dataService = ServiceLocator.Get<IDataService>();
+        _boardLogic = ServiceLocator.Get<IBoardLogic>();
+        _lineClearHandler = ServiceLocator.Get<ILineClearHandler>();
+        _scoreService = ServiceLocator.Get<IScoreService>();
+        _viewRegistry = ServiceLocator.Get<ITileViewRegistry>();
+        _stateController = ServiceLocator.Get<GameStateController>();
+        _configService = ServiceLocator.Get<ConfigService>();
 
-        Application.targetFrameRate = logicConfig.TargetFrameRate;
-
-        _dataService = new DataService();
-        var persistence = new PlayerPrefsScorePersistence(logicConfig.MaxScoreKey);
-        _boardLogic = new BoardLogic(_dataService.Board, logicConfig.SnapThreshold, logicConfig.ExactMatchThreshold);
-        _viewRegistry = new TileViewRegistry(logicConfig, gameViewConfig);
-        _scoreService = new ScoreService(_dataService.Session, persistence);
-        _lineClearHandler = new LineClearHandler(_boardLogic, _viewRegistry);
-
-        InitStateMachine();
-
-        ServiceLocator.Register(_dataService);
-        ServiceLocator.Register(_boardLogic);
-        ServiceLocator.Register(_viewRegistry);
         ServiceLocator.Register(this);
 
-        boardGenerator.Generate(_dataService.Board, _viewRegistry, logicConfig, gameViewConfig);
-        _viewRegistry.SyncWorldPositions(_dataService.Board);
-    }
-
-    private void InitStateMachine()
-    {
-        _stateMachine = new StateMachine<GameState>();
-
-        var context = new GameContext(_dataService.Session, _scoreService, _stateMachine);
-
-        _stateMachine.RegisterState(GameState.Playing, new PlayingState(context));
-        _stateMachine.RegisterState(GameState.Paused, new PausedState(context));
-        _stateMachine.RegisterState(GameState.Lost, new LostState(context));
+        _dataService.Board.BuildAxisMappings();
+        StartNewGame();
     }
 
     private void OnEnable()
     {
-        GameEvents.OnPauseRequested += OnPauseRequested;
-        GameEvents.OnResumeRequested += OnResumeRequested;
         GameEvents.OnReplayRequested += OnReplayRequested;
     }
 
     private void OnDisable()
     {
-        GameEvents.OnPauseRequested -= OnPauseRequested;
-        GameEvents.OnResumeRequested -= OnResumeRequested;
         GameEvents.OnReplayRequested -= OnReplayRequested;
-    }
-
-    private void Start()
-    {
-        _dataService.Board.BuildAxisMappings();
-        StartNewGame();
-    }
-
-    private void Update()
-    {
-        _stateMachine.Update();
-    }
-
-    private void OnPauseRequested()
-    {
-        if (_stateMachine.CurrentKey == GameState.Playing)
-            _stateMachine.ChangeState(GameState.Paused);
-    }
-
-    private void OnResumeRequested()
-    {
-        _stateMachine.ChangeState(GameState.Playing);
     }
 
     private void OnReplayRequested()
@@ -107,7 +60,7 @@ public class GameManager : MonoBehaviour
         _viewRegistry.ClearSpawnedTiles();
         _viewRegistry.ClearPlacedTiles();
 
-        _stateMachine.ChangeState(GameState.Playing);
+        _stateController.ChangeState(GameState.Playing);
         _scoreService.Reset();
         tileSpawner.ResetSpawnZones();
         tileSpawner.SpawnTiles();
@@ -152,7 +105,7 @@ public class GameManager : MonoBehaviour
     private void CheckLose()
     {
         var spawnedTiles = _viewRegistry.SpawnedTiles;
-        if (spawnedTiles.Count == 0 || _stateMachine.CurrentKey == GameState.Lost) return;
+        if (spawnedTiles.Count == 0 || _stateController.CurrentState == GameState.Lost) return;
 
         var anyCanPlace = false;
 
@@ -168,13 +121,13 @@ public class GameManager : MonoBehaviour
 
         if (!anyCanPlace)
         {
-            _stateMachine.ChangeState(GameState.Lost);
+            _stateController.ChangeState(GameState.Lost);
         }
     }
 
     private IEnumerator DelayedCheckLose()
     {
-        yield return new WaitForSeconds(logicConfig.LineClearSettleDelay);
+        yield return new WaitForSeconds(_configService.Logic.LineClearSettleDelay);
         CheckLose();
     }
 
@@ -189,11 +142,6 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        _viewRegistry.Dispose();
-        ServiceLocator.Unregister<ConfigService>();
-        ServiceLocator.Unregister<DataService>();
-        ServiceLocator.Unregister<BoardLogic>();
-        ServiceLocator.Unregister<TileViewRegistry>();
         ServiceLocator.Unregister<GameManager>();
         StopAllCoroutines();
     }

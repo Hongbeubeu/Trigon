@@ -1,29 +1,9 @@
-# Utils (`Trigon.Utils`)
+# Trigon `Utils` Assembly
 
-Reusable utility classes and design pattern implementations. No game-specific logic.
+This assembly contains globally sharable abstractions, design patterns, and generalized helpers.
 
-**Dependencies:** None
+## Architectural Rules
 
-## Structure
-
-```
-Utils/
-└── Patterns/
-    └── ServiceLocator    Lightweight IoC container for runtime dependency resolution
-```
-
-## ServiceLocator
-
-A generic static service registry used by Unity MonoBehaviours to resolve dependencies at runtime.
-
-**API:**
-- `Register<T>(T service)` — register a service instance
-- `Get<T>()` — resolve a service (logs error if not found)
-- `TryGet<T>(out T service)` — safe resolution with boolean result
-- `Unregister<T>()` — remove a service registration
-- `Clear()` — remove all registrations
-
-**Usage pattern:**
-- Pure C# classes (Core) use **constructor injection** — no ServiceLocator
-- Unity MonoBehaviours (Board, UI) use **ServiceLocator** for runtime resolution
-- Services are registered in `GameManager.Awake()` and unregistered in `OnDestroy()`
+1. **Maximum Reusability**: Classes here (like `ServiceLocator`, extensions, formatters) must be completely agnostic to the specific rules of the Trigon game.
+2. **Global Access**: Since utilities are referenced universally across `Modules` and `UI`, code here must be completely side-effect free and thread-safe where possible.
+3. **No Cross-Talk**: Code in `Utils` cannot reference `Core`, `Board`, or `UI` directly. It sits at the absolute foundation (alongside `Core`) and strictly provides scaffolding structure for the application.

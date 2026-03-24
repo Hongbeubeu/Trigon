@@ -333,6 +333,7 @@ GameObject:
   m_Component:
   - component: {fileID: 854669868}
   - component: {fileID: 854669869}
+  - component: {fileID: 854669870}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
@@ -367,11 +368,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92e6b8200ad528c43b61a4e33a1c8078, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _camera: {fileID: 519420031}
-  _targetRect: {fileID: 374887590}
+  _cameraFitter: {fileID: 854669870}
   _showGizmos: 0
   _gizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   _gizmoFontSize: 20
+--- !u!114 &854669870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 854669867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e7b8725a3e64004c8379d36d38f850a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Trigon.Board::BoardCameraFitter
+  _camera: {fileID: 519420031}
+  _targetRect: {fileID: 374887590}
 --- !u!1 &1024694343
 GameObject:
   m_ObjectHideFlags: 0
@@ -633,6 +647,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2010693086}
   - component: {fileID: 2010693087}
+  - component: {fileID: 2010693088}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -667,11 +682,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9bc918a99277a44fa842d2a603876cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boardGenerator: {fileID: 854669869}
   tileSpawner: {fileID: 1628060463}
   tilesOnBoardZone: {fileID: 1504249774}
+--- !u!114 &2010693088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2010693085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b30537b655d66849a74c5a7205d8744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Trigon.Board::GameBootstrapper
   logicConfig: {fileID: 11400000, guid: f7588c76ce32e4f459b0dc64706a0340, type: 2}
   gameViewConfig: {fileID: 11400000, guid: 18a658200c3ffb145a7c15df98c93d2e, type: 2}
+  boardGenerator: {fileID: 854669869}
 --- !u!1 &2073460359
 GameObject:
   m_ObjectHideFlags: 0

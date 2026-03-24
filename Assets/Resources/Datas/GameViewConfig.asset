@@ -20,7 +20,7 @@ MonoBehaviour:
   topSortingOrder: 5
   defaultSortingOrder: 2
   pickupScale: 1
-  spawnScale: 0.95
+  spawnScale: 0.9
   dragYOffset: 2
   dragSpeed: 100
   destroyAnimDuration: 0.3
