@@ -31,7 +31,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5146808024711013123}
+  - {fileID: 3209301607473043147}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-755217072793674681
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _baseTiles:
-  - {fileID: 6969104832511273766}
+  - {fileID: 816175744861871854}
   _occupiedCoords:
   - {x: 1, y: 0, z: 0}
   _tilePrefab: {fileID: -1573004039936141054, guid: b5c8a6124d0b2424c84ed1fa0939e77a,
@@ -98,7 +98,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 4, y: 4}
   m_EdgeRadius: 0
---- !u!1001 &764673792064680484
+--- !u!1001 &7023419337152268268
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -108,13 +108,13 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -1573004039936141054, guid: b5c8a6124d0b2424c84ed1fa0939e77a,
         type: 3}
-      propertyPath: type
+      propertyPath: tileType
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5616420165216850210, guid: b5c8a6124d0b2424c84ed1fa0939e77a,
         type: 3}
       propertyPath: m_Name
-      value: Triangle
+      value: BaseTile
       objectReference: {fileID: 0}
     - target: {fileID: 5616420165216850215, guid: b5c8a6124d0b2424c84ed1fa0939e77a,
         type: 3}
@@ -171,17 +171,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b5c8a6124d0b2424c84ed1fa0939e77a, type: 3}
---- !u!4 &5146808024711013123 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5616420165216850215, guid: b5c8a6124d0b2424c84ed1fa0939e77a,
-    type: 3}
-  m_PrefabInstance: {fileID: 764673792064680484}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &6969104832511273766 stripped
+--- !u!114 &816175744861871854 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: -1573004039936141054, guid: b5c8a6124d0b2424c84ed1fa0939e77a,
     type: 3}
-  m_PrefabInstance: {fileID: 764673792064680484}
+  m_PrefabInstance: {fileID: 7023419337152268268}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -189,3 +183,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0e844e5ed4dd1a4bb85d15199e3460f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &3209301607473043147 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5616420165216850215, guid: b5c8a6124d0b2424c84ed1fa0939e77a,
+    type: 3}
+  m_PrefabInstance: {fileID: 7023419337152268268}
+  m_PrefabAsset: {fileID: 0}

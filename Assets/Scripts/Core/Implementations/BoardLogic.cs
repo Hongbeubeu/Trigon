@@ -7,7 +7,6 @@ using System.Collections.Generic;
 /// </summary>
 public class BoardLogic : IBoardLogic
 {
-    // todo Fix logic check loose
     private static readonly Position2D InvalidPosition = new(float.MaxValue, float.MaxValue);
     private readonly BoardData _data;
     private readonly float _snapThreshold;
@@ -20,12 +19,12 @@ public class BoardLogic : IBoardLogic
         _exactThreshold = exactThreshold;
     }
 
-    public Position2D FindNearestAvailablePosition(Position2D position, TypeTile type)
+    public Position2D FindNearestAvailablePosition(Position2D position, TileType tileType)
     {
         foreach (var kvp in _data.Tiles)
         {
             var cell = kvp.Value;
-            if (cell.Type != type || cell.IsOccupied) continue;
+            if (cell.TileType != tileType || cell.IsOccupied) continue;
             if (MathF.Abs(cell.WorldPosition.x - position.x) < _snapThreshold &&
                 MathF.Abs(cell.WorldPosition.y - position.y) < _snapThreshold)
             {
@@ -67,12 +66,12 @@ public class BoardLogic : IBoardLogic
         _data.SetOccupied(coord, false);
     }
 
-    public bool CanFitShape(List<GridCoord> gridOffsets, TypeTile rootType)
+    public bool CanFitShape(List<GridCoord> gridOffsets, TileType rootTileType)
     {
         foreach (var kvp in _data.Tiles)
         {
             var tile = kvp.Value;
-            if (tile.IsOccupied || tile.Type != rootType) continue;
+            if (tile.IsOccupied || tile.TileType != rootTileType) continue;
 
             var canFit = true;
             foreach (var offset in gridOffsets)

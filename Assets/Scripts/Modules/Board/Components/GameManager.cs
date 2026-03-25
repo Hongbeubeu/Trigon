@@ -112,7 +112,7 @@ public class GameManager : MonoBehaviour
         foreach (var kvp in spawnedTiles)
         {
             var compositeTile = kvp.Value;
-            var rootType = compositeTile.BaseTiles[0].type;
+            var rootType = compositeTile.BaseTiles[0].tileType;
             var canFit = _boardLogic.CanFitShape(compositeTile.GridOffsets, rootType);
             compositeTile.SetPlaceable(canFit);
 

@@ -80,9 +80,9 @@ public class BoardGenerator : MonoBehaviour
     {
         var rotation = isUpTile ? Quaternion.identity : Quaternion.Euler(0f, 0f, 180f);
         var boardTile = LeanPool.Spawn(prefab, position, rotation, transform);
-        boardTile.TypeTile = isUpTile ? TypeTile.Up : TypeTile.Down;
+        boardTile.TileType = isUpTile ? TileType.Up : TileType.Down;
         boardTile.SpriteRenderer.color = boardColor;
-        var tileData = new TileData(gridCoord, new Position2D(position.x, position.y), boardTile.TypeTile);
+        var tileData = new TileData(gridCoord, new Position2D(position.x, position.y), boardTile.TileType);
         boardData.RegisterTiles(tileData);
         viewRegistry.RegisterBoardTileView(gridCoord, boardTile);
         _spawnedBoardTiles.Add(boardTile);

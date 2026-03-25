@@ -43,14 +43,14 @@ public class TileViewRegistry : ITileViewRegistry
         _boardTileViews[coord] = view;
     }
 
-    public void SpawnPlacedTile(GridCoord coord, TypeTile type, Vector2 position, Color color, int sortingOrder, Transform parent)
+    public void SpawnPlacedTile(GridCoord coord, TileType tileType, Vector2 position, Color color, int sortingOrder, Transform parent)
     {
         var tile = LeanPool.Spawn(_placedTilePrefab, position, Quaternion.identity, parent);
         tile.transform.localScale = Vector3.one * _placedTileScale;
         tile.SetColor(color);
         tile.SetSortingOrder(sortingOrder);
-        tile.type = type;
-        tile.transform.rotation = type == TypeTile.Up ? Quaternion.identity : Quaternion.Euler(0f, 0f, 180f);
+        tile.tileType = tileType;
+        tile.transform.rotation = tileType == TileType.Up ? Quaternion.identity : Quaternion.Euler(0f, 0f, 180f);
         _placedTileViews[coord] = tile;
     }
 

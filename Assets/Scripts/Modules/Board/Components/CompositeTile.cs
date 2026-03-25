@@ -206,7 +206,7 @@ public class CompositeTile : MonoBehaviour
             var worldPos = TypeConversions.ToVector2(snappedPositions[i]);
             var coord = _boardLogic.PlaceTile(snappedPositions[i]);
             
-            _viewRegistry.SpawnPlacedTile(coord, _baseTiles[i].type, worldPos, _activeColor, _defaultSortingOrder, _gameManager.TilesOnBoardZone);
+            _viewRegistry.SpawnPlacedTile(coord, _baseTiles[i].tileType, worldPos, _activeColor, _defaultSortingOrder, _gameManager.TilesOnBoardZone);
             placedCoords.Add(coord);
         }
         
@@ -224,7 +224,7 @@ public class CompositeTile : MonoBehaviour
 
         var snappedPositions = new List<Position2D>();
         var rootPos = TypeConversions.ToPosition2D(_baseTiles[0].transform.position);
-        var rootSnappedPos = _boardLogic.FindNearestAvailablePosition(rootPos, _baseTiles[0].type);
+        var rootSnappedPos = _boardLogic.FindNearestAvailablePosition(rootPos, _baseTiles[0].tileType);
         
         if (_boardLogic.IsInvalidPosition(rootSnappedPos)) return null;
 
@@ -331,7 +331,8 @@ public class CompositeTile : MonoBehaviour
             var gridCoord = TypeConversions.ToGridCoord(vector3Int);
             tile.transform.localPosition = gridCoord.ToVector2(out var isUpTile);
             tile.transform.rotation = isUpTile ? Quaternion.identity : Quaternion.Euler(0, 0, 180f);
-            tile.type = isUpTile ? TypeTile.Up : TypeTile.Down;
+            tile.tileType = isUpTile ? TileType.Up : TileType.Down;
+            EditorUtility.SetDirty(this);
         }
         FitShapeToCenter();
     }
@@ -344,7 +345,7 @@ public class CompositeTile : MonoBehaviour
         foreach (var tile in _baseTiles)
         {
             var position = tile.transform.localPosition;
-            var isUpTile = tile.type == TypeTile.Up;
+            var isUpTile = tile.tileType == TileType.Up;
             var upOffset = isUpTile ? tileHeight * 2 / 3f : tileHeight / 3f;
             var downOffset = isUpTile ? tileHeight / 3f : tileHeight * 2 / 3f;
             if (position.x - _tileWidth / 2f < min.x) min.x = position.x - _tileWidth / 2f;

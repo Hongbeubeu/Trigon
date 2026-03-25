@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4e427e1a91be3e488effc41950bf745, type: 3}
   m_Name: ColorPalette
   m_EditorClassIdentifier: Assembly-CSharp::ColorPalette
-  colors:
-  - {r: 0.7960785, g: 0.7960785, b: 0.80392164, a: 1}
+  _colors:
+  - {r: 0.8773585, g: 0.8773585, b: 0.8773585, a: 1}

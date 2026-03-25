@@ -6,7 +6,7 @@ public interface ITileViewRegistry
 {
     IReadOnlyDictionary<int, CompositeTile> SpawnedTiles { get; }
     void RegisterBoardTileView(GridCoord coord, BoardTile view);
-    void SpawnPlacedTile(GridCoord coord, TypeTile type, Vector2 position, Color color, int sortingOrder, Transform parent);
+    void SpawnPlacedTile(GridCoord coord, TileType tileType, Vector2 position, Color color, int sortingOrder, Transform parent);
     void RegisterSpawnedTile(int id, CompositeTile view);
     void RemoveSpawnedTile(int id);
     void AnimateRemovePlacedTile(GridCoord coord);

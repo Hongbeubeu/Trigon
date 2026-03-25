@@ -1,4 +1,4 @@
-public enum TypeTile
+public enum TileType
 {
     Up,
     Down

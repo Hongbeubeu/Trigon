@@ -11,7 +11,7 @@ public class BaseTile : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Color loseColor;
 
-    public TypeTile type;
+    public TileType tileType;
 
     public void SetColor(Color color)
     {
