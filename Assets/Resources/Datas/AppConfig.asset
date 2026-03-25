@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4e427e1a91be3e488effc41950bf745, type: 3}
-  m_Name: ColorPalette
-  m_EditorClassIdentifier: Assembly-CSharp::ColorPalette
-  _colors:
-  - {r: 0.79607844, g: 0.79607844, b: 0.8039216, a: 1}
+  m_Script: {fileID: 11500000, guid: 1d2fe7e801abb074d874532178d38454, type: 3}
+  m_Name: AppConfig
+  m_EditorClassIdentifier: Trigon.Board::AppConfig
+  _targetFrameRate: 120
+  _maxScoreKey: MaxScore

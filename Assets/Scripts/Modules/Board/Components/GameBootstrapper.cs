@@ -7,6 +7,7 @@ using UnityEngine;
 public class GameBootstrapper : MonoBehaviour
 {
     [Header("Config Databases")]
+    [SerializeField] private AppConfig appConfig;
     [SerializeField] private LogicConfig logicConfig;
     [SerializeField] private GameViewConfig gameViewConfig;
 
@@ -22,13 +23,13 @@ public class GameBootstrapper : MonoBehaviour
 
     private void Awake()
     {
-        var configService = new ConfigService(logicConfig, gameViewConfig);
+        var configService = new ConfigService(appConfig, logicConfig, gameViewConfig);
         ServiceLocator.Register(configService);
 
-        Application.targetFrameRate = logicConfig.TargetFrameRate;
+        Application.targetFrameRate = appConfig.TargetFrameRate;
 
         _dataService = new DataService();
-        var persistence = new PlayerPrefsScorePersistence(logicConfig.MaxScoreKey);
+        var persistence = new PlayerPrefsScorePersistence(appConfig.MaxScoreKey);
         _boardLogic = new BoardLogic(_dataService.Board, logicConfig.SnapThreshold, logicConfig.ExactMatchThreshold);
         _viewRegistry = new TileViewRegistry(logicConfig, gameViewConfig);
         _scoreService = new ScoreService(_dataService.Session, persistence);

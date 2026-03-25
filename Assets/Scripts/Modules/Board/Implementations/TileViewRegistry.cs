@@ -24,7 +24,7 @@ public class TileViewRegistry : ITileViewRegistry
 
     public TileViewRegistry(LogicConfig logicConfig, GameViewConfig viewConfig)
     {
-        _clearTileDelay = logicConfig.ClearTileDelay;
+        _clearTileDelay = viewConfig.ClearTileDelay;
         _destroyAnimDuration = viewConfig.DestroyAnimDuration;
         _boardColor = viewConfig.BoardColor;
         _placedTileScale = viewConfig.PlacedTileScale;

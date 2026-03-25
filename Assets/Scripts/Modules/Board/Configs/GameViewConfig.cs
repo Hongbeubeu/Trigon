@@ -17,6 +17,8 @@ public class GameViewConfig : ScriptableObject
     [SerializeField] private float _dragYOffset = 2f;
     [SerializeField] [Range(10f, 100f)] private float _dragSpeed = 30f;
     [SerializeField] private float _destroyAnimDuration = 0.25f;
+    [SerializeField] private float _lineClearSettleDelay = 0.26f;
+    [SerializeField] private float _clearTileDelay = 0.01f;
     [SerializeField] [Range(0f, 1f)] private float _placeholderAlpha = 0.35f;
     [SerializeField] private Color _disabledColor = new(176f / 255f, 176f / 255f, 176f / 255f, 1f);
 
@@ -39,6 +41,8 @@ public class GameViewConfig : ScriptableObject
     public float DragYOffset => _dragYOffset;
     public float DragSpeed => _dragSpeed;
     public float DestroyAnimDuration => _destroyAnimDuration;
+    public float LineClearSettleDelay => _lineClearSettleDelay;
+    public float ClearTileDelay => _clearTileDelay;
     public float PlaceholderAlpha => _placeholderAlpha;
     public Color DisabledColor => _disabledColor;
     public float PlacedTileScale => _placedTileScale;

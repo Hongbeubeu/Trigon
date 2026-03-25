@@ -127,7 +127,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator DelayedCheckLose()
     {
-        yield return new WaitForSeconds(_configService.Logic.LineClearSettleDelay);
+        yield return new WaitForSeconds(_configService.GameView.LineClearSettleDelay);
         CheckLose();
     }
 

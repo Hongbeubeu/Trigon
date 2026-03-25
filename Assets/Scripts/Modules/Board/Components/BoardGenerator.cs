@@ -10,13 +10,9 @@ using UnityEngine;
 public class BoardGenerator : MonoBehaviour
 {
     [SerializeField] private BoardCameraFitter _cameraFitter;
-    private static readonly float Sqrt3 = Mathf.Sqrt(3f);
-    private readonly List<(Vector2 position, GridCoord coord)> _debugTiles = new();
     private readonly List<BoardTile> _spawnedBoardTiles = new();
     private float _upYOffset;
     private float _downYOffset;
-
-    public IReadOnlyList<BoardTile> SpawnedBoardTiles => _spawnedBoardTiles;
 
     public void Generate(BoardData boardData, ITileViewRegistry viewRegistry, LogicConfig logicConfig, GameViewConfig viewConfig)
     {
@@ -25,8 +21,8 @@ public class BoardGenerator : MonoBehaviour
         var cutOffLines = logicConfig.CutOffLines;
         var tileWidth = viewConfig.TileWidth;
         var position = Vector2.zero;
-        _upYOffset = tileWidth * Sqrt3 / 6f;
-        _downYOffset = tileWidth * Sqrt3 / 3f;
+        _upYOffset = tileWidth * HexGridExtensions.SQRT3 / 6f;
+        _downYOffset = tileWidth * HexGridExtensions.SQRT3 / 3f;
         for (var row = 0; row < rows; row++)
         {
             var gridCoord = new GridCoord(row, row, 0);
@@ -51,7 +47,7 @@ public class BoardGenerator : MonoBehaviour
                 else
                     gridCoord.z++;
             }
-            position.y -= tileWidth * Sqrt3 / 2f;
+            position.y -= tileWidth * HexGridExtensions.SQRT3 / 2f;
         }
         ScaleBoard(viewConfig.BoardScale);
         viewRegistry.SyncWorldPositions(boardData);
@@ -68,7 +64,9 @@ public class BoardGenerator : MonoBehaviour
             LeanPool.Despawn(tile);
         }
         _spawnedBoardTiles.Clear();
+#if UNITY_EDITOR
         _debugTiles.Clear();
+#endif
     }
 
     private void ScaleBoard(float scale)
@@ -96,6 +94,8 @@ public class BoardGenerator : MonoBehaviour
     [SerializeField] private bool _showGizmos = true;
     [SerializeField] private Color _gizmoColor = Color.yellow;
     [SerializeField] private int _gizmoFontSize = 12;
+    private readonly List<(Vector2 position, GridCoord coord)> _debugTiles = new();
+    
     private void OnDrawGizmos()
     {
         if (!_showGizmos || _debugTiles.Count == 0) return;
