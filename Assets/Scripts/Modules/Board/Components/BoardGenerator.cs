@@ -49,7 +49,6 @@ public class BoardGenerator : MonoBehaviour
             }
             position.y -= tileWidth * HexGridExtensions.SQRT3 / 2f;
         }
-        ScaleBoard(viewConfig.BoardScale);
         viewRegistry.SyncWorldPositions(boardData);
         if (_cameraFitter != null)
         {
@@ -67,11 +66,6 @@ public class BoardGenerator : MonoBehaviour
 #if UNITY_EDITOR
         _debugTiles.Clear();
 #endif
-    }
-
-    private void ScaleBoard(float scale)
-    {
-        transform.localScale = new Vector2(scale, scale);
     }
 
     private void InstantiateTile(BoardTile prefab, Vector2 position, bool isUpTile, GridCoord gridCoord, Color boardColor, BoardData boardData, ITileViewRegistry viewRegistry)

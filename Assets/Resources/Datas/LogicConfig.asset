@@ -12,12 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb48c544b59a50144b8981f578197aab, type: 3}
   m_Name: LogicConfig
   m_EditorClassIdentifier: Assembly-CSharp::LogicConfig
-  boardRowCount: 12
+  _boardRowCount: 12
   _cutOffLines: 4
-  snapThreshold: 0.3
-  exactMatchThreshold: 0.01
-  tilesPerSpawn: 3
-  targetFrameRate: 120
-  lineClearSettleDelay: 0.26
-  clearTileDelay: 0.01
-  maxScoreKey: MaxScore
+  _snapThreshold: 0.75
+  _exactMatchThreshold: 0.01
+  _tilesPerSpawn: 3

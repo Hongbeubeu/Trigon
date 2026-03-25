@@ -58,6 +58,7 @@ MonoBehaviour:
   - {x: 2, y: 0, z: 1}
   _tilePrefab: {fileID: -1573004039936141054, guid: b5c8a6124d0b2424c84ed1fa0939e77a,
     type: 3}
+  _collider2D: {fileID: 8384597338943005014}
 --- !u!61 &8384597338943005014
 BoxCollider2D:
   m_ObjectHideFlags: 0

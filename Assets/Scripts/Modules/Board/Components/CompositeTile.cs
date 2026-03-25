@@ -25,6 +25,7 @@ public class CompositeTile : MonoBehaviour
     [SerializeField] private List<BaseTile> _baseTiles = new();
     [SerializeField] private List<Vector3Int> _occupiedCoords = new();
     [SerializeField] private BaseTile _tilePrefab;
+    [SerializeField] private BoxCollider2D _collider2D;
     #endregion
 
     #region Properties
@@ -71,7 +72,7 @@ public class CompositeTile : MonoBehaviour
     #region Unity Lifecycle & Initialization
     private void Awake()
     {
-        _camera = Camera.main;
+        _camera = ServiceLocator.Get<ICameraService>().MainCamera;
         _dataService = ServiceLocator.Get<IDataService>();
         _boardLogic = ServiceLocator.Get<IBoardLogic>();
         _viewRegistry = ServiceLocator.Get<ITileViewRegistry>();
@@ -273,6 +274,11 @@ public class CompositeTile : MonoBehaviour
         SetColor(canPlace ? _activeColor : _disabledColor);
     }
 
+    public void SetColliderSize(Vector2 size)
+    {
+        _collider2D.size = size;
+    }
+    
     /// <summary>Smoothly glides the shape back to the UI spawn rack.</summary>
     private void AnimateReturnToOrigin()
     {
@@ -321,6 +327,7 @@ public class CompositeTile : MonoBehaviour
     [ContextMenu("Generate Pattern")]
     private void GeneratePattern()
     {
+        GetCollider();
         CleanTiles();
         foreach (var vector3Int in _occupiedCoords)
         {
@@ -359,6 +366,7 @@ public class CompositeTile : MonoBehaviour
             var newPosition = tile.transform.position - center;
             tile.transform.localPosition = newPosition;
         }
+
     }
 
     [ContextMenu("Clear Tiles")]
@@ -370,6 +378,13 @@ public class CompositeTile : MonoBehaviour
             DestroyImmediate(tile.gameObject);
         }
         _baseTiles.Clear();
+    }
+
+    [ContextMenu("Get Collider")]
+    private void GetCollider()
+    {
+        _collider2D = GetComponent<BoxCollider2D>();
+        EditorUtility.SetDirty(this);
     }
     #endregion
 #endif

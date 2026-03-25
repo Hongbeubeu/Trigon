@@ -12,6 +12,7 @@ public class GameBootstrapper : MonoBehaviour
     [SerializeField] private GameViewConfig gameViewConfig;
 
     [Header("Scene References")]
+    [SerializeField] private Camera mainCamera;
     [SerializeField] private BoardGenerator boardGenerator;
 
     private IDataService _dataService;
@@ -20,6 +21,7 @@ public class GameBootstrapper : MonoBehaviour
     private IScoreService _scoreService;
     private ITileViewRegistry _viewRegistry;
     private GameStateController _stateController;
+    private ICameraService _cameraService;
 
     private void Awake()
     {
@@ -27,6 +29,9 @@ public class GameBootstrapper : MonoBehaviour
         ServiceLocator.Register(configService);
 
         Application.targetFrameRate = appConfig.TargetFrameRate;
+
+        _cameraService = new CameraService(mainCamera != null ? mainCamera : Camera.main);
+        ServiceLocator.Register<ICameraService>(_cameraService);
 
         _dataService = new DataService();
         var persistence = new PlayerPrefsScorePersistence(appConfig.MaxScoreKey);
@@ -58,6 +63,7 @@ public class GameBootstrapper : MonoBehaviour
         _stateController?.Dispose();
         _viewRegistry?.Dispose();
         ServiceLocator.Unregister<ConfigService>();
+        ServiceLocator.Unregister<ICameraService>();
         ServiceLocator.Unregister<IDataService>();
         ServiceLocator.Unregister<IBoardLogic>();
         ServiceLocator.Unregister<ITileViewRegistry>();
